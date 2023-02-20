@@ -2,20 +2,10 @@ version: "3.8"
 
 services:
   #################################
-  # Book: The Book microservice
+  # Notification: The Notification microservice
   #################################
   book:
     image: ESDeezney/notification:1.0
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/book
-
-  ###############################################
-  # callbook: The test_invoke_http.py program
-  ###############################################
-  callbook:
-    image: ngkangting/callbook:1.0
-    depends_on:
-      - book
-    environment:
-      bookURL: http://book:5000/book
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/notification
