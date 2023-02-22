@@ -2,10 +2,10 @@ version: "3.8"
 
 services:
   #################################
-  # Notification: The Notification microservice
+  # Mission: The Mission microservice
   #################################
   book:
-    image: ESDeezney/notification:1.0
+    image: ngkangting/mission:1.0
     restart: always
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/notification
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/mission
