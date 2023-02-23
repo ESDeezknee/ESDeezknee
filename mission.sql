@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `mission` (
   `difficulty` varchar(64) NOT NULL,
   `duration` decimal(10,2) NOT NULL,
   `award_points` int(11) NOT NULL,
-  `is_active` tinyint(1) NOT NULL,
+  `is_active` smallint(1) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`mission_id`)

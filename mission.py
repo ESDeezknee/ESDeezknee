@@ -26,16 +26,13 @@ class Mission(db.Model):
     modified = db.Column(db.DateTime, nullable=False,
                          default=datetime.now, onupdate=datetime.now)
 
-    def __init__(self, mission_id, name, description, difficulty, duration, award_points, is_active, created, modified):
-        self.mission_id = mission_id
+    def __init__(self, name, description, difficulty, duration, award_points, is_active):
         self.name = name
         self.description = description
         self.difficulty = difficulty
         self.duration = duration
         self.award_points = award_points
         self.is_active = is_active
-        self.created = created
-        self.modified = modified
 
     def json(self):
         return {"mission_id": self.mission_id, "name": self.name, "description": self.description, "difficulty": self.difficulty, "duration": self.duration, "award_points": self.award_points, "is_active": self.is_active, "created": self.created, "modified": self.modified}
@@ -79,21 +76,23 @@ def find_by_mission_id(mission_id):
     ), 404
 
 
-@app.route("/mission/<mission_id>", methods=['POST'])
-def create_mission(mission_id):
-    if (Mission.query.filter_by(mission_id=mission_id).first()):
+@app.route("/mission", methods=['POST'])
+def create_mission():
+    data = request.get_json()
+    mission = Mission(**data)
+
+    if (Mission.query.filter_by(mission_id=mission.mission_id).first()):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "mission_id": mission_id
+                    "mission_id": mission.mission_id
                 },
                 "message": "Mission already exists."
             }
         ), 400
 
-    data = request.get_json()
-    mission = Mission(mission_id, **data)
+
 
     try:
         db.session.add(mission)
@@ -103,7 +102,7 @@ def create_mission(mission_id):
             {
                 "code": 500,
                 "data": {
-                    "mission_id": mission_id
+                    "mission_id": mission.mission_id
                 },
                 "message": "An error occurred creating the mission."
             }
@@ -117,33 +116,42 @@ def create_mission(mission_id):
     ), 201
 
 
-# @app.route("/mission/<integer:mission_id>", methods=['PUT'])
-# def update_mission(mission_id):
-#     mission = Mission.query.filter_by(mission_id=mission_id).first()
-#     if mission:
-#         data = request.get_json()
-#         if data['title']:
-#             mission.title = data['title']
-#         if data['price']:
-#             mission.price = data['price']
-#         if data['availability']:
-#             mission.availability = data['availability'] 
-#         db.session.commit()
-#         return jsonify(
-#             {
-#                 "code": 200,
-#                 "data": book.json()
-#             }
-#         )
-#     return jsonify(
-#         {
-#             "code": 404,
-#             "data": {
-#                 "isbn13": isbn13
-#             },
-#             "message": "Book not found."
-#         }
-#     ), 404
+@app.route("/mission/<mission_id>", methods=['PUT'])
+def update_mission(mission_id):
+    mission = Mission.query.filter_by(mission_id=mission_id).first()
+    if mission:
+        data = request.get_json()
+        print(data['is_active'])
+
+        if data['name']:
+            mission.name = data['name']
+        if data['description']:
+            mission.description = data['description']
+        if data['difficulty']:
+            mission.difficulty = data['difficulty']
+        if data['duration']:
+            mission.duration = data['duration']
+        if data['award_points']:
+            mission.award_points = data['award_points'] 
+        if type(data['is_active']) == bool:
+            mission.is_active = data['is_active']
+          
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": mission.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "data": {
+                "mission_id": mission_id
+            },
+            "message": "Mission not found."
+        }
+    ), 404
 
 
 @app.route("/mission/<mission_id>", methods=['DELETE'])
