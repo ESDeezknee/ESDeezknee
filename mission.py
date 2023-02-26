@@ -121,7 +121,6 @@ def update_mission(mission_id):
     mission = Mission.query.filter_by(mission_id=mission_id).first()
     if mission:
         data = request.get_json()
-        print(data['is_active'])
 
         if data['name']:
             mission.name = data['name']
@@ -180,4 +179,4 @@ def delete_mission(mission_id):
 
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5001, debug=True)
