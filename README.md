@@ -1,5 +1,9 @@
 # ESDeezknee
 
-## Customer Service
+## User Scenarios
 
-## Mission Service
+### Customer Finding People to Enter a Ride
+
+### Customer Wishes to Jump Queue
+
+### Customer Participates in Challenges
