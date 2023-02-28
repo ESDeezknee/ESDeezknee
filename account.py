@@ -7,6 +7,7 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/account'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 
@@ -38,7 +39,7 @@ class Account(db.Model):
         self.is_active = is_active
 
     def json(self):
-        return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "membership_type": self.membership_type, "is_active": self.membership_type, "created": self.created}
+        return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "membership_type": self.membership_type, "is_active": self.is_active, "created": self.created}
 
 
 @app.route("/account")
@@ -60,5 +61,22 @@ def get_all():
         }
     ), 404
 
+@app.route("/account/<account_id>")
+def find_by_account_id(account_id):
+    account = Account.query.filter_by(account_id=account_id).first()
+    if account:
+        return jsonify(
+            {
+                "code": 200,
+                "data": account.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Account not found."
+        }
+    ), 404
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

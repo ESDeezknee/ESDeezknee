@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 21, 2022 at 23:42 PM
+-- Generation Time: Feb 24, 2023 at 17:21 PM
 -- Server version: 5.7.19
 -- PHP Version: 7.1.9
 
@@ -19,37 +19,39 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `mission`
+-- Database: `account`
 --
-CREATE DATABASE IF NOT EXISTS `mission` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `mission`;
+CREATE DATABASE IF NOT EXISTS `account` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `account`;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `mission`
+-- Table structure for table `account`
 --
 
-DROP TABLE IF EXISTS `mission`;
-CREATE TABLE IF NOT EXISTS `mission` (
-  `mission_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
-  `description` varchar(256) NOT NULL,
-  `difficulty` varchar(64) NOT NULL,
-  `duration` decimal(10,2) NOT NULL,
-  `award_points` int(11) NOT NULL,
+DROP TABLE IF EXISTS `account`;
+CREATE TABLE IF NOT EXISTS `account` (
+  `account_id` int(11) NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(64) NOT NULL,
+  `last_name` varchar(64) NOT NULL,
+  `date_of_birth` timestamp NOT NULL,
+  `age` int(11) NOT NULL,
+  `gender` varchar(1) NOT NULL,
+  `email` varchar(256) NOT NULL,
+  `phone` varchar(64) NOT NULL,
+  `membership_type` varchar(64) NOT NULL,
   `is_active` smallint(1) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`mission_id`)
+  PRIMARY KEY (`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `mission`
+-- Dumping data for table `account`
 --
 
-INSERT INTO `mission` (`mission_id`, `name`, `description`, `difficulty`, `duration`, `award_points`, `is_active`, `created`, `modified`) VALUES
-(1, 'Revenge of the Mummy', 'Ride Revenge of the Mummy 5 times to gain 100 points!', 'Moderate', '1.0', '100', '1', '2023-02-22 15:35:55', '2023-02-22 15:35:55');
+INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `membership_type`, `is_active`, `created`) VALUES
+(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 'basic', 1, '2023-02-24 18:00:00');
 
 -- --------------------------------------------------------
 

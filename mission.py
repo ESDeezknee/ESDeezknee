@@ -7,16 +7,18 @@ from datetime import datetime
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/mission'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 
 CORS(app)
 
+
 class Mission(db.Model):
     __tablename__ = 'mission'
 
     mission_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(64), unique=True, nullable=False)
     description = db.Column(db.String(256), nullable=False)
     difficulty = db.Column(db.String(64), nullable=False)
     duration = db.Column(db.Float(precision=2), nullable=False)
@@ -92,8 +94,6 @@ def create_mission():
             }
         ), 400
 
-
-
     try:
         db.session.add(mission)
         db.session.commit()
@@ -101,9 +101,6 @@ def create_mission():
         return jsonify(
             {
                 "code": 500,
-                "data": {
-                    "mission_id": mission.mission_id
-                },
                 "message": "An error occurred creating the mission."
             }
         ), 500
@@ -118,65 +115,84 @@ def create_mission():
 
 @app.route("/mission/<mission_id>", methods=['PUT'])
 def update_mission(mission_id):
-    mission = Mission.query.filter_by(mission_id=mission_id).first()
-    if mission:
-        data = request.get_json()
-
-        if data['name']:
-            mission.name = data['name']
-        if data['description']:
-            mission.description = data['description']
-        if data['difficulty']:
-            mission.difficulty = data['difficulty']
-        if data['duration']:
-            mission.duration = data['duration']
-        if data['award_points']:
-            mission.award_points = data['award_points'] 
-        if type(data['is_active']) == bool:
-            mission.is_active = data['is_active']
-          
-        db.session.commit()
+    if (not Mission.query.filter_by(mission_id=mission_id).first()):
         return jsonify(
             {
-                "code": 200,
-                "data": mission.json()
+                "code": 404,
+                "data": {
+                    "mission_id": mission_id
+                },
+                "message": "Mission not found."
             }
-        )
+        ), 404
+
+    mission = Mission.query.filter_by(mission_id=mission_id).first()
+    data = request.get_json()
+
+    try:
+        mission.name = data['name']
+        mission.description = data['description']
+        mission.difficulty = data['difficulty']
+        mission.duration = data['duration']
+        mission.award_points = data['award_points']
+        mission.is_active = data['is_active']
+        db.session.commit()
+
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "mission_id": mission_id
+                },
+                "message": "An error occurred updating the mission."
+            }
+        ), 500
+
     return jsonify(
         {
-            "code": 404,
-            "data": {
-                "mission_id": mission_id
-            },
-            "message": "Mission not found."
+            "code": 200,
+            "data": mission.json()
         }
-    ), 404
+    ), 200
 
 
 @app.route("/mission/<mission_id>", methods=['DELETE'])
 def delete_mission(mission_id):
-    mission = Mission.query.filter_by(mission_id=mission_id).first()
-    if mission:
-        db.session.delete(mission)
-        db.session.commit()
+    if (not Mission.query.filter_by(mission_id=mission_id).first()):
         return jsonify(
             {
-                "code": 200,
+                "code": 404,
                 "data": {
                     "mission_id": mission_id
-                }
+                },
+                "message": "Mission not found."
             }
-        )
+        ), 404
+
+    mission = Mission.query.filter_by(mission_id=mission_id).first()
+
+    try:
+        db.session.delete(mission)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "mission_id": mission_id
+                },
+                "message": "An error occurred deleting the mission."
+            }
+        ), 500
+
     return jsonify(
         {
-            "code": 404,
-            "data": {
-                "mission_id": mission_id
-            },
-            "message": "Mission not found."
+            "code": 200,
+            "message": "Mission " + mission_id + " successfully deleted."
         }
-    ), 404
+    ), 200
 
 
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
