@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from sqlalchemy.orm import relationship
 
 from datetime import datetime
 
@@ -18,7 +19,12 @@ class Order(db.Model):
     order_id = db.Column(db.Integer, primary_key=True)
     is_express = db.Column(db.Boolean, default=False, nullable=False)
     order_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    account_id = db.Column(db.Integer, ForeignKey("account.account_id"), nullable = False, primary_key = True)
+    account_id = db.Column(db.Integer, db.ForeignKey("account.account_id"), nullable = False)
+    # To access Account for an Order object using the account attribute;
+    # order = Order.query.first()
+    # account = order.account
+
+    account = relationship("Account", backref="orders")
 
     def __init__(self, is_express, order_created, account_id):
         self.is_express = is_express

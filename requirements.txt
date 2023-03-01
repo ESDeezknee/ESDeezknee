@@ -3,3 +3,4 @@ Flask-Cors==3.0.10
 Flask-SQLAlchemy==3.0.2
 mysql-connector-python==8.0.31
 requests==2.27.1
+SQLAlchemy==1.4.25
