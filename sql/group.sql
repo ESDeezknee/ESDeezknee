@@ -19,10 +19,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `group`
+-- Database: `grouping`
 --
-CREATE DATABASE IF NOT EXISTS `group` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `group`;
+CREATE DATABASE IF NOT EXISTS `grouping` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `grouping`;
 
 -- --------------------------------------------------------
 
@@ -30,20 +30,20 @@ USE `group`;
 -- Table structure for table `group`
 --
 
-DROP TABLE IF EXISTS `group`;
-CREATE TABLE IF NOT EXISTS `group` (
-    `group_id` int(11) NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `grouping`;
+CREATE TABLE IF NOT EXISTS `grouping` (
+    `grouping_id` int(11) NOT NULL AUTO_INCREMENT,
     `description` varchar(256) NOT NULL,
     `status` boolean NOT NULL,
-    PRIMARY KEY (`group_id`)
+    PRIMARY KEY (`grouping_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `group`
 --
 
-INSERT INTO `group` (`group_id`, `description`, `status`) VALUES
-(1, 'Group of 2 looking for 4 people to join', False);
+INSERT INTO `grouping` (`grouping_id`, `description`, `status`) VALUES
+(1, 'Grouping of 2 looking for 4 people to join', False);
 
 -- --------------------------------------------------------
 

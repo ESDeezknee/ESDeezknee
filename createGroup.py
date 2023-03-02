@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/group'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/grouping'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -11,93 +11,83 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-class Group(db.Model):
-    __tablename__ = 'group'
+class Grouping(db.Model):
+    __tablename__ = 'grouping'
 
-    group_id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(256), nullable=False)
-    status = db.Column(db.Boolean, nullable=False)
+    grouping_id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")
+    status = db.Column(db.String(256), nullable=False, default="Started")
 
     def __init__(self, description, status):
         self.description = description
         self.status = status
 
     def json(self):
-        return {"group_id": self.group_id, "description": self.description, "status": self.status}
+        return {"grouping_id": self.grouping_id, "description": self.description, "status": self.status}
 
 with app.app_context():
     db.create_all()  
 
-@app.route("/group")
+@app.route("/grouping")
 def get_all():
-    grouplist = Group.query.all()
-    if len(grouplist):
+    groupinglist = Grouping.query.all()
+    if len(groupinglist):
         return jsonify(
             {
                 "code": 200,
                 "data": {
-                    "groups": [group.json() for group in grouplist]
+                    "groupings": [grouping.json() for grouping in groupinglist]
                 }
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "There are no groups."
+            "message": "There are no groupings."
         }
     ), 404
 
-@app.route("/group/<group_id>")
-def find_by_group_id(group_id):
-    group = Group.query.filter_by(group_id=group_id).first()
-    if group:
+@app.route("/grouping/<grouping_id>")
+def find_by_grouping_id(grouping_id):
+    grouping = Grouping.query.filter_by(grouping_id=grouping_id).first()
+    if grouping:
         return jsonify(
             {
                 "code": 200,
-                "data": group.json()
+                "data": grouping.json()
             }
         )
     return jsonify(
         {
             "code": 404,
-            "message": "Group not found."
+            "message": "grouping not found."
         }
     ), 404
 
-@app.route("/group/<group_id>", methods=['POST'])
-def create_group(group_id):
+@app.route("/grouping", methods=['POST'])
+def create_grouping():
     data = request.get_json()
-    group = Group(**data)
-
-    if (Group.query.filter_by(group_id=group_id).first()):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "group_id": group.group_id
-                },
-                "message": "Group already exists."
-            }
-        ), 400
+    grouping = Grouping(**data)
+    print(grouping.json())
 
     try:
-        db.session.add(group)
+        db.session.add(grouping)
         db.session.commit()
     except:
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the group."
+                "message": "An error occurred creating the Grouping.",
             }
         ), 500
 
     return jsonify(
         {
             "code": 201,
-            "data": group.json()
+            "data": grouping.json()
         }
     ), 201
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=6103, debug=True)
