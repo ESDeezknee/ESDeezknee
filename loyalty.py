@@ -17,10 +17,8 @@ CORS(app)
 class Loyalty(db.Model):
     __tablename__ = 'loyalty'
 
-    account_id = db.Column(db.ForeignKey(
-        'account.account_id', ondelete='CASCADE', onupdate='CASCADE'), primary_key=True)
-    # account_id = db.Column(db.ForeignKey(
-    #     'account.account_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    account_id = db.Column(db.Integer, db.ForeignKey(
+        'account.id'), primary_key=True, unique=True)
     available_points = db.Column(db.Integer, nullable=False)
     redeem_points = db.Column(db.Integer, nullable=False)
     total_points = db.Column(db.Integer, nullable=False)
@@ -36,6 +34,9 @@ class Loyalty(db.Model):
     def json(self):
         return {"account_id": self.account_id, "available_points": self.available_points, "redeem_points": self.redeem_points, "total_points": self.total_points, "expiry": self.expiry}
 
+with app.app_context():
+  db.init_app(app)
+  db.create_all()
 
 @app.route("/loyalty/<account_id>")
 def find_by_account_id(account_id):

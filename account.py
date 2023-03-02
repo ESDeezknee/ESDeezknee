@@ -13,10 +13,11 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
+
 class Account(db.Model):
     __tablename__ = 'account'
 
-    account_id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
     date_of_birth = db.Column(db.DateTime, nullable=False)
@@ -24,23 +25,28 @@ class Account(db.Model):
     gender = db.Column(db.String(1), nullable=False)
     email = db.Column(db.String(256), nullable=False)
     phone = db.Column(db.String(64), nullable=False)
-    membership_type = db.Column(db.String(64), nullable=False)
+    is_express = db.Column(db.Boolean, default=False, nullable=False)
     is_active = db.Column(db.Boolean, default=False, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    def __init__(self, first_name, last_name, date_of_birth, gender, email, phone, membership_type, is_active):
+    loyalty = db.relationship('Loyalty', backref='account', uselist=False)
+
+    def __init__(self, first_name, last_name, date_of_birth, gender, email, phone, is_express, is_active):
         self.first_name = first_name
         self.last_name = last_name
         self.date_of_birth = date_of_birth
         self.gender = gender
         self.email = email
         self.phone = phone
-        self.membership_type = membership_type
+        self.is_express = is_express
         self.is_active = is_active
 
     def json(self):
-        return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "membership_type": self.membership_type, "is_active": self.is_active, "created": self.created}
+        return {"id": self.id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "is_express": self.is_express, "is_active": self.is_active, "created": self.created}
 
+with app.app_context():
+  db.init_app(app)
+  db.create_all()
 
 @app.route("/account")
 def get_all():
@@ -61,9 +67,10 @@ def get_all():
         }
     ), 404
 
-@app.route("/account/<account_id>")
-def find_by_account_id(account_id):
-    account = Account.query.filter_by(account_id=account_id).first()
+
+@app.route("/account/<id>")
+def find_by_id(id):
+    account = Account.query.filter_by(account_id=id).first()
     if account:
         return jsonify(
             {
@@ -77,6 +84,7 @@ def find_by_account_id(account_id):
             "message": "Account not found."
         }
     ), 404
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
