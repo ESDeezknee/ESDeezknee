@@ -59,6 +59,24 @@ def get_all():
         }
     ), 404
 
+@app.route("/mission/active")
+def get_active_missions():
+    activemissionlist = Mission.query.filter_by(is_active=True).all()
+    if len(activemissionlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "missions": [mission.json() for mission in activemissionlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no active missions."
+        }
+    ), 404
 
 @app.route("/mission/<mission_id>")
 def find_by_mission_id(mission_id):
@@ -83,12 +101,14 @@ def create_mission():
     data = request.get_json()
     mission = Mission(**data)
 
-    if (Mission.query.filter_by(mission_id=mission.mission_id).first()):
+    existing_mission = Mission.query.filter_by(name=mission.name).first()
+
+    if (existing_mission):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "mission_id": mission.mission_id
+                    "mission_id": existing_mission.mission_id
                 },
                 "message": "Mission already exists."
             }

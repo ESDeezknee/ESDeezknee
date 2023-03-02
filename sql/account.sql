@@ -32,7 +32,7 @@ USE `account`;
 
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
-  `account_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(64) NOT NULL,
   `last_name` varchar(64) NOT NULL,
   `date_of_birth` timestamp NOT NULL,
@@ -43,14 +43,14 @@ CREATE TABLE IF NOT EXISTS `account` (
   `membership_type` varchar(64) NOT NULL,
   `is_active` smallint(1) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`account_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `membership_type`, `is_active`, `created`) VALUES
+INSERT INTO `account` (`id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `membership_type`, `is_active`, `created`) VALUES
 (1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 'basic', 1, '2023-02-24 18:00:00');
 
 -- --------------------------------------------------------
