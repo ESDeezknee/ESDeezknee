@@ -32,7 +32,7 @@ USE `account`;
 
 DROP TABLE IF EXISTS `account`;
 CREATE TABLE IF NOT EXISTS `account` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `account_id` int(11) NOT NULL AUTO_INCREMENT,
   `first_name` varchar(64) NOT NULL,
   `last_name` varchar(64) NOT NULL,
   `date_of_birth` timestamp NOT NULL,
@@ -40,18 +40,18 @@ CREATE TABLE IF NOT EXISTS `account` (
   `gender` varchar(1) NOT NULL,
   `email` varchar(256) NOT NULL,
   `phone` varchar(64) NOT NULL,
-  `membership_type` varchar(64) NOT NULL,
+  `is_express` varchar(64) NOT NULL,
   `is_active` smallint(1) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `membership_type`, `is_active`, `created`) VALUES
-(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 'basic', 1, '2023-02-24 18:00:00');
+INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
+(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 0, 1, '2023-02-24 18:00:00');
 
 -- --------------------------------------------------------
 

@@ -17,7 +17,7 @@ CORS(app)
 class Account(db.Model):
     __tablename__ = 'account'
 
-    id = db.Column(db.Integer, primary_key=True)
+    account_id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(64), nullable=False)
     last_name = db.Column(db.String(64), nullable=False)
     date_of_birth = db.Column(db.DateTime, nullable=False)
@@ -28,8 +28,6 @@ class Account(db.Model):
     is_express = db.Column(db.Boolean, default=False, nullable=False)
     is_active = db.Column(db.Boolean, default=False, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-
-    loyalty = db.relationship('Loyalty', backref='account', uselist=False)
 
     def __init__(self, first_name, last_name, date_of_birth, gender, email, phone, is_express, is_active):
         self.first_name = first_name
@@ -42,10 +40,9 @@ class Account(db.Model):
         self.is_active = is_active
 
     def json(self):
-        return {"id": self.id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "is_express": self.is_express, "is_active": self.is_active, "created": self.created}
+        return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "is_express": self.is_express, "is_active": self.is_active, "created": self.created}
 
 with app.app_context():
-  db.init_app(app)
   db.create_all()
 
 @app.route("/account")
@@ -68,9 +65,9 @@ def get_all():
     ), 404
 
 
-@app.route("/account/<id>")
-def find_by_id(id):
-    account = Account.query.filter_by(account_id=id).first()
+@app.route("/account/<account_id>")
+def find_by_account_id(account_id):
+    account = Account.query.filter_by(account_id=account_id).first()
     if account:
         return jsonify(
             {
@@ -87,4 +84,4 @@ def find_by_id(id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=6000, debug=True)
