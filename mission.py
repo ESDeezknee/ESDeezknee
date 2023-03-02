@@ -39,6 +39,8 @@ class Mission(db.Model):
     def json(self):
         return {"mission_id": self.mission_id, "name": self.name, "description": self.description, "difficulty": self.difficulty, "duration": self.duration, "award_points": self.award_points, "is_active": self.is_active, "created": self.created, "modified": self.modified}
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/mission")
 def get_all():
@@ -215,4 +217,4 @@ def delete_mission(mission_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=6300, debug=True)

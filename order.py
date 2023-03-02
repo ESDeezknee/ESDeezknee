@@ -34,8 +34,11 @@ class Order(db.Model):
     def json(self):
         return {"order_id": self.order_id, "is_express": self.is_express, "order_created": self.order_created, "account_id": self.account_id}
 
+with app.app_context():
+  db.init_app(app)
+  db.create_all()
 
-@app.route("/order")
+@app.get("/order")
 def get_all():
     orderList = Order.query.all()
     if len(orderList):
@@ -54,5 +57,73 @@ def get_all():
         }
     ), 404
 
+@app.get("/order/<int:order_id>")
+def get_by_id(order_id):
+    order = Order.query.filter_by(order_id=order_id).first()
+    if order:
+        return jsonify(
+            {
+                "code": 200,
+                "data": order.json()
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Order not found."
+        }
+    ), 404
+
+@app.post("/order")
+def create_order():
+    if request.json is None:
+        raise Exception("No data received.")
+    try:
+        data = request.get_json()
+        new_order = Order(**data)
+        db.session.add(new_order)
+        db.session.commit()
+        db.session.refresh(new_order)
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "order_id": new_order.order_id
+                },
+                "message": "An error occurred creating the order."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 201,
+            "data": new_order.json()
+        }
+    ), 201
+
+@app.delete("/order/<int:order_id>")
+def delete_order(order_id):
+    order = Order.query.filter_by(order_id=order_id).first()
+    if order:
+        db.session.delete(order)
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "order_id": order.order_id
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Order not found."
+        }
+    ), 404
+
+
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=6201, debug=True)

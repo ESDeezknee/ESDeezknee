@@ -36,17 +36,15 @@ CREATE TABLE IF NOT EXISTS `loyalty` (
   `available_points` int(11) NOT NULL,
   `redeem_points` int(11) NOT NULL,
   `total_points` int(11) NOT NULL,
-  `expiry` timestamp NOT NULL,
   PRIMARY KEY (`account_id`),
-  KEY `FK_account_id` (`account_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `loyalty`
 --
 
-INSERT INTO `loyalty` (`account_id`, `available_points`, `redeem_points`, `total_points`, `expiry`) VALUES
-(1, 100, 0, 100, NULL);
+INSERT INTO `loyalty` (`account_id`, `available_points`, `redeem_points`, `total_points`) VALUES
+(1, 100, 0, 100);
 
 -- --------------------------------------------------------
 

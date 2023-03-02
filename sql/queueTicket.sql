@@ -34,6 +34,7 @@ DROP TABLE IF EXISTS `queueTicket`;
 CREATE TABLE IF NOT EXISTS `queueTicket` (
   `queue_id` int(11) NOT NULL AUTO_INCREMENT,
   `is_express` smallint(1) NOT NULL,
+  `ride_times` int(11) NOT NULL DEFAULT '0',
   `queue_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY(`account_id`) REFERENCES account(`account_id`),
   PRIMARY KEY (`queue_id`)
@@ -43,8 +44,8 @@ CREATE TABLE IF NOT EXISTS `queueTicket` (
 -- Dumping data for table `queueTicket`
 --
 
-INSERT INTO `queueTicket` (`queue_id`, `is_express`, `queue_created`, `account_id`) VALUES
-(1, '1', '2023-02-24 18:00:00', '1');
+INSERT INTO `queueTicket` (`queue_id`, `is_express`, `ride_times`, `queue_created`, `account_id`) VALUES
+(1, '1', '2', '2023-02-24 18:00:00', '1');
 
 -- --------------------------------------------------------
 

@@ -15,17 +15,16 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-mission_URL = "http://localhost:5001/mission"
+account_URL = "http://localhost:6000/account"
+mission_URL = "http://localhost:6300/mission"
 
 
 class Challenge(db.Model):
     __tablename__ = 'challenge'
 
     challenge_id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.ForeignKey(
-        'account.account_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
-    mission_id = db.Column(db.ForeignKey(
-        'mission.mission_id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False, index=True)
+    account_id = db.Column(db.Integer, nullable=False)
+    mission_id = db.Column(db.Integer, nullable=False)
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String(64), nullable=False, default="In Progress")
@@ -120,8 +119,7 @@ def create_challenge():
         current_time = datetime.now()
         challenge.start_date = current_time
         challenge.end_date = current_time + timedelta(hours=mission_duration)
-        print(challenge.json())
-        # db.session.add(challenge)
+        db.session.add(challenge)
         db.session.commit()
     except:
         return jsonify(
@@ -140,4 +138,4 @@ def create_challenge():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002, debug=True)
+    app.run(host='0.0.0.0', port=6302, debug=True)
