@@ -41,6 +41,8 @@ class Account(db.Model):
     def json(self):
         return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "membership_type": self.membership_type, "is_active": self.is_active, "created": self.created}
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/account")
 def get_all():
