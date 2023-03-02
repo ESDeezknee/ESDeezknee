@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-account_URL = "http://localhost:5000/account"
+account_URL = "http://localhost:6000/account"
 
 
 class Loyalty(db.Model):
@@ -89,7 +89,7 @@ def create_loyalty():
             }
         ), 500
 
-    if account_result["code"] in range(200, 500):
+    if account_result["code"] in range(300, 500):
         return jsonify(
             {
                 "code": 400,
