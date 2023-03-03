@@ -135,7 +135,7 @@ def create_redemption():
             {
                 "code": 400,
                 "data": {
-                    "reward_id": redemption.mission_id
+                    "reward_id": redemption.reward_id
                 },
                 "message": "Reward is not available"
             }
