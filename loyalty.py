@@ -15,7 +15,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-account_URL = "http://localhost:6000/account"
+verification_URL = "http://localhost:6001/verification/"
 
 
 class Loyalty(db.Model):
@@ -50,7 +50,7 @@ def find_loyalty_by_account_id(account_id):
                 "code": 200,
                 "data": loyalty.json()
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -79,7 +79,7 @@ def create_loyalty():
         ), 400
 
     account_result = invoke_http(
-        account_URL + "/" + str(loyalty.account_id), method='GET')
+        verification_URL + "account/" + str(loyalty.account_id), method='GET')
 
     if account_result["code"] in range(500, 600):
         return jsonify(

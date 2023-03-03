@@ -15,8 +15,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-account_URL = "http://localhost:6000/account"
-mission_URL = "http://localhost:6300/mission"
+verification_URL = "http://localhost:6001/verification/"
 
 
 class Challenge(db.Model):
@@ -85,10 +84,40 @@ def create_challenge():
     data = request.get_json()
     challenge = Challenge(**data)
 
-    mission_result = invoke_http(
-        mission_URL + "/" + str(challenge.mission_id), method='GET')
+    account_result = invoke_http(
+        verification_URL + "account/" + str(challenge.account_id), method='GET')
 
-    if mission_result["code"] not in range(200, 300):
+    if account_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong!"
+            }
+        ), 500
+
+    if account_result["code"] in range(300, 500):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "account_id": challenge.account_id
+                },
+                "message": "Account does not exist."
+            }
+        ), 400
+
+    mission_result = invoke_http(
+        verification_URL + "mission/" + str(challenge.mission_id), method='GET')
+
+    if mission_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong!"
+            }
+        ), 500
+
+    if mission_result["code"] in range(300, 500):
         return jsonify(
             {
                 "code": 400,
