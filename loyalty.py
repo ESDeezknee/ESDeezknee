@@ -41,6 +41,26 @@ with app.app_context():
     db.create_all()
 
 
+@app.route("/loyalty")
+def get_all():
+    loyaltylist = Loyalty.query.all()
+    if len(loyaltylist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "loyalties": [loyalty.json() for loyalty in loyaltylist]
+                }
+            }, 200
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no loyalties."
+        }
+    ), 404
+
+
 @app.route("/loyalty/<account_id>")
 def find_loyalty_by_account_id(account_id):
     loyalty = Loyalty.query.filter_by(account_id=account_id).first()
@@ -158,6 +178,7 @@ def update_loyalty_earn(account_id):
         }
     ), 200
 
+
 @app.route("/loyalty/<account_id>/redeem", methods=['PATCH'])
 def update_loyalty_redeem(account_id):
     if (not Loyalty.query.filter_by(account_id=account_id).first()):
@@ -208,6 +229,7 @@ def update_loyalty_redeem(account_id):
             "data": loyalty.json()
         }
     ), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6301, debug=True)

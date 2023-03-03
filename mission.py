@@ -211,7 +211,7 @@ def delete_mission(mission_id):
     return jsonify(
         {
             "code": 200,
-            "message": "Mission " + mission_id + " successfully deleted."
+            "message": "Mission with ID " + mission_id + " successfully deleted."
         }
     ), 200
 
