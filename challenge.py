@@ -38,8 +38,10 @@ class Challenge(db.Model):
     def json(self):
         return {"challenge_id": self.challenge_id, "account_id": self.account_id, "mission_id": self.mission_id, "start_date": self.start_date, "end_date": self.end_date, "status": self.status, "created": self.created, "modified": self.modified}
 
+
 with app.app_context():
-  db.create_all()
+    db.create_all()
+
 
 @app.route("/challenge")
 def get_all():
@@ -164,6 +166,55 @@ def create_challenge():
             "data": challenge.json()
         }
     ), 201
+
+
+@app.route("/challenge/<challenge_id>/complete", methods=['PATCH'])
+def update_challenge(challenge_id):
+    if (not Challenge.query.filter_by(challenge_id=challenge_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "challenge_id": challenge_id
+                },
+                "message": "Challenge not found."
+            }
+        ), 404
+
+    challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
+
+    if challenge.status == "Completed":
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "challenge_id": challenge_id
+                },
+                "message": "Challenge is already completed."
+            }
+        ), 400
+
+    try:
+        challenge.status = "Completed"
+        db.session.commit()
+
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "challenge": challenge
+                },
+                "message": "An error occurred updating the challenge."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "data": challenge.json()
+        }
+    ), 200
 
 
 if __name__ == '__main__':
