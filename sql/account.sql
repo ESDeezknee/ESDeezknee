@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `account` (
   `gender` varchar(1) NOT NULL,
   `email` varchar(256) NOT NULL,
   `phone` varchar(64) NOT NULL,
-  `membership_type` varchar(64) NOT NULL,
+  `is_express` varchar(64) NOT NULL,
   `is_active` smallint(1) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`account_id`)
@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS `account` (
 -- Dumping data for table `account`
 --
 
-INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `membership_type`, `is_active`, `created`) VALUES
-(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 'basic', 1, '2023-02-24 18:00:00');
+INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
+(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 0, 1, '2023-02-24 18:00:00');
 
 -- --------------------------------------------------------
 

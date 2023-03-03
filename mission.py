@@ -39,6 +39,8 @@ class Mission(db.Model):
     def json(self):
         return {"mission_id": self.mission_id, "name": self.name, "description": self.description, "difficulty": self.difficulty, "duration": self.duration, "award_points": self.award_points, "is_active": self.is_active, "created": self.created, "modified": self.modified}
 
+with app.app_context():
+    db.create_all()
 
 @app.route("/mission")
 def get_all():
@@ -59,6 +61,24 @@ def get_all():
         }
     ), 404
 
+@app.route("/mission/active")
+def get_active_missions():
+    activemissionlist = Mission.query.filter_by(is_active=True).all()
+    if len(activemissionlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "missions": [mission.json() for mission in activemissionlist]
+                }
+            }
+        )
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no active missions."
+        }
+    ), 404
 
 @app.route("/mission/<mission_id>")
 def find_by_mission_id(mission_id):
@@ -83,12 +103,14 @@ def create_mission():
     data = request.get_json()
     mission = Mission(**data)
 
-    if (Mission.query.filter_by(mission_id=mission.mission_id).first()):
+    existing_mission = Mission.query.filter_by(name=mission.name).first()
+
+    if (existing_mission):
         return jsonify(
             {
                 "code": 400,
                 "data": {
-                    "mission_id": mission.mission_id
+                    "mission_id": existing_mission.mission_id
                 },
                 "message": "Mission already exists."
             }
@@ -189,10 +211,10 @@ def delete_mission(mission_id):
     return jsonify(
         {
             "code": 200,
-            "message": "Mission " + mission_id + " successfully deleted."
+            "message": "Mission with ID " + mission_id + " successfully deleted."
         }
     ), 200
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=6300, debug=True)
