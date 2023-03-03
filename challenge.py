@@ -169,7 +169,7 @@ def create_challenge():
 
 
 @app.route("/challenge/<challenge_id>/complete", methods=['PATCH'])
-def update_challenge(challenge_id):
+def update_challenge_complete(challenge_id):
     if (not Challenge.query.filter_by(challenge_id=challenge_id).first()):
         return jsonify(
             {
