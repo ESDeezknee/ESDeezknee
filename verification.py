@@ -10,6 +10,7 @@ CORS(app)
 
 account_URL = "http://localhost:6000/account/"
 mission_URL = "http://localhost:6300/mission/"
+reward_URL = "http://localhost:6303/reward/"
 
 
 @app.route("/verification/account/<account_id>")
@@ -21,6 +22,11 @@ def verify_account(account_id):
 def verify_mission(mission_id):
     return invoke_http(
         mission_URL + str(mission_id), method='GET')
+
+@app.route("/verification/reward/<reward_id>")
+def verify_reward(reward_id):
+    return invoke_http(
+        reward_URL + str(reward_id), method='GET')
 
 
 if __name__ == '__main__':
