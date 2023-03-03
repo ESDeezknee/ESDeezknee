@@ -55,8 +55,8 @@ def get_all():
                 "data": {
                     "accounts": [account.json() for account in accountlist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,
