@@ -12,13 +12,15 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
+
 class Order(db.Model):
     __tablename__ = 'order'
 
     order_id = db.Column(db.Integer, primary_key=True)
     is_express = db.Column(db.Boolean, default=False, nullable=False)
-    order_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    account_id = db.Column(db.Integer, nullable = False)
+    order_created = db.Column(
+        db.DateTime, nullable=False, default=datetime.now)
+    account_id = db.Column(db.Integer, nullable=False)
     # tentative do not use FK
 
     def __init__(self, is_express, order_created, account_id):
@@ -29,9 +31,11 @@ class Order(db.Model):
     def json(self):
         return {"order_id": self.order_id, "is_express": self.is_express, "order_created": self.order_created, "account_id": self.account_id}
 
+
 with app.app_context():
-  db.init_app(app)
-  db.create_all()
+    db.init_app(app)
+    db.create_all()
+
 
 @app.get("/order")
 def get_all():
@@ -52,6 +56,7 @@ def get_all():
         }
     ), 404
 
+
 @app.get("/order/<int:order_id>")
 def get_by_id(order_id):
     order = Order.query.filter_by(order_id=order_id).first()
@@ -68,6 +73,7 @@ def get_by_id(order_id):
             "message": "Order not found."
         }
     ), 404
+
 
 @app.post("/order")
 def create_order():
@@ -97,6 +103,7 @@ def create_order():
         }
     ), 201
 
+
 @app.delete("/order/<int:order_id>")
 def delete_order(order_id):
     order = Order.query.filter_by(order_id=order_id).first()
@@ -117,7 +124,6 @@ def delete_order(order_id):
             "message": "Order not found."
         }
     ), 404
-
 
 
 if __name__ == '__main__':

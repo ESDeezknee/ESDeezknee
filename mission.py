@@ -39,8 +39,10 @@ class Mission(db.Model):
     def json(self):
         return {"mission_id": self.mission_id, "name": self.name, "description": self.description, "difficulty": self.difficulty, "duration": self.duration, "award_points": self.award_points, "is_active": self.is_active, "created": self.created, "modified": self.modified}
 
+
 with app.app_context():
     db.create_all()
+
 
 @app.route("/mission")
 def get_all():
@@ -61,6 +63,7 @@ def get_all():
         }
     ), 404
 
+
 @app.route("/mission/active")
 def get_active_missions():
     activemissionlist = Mission.query.filter_by(is_active=True).all()
@@ -79,6 +82,7 @@ def get_active_missions():
             "message": "There are no active missions."
         }
     ), 404
+
 
 @app.route("/mission/<mission_id>")
 def find_by_mission_id(mission_id):

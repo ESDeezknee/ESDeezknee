@@ -10,11 +10,11 @@ INSERT INTO `account` (`account_id`, `first_name`, `last_name`, `date_of_birth`,
 USE `loyalty`;
 
 
-INSERT INTO `loyalty` (`account_id`, `available_points`, `redeem_points`, `total_points`) VALUES
+INSERT INTO `loyalty` (`account_id`, `available_points`, `redeemed_points`, `total_points`) VALUES
 (1, 1000, 0, 1000);
-INSERT INTO `loyalty` (`account_id`, `available_points`, `redeem_points`, `total_points`) VALUES
+INSERT INTO `loyalty` (`account_id`, `available_points`, `redeemed_points`, `total_points`) VALUES
 (2, 500, 0, 500);
-INSERT INTO `loyalty` (`account_id`, `available_points`, `redeem_points`, `total_points`) VALUES
+INSERT INTO `loyalty` (`account_id`, `available_points`, `redeemed_points`, `total_points`) VALUES
 (3, 100, 0, 100);
 
 USE `mission`;
