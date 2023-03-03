@@ -53,7 +53,7 @@ def get_all():
                     "missions": [mission.json() for mission in missionlist]
                 }
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -72,7 +72,7 @@ def get_active_missions():
                     "missions": [mission.json() for mission in activemissionlist]
                 }
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -89,7 +89,7 @@ def find_by_mission_id(mission_id):
                 "code": 200,
                 "data": mission.json()
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,

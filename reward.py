@@ -54,8 +54,8 @@ def get_all():
                 "data": {
                     "rewards": [reward.json() for reward in rewardlist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,

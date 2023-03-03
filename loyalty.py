@@ -20,7 +20,6 @@ verification_URL = "http://localhost:6001/verification/"
 
 class Loyalty(db.Model):
     __tablename__ = 'loyalty'
-
     account_id = db.Column(db.Integer, nullable=False,
                            primary_key=True, unique=True)
     available_points = db.Column(db.Integer, nullable=False, default=0)
@@ -51,8 +50,8 @@ def get_all():
                 "data": {
                     "loyalties": [loyalty.json() for loyalty in loyaltylist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,
