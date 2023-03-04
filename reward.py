@@ -54,12 +54,32 @@ def get_all():
                 "data": {
                     "rewards": [reward.json() for reward in rewardlist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,
             "message": "There are no rewards."
+        }
+    ), 404
+
+
+@app.route("/reward/active")
+def get_active_rewards():
+    activerewardlist = Reward.query.filter_by(is_active=True).all()
+    if len(activerewardlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "rewards": [reward.json() for reward in activerewardlist]
+                }
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no active rewards."
         }
     ), 404
 

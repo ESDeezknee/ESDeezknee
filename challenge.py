@@ -16,6 +16,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 verification_URL = "http://localhost:6001/verification/"
+loyalty_URL = "http://localhost:6301/loyalty/"
 
 
 class Challenge(db.Model):
@@ -54,7 +55,7 @@ def get_all():
                     "challenges": [challenge.json() for challenge in challengelist],
                 }
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -72,7 +73,7 @@ def find_by_challenge_id(challenge_id):
                 "code": 200,
                 "data": challenge.json()
             }
-        )
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -127,6 +128,17 @@ def create_challenge():
                     "mission_id": challenge.mission_id
                 },
                 "message": "Mission not found"
+            }
+        ), 400
+
+    if not mission_result["data"]["is_active"]:
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "mission_id": challenge.mission_id
+                },
+                "message": "Mission is not available"
             }
         ), 400
 
@@ -193,6 +205,46 @@ def update_challenge_complete(challenge_id):
                 "message": "Challenge is already completed."
             }
         ), 400
+
+    mission_result = invoke_http(
+        verification_URL + "mission/" + str(challenge.mission_id), method='GET')
+
+    if mission_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong!"
+            }
+        ), 500
+
+    if mission_result["code"] in range(300, 500):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "mission_id": challenge.mission_id
+                },
+                "message": "Mission not found"
+            }
+        ), 400
+
+    earn_json = {
+        "points": mission_result["data"]["award_points"]
+    }
+
+    earn_result = invoke_http(
+        loyalty_URL + str(challenge.account_id) + "/earn", method='PATCH', json=earn_json)
+
+    if earn_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong!"
+            }
+        ), 500
+
+    if earn_result["code"] in range(300, 500):
+        return earn_result
 
     try:
         challenge.status = "Completed"

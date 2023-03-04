@@ -42,8 +42,10 @@ class Account(db.Model):
     def json(self):
         return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "is_express": self.is_express, "is_active": self.is_active, "created": self.created}
 
+
 with app.app_context():
-  db.create_all()
+    db.create_all()
+
 
 @app.route("/account")
 def get_all():
@@ -55,8 +57,8 @@ def get_all():
                 "data": {
                     "accounts": [account.json() for account in accountlist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,

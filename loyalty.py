@@ -20,21 +20,20 @@ verification_URL = "http://localhost:6001/verification/"
 
 class Loyalty(db.Model):
     __tablename__ = 'loyalty'
-
     account_id = db.Column(db.Integer, nullable=False,
                            primary_key=True, unique=True)
     available_points = db.Column(db.Integer, nullable=False, default=0)
-    redeem_points = db.Column(db.Integer, nullable=False, default=0)
+    redeemed_points = db.Column(db.Integer, nullable=False, default=0)
     total_points = db.Column(db.Integer, nullable=False, default=0)
 
-    def __init__(self, account_id, available_points, redeem_points, total_points):
+    def __init__(self, account_id, available_points, redeemed_points, total_points):
         self.account_id = account_id
         self.available_points = available_points
-        self.redeem_points = redeem_points
+        self.redeemed_points = redeemed_points
         self.total_points = total_points
 
     def json(self):
-        return {"account_id": self.account_id, "available_points": self.available_points, "redeem_points": self.redeem_points, "total_points": self.total_points}
+        return {"account_id": self.account_id, "available_points": self.available_points, "redeemed_points": self.redeemed_points, "total_points": self.total_points}
 
 
 with app.app_context():
@@ -51,8 +50,8 @@ def get_all():
                 "data": {
                     "loyalties": [loyalty.json() for loyalty in loyaltylist]
                 }
-            }, 200
-        )
+            }
+        ), 200
     return jsonify(
         {
             "code": 404,
@@ -208,7 +207,7 @@ def update_loyalty_redeem(account_id):
         ), 400
 
     try:
-        loyalty.redeem_points += data['points']
+        loyalty.redeemed_points += data['points']
         loyalty.available_points -= data['points']
         db.session.commit()
 
