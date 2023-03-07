@@ -8,7 +8,6 @@ from datetime import datetime
 from invokes import invoke_http
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/loyalty'
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -17,7 +16,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = "http://localhost:6001/verification/"
+verification_URL = environ.get('verificationURL')
 
 
 class Loyalty(db.Model):

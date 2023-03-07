@@ -19,9 +19,13 @@ services:
   verification:
     image: ngkangting/verification:1.0
     build: ./verification
+    restart: always
     ports:
       - "6001:6001"
-    restart: always
+    environment:
+      accountURL: http://account:6000/account/
+      missionURL: http://mission:6300/mission/
+      rewardURL: http://reward:6303/reward/
 
   #################################
   # Mission: The Mission microservice
@@ -46,6 +50,7 @@ services:
       - "6301:6301"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/loyalty
+      verificationURL: http://verification:6001/verification/
 
   #################################
   # Challenge: The Challenge microservice
@@ -57,6 +62,8 @@ services:
       - "6302:6302"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/challenge
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
 
   #################################
   # Reward: The Reward microservice
@@ -80,3 +87,5 @@ services:
       - "6304:6304"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/

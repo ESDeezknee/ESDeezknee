@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from os import environ
 
 from invokes import invoke_http
 
@@ -8,9 +9,9 @@ app = Flask(__name__)
 
 CORS(app)
 
-account_URL = "http://localhost:6000/account/"
-mission_URL = "http://localhost:6300/mission/"
-reward_URL = "http://localhost:6303/reward/"
+account_URL = environ.get('accountURL')
+mission_URL = environ.get('missionURL')
+reward_URL = environ.get('rewardURL')
 
 
 @app.route("/verification/account/<account_id>")
