@@ -2,6 +2,19 @@ version: "3.8"
 
 services:
   #################################
+  # RabbitMQ: AMQP
+  #################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_management
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  #################################
   # Account: The Account microservice
   #################################
   account:
