@@ -2,10 +2,81 @@ version: "3.8"
 
 services:
   #################################
+  # Account: The Account microservice
+  #################################
+  account:
+    image: ngkangting/account:1.0
+    build: ./account
+    restart: always
+    ports:
+      - "6000:6000"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/account
+
+  #################################
+  # Verification: The Verification microservice
+  #################################
+  verification:
+    image: ngkangting/verification:1.0
+    build: ./verification
+    ports:
+      - "6001:6001"
+    restart: always
+
+  #################################
   # Mission: The Mission microservice
   #################################
-  book:
+  mission:
     image: ngkangting/mission:1.0
+    build: ./mission
     restart: always
+    ports:
+      - "6300:6300"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/mission
+
+  #################################
+  # Loyalty: The Loyalty microservice
+  #################################
+  loyalty:
+    image: ngkangting/loyalty:1.0
+    build: ./loyalty
+    restart: always
+    ports:
+      - "6301:6301"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/loyalty
+
+  #################################
+  # Challenge: The Challenge microservice
+  #################################
+  challenge:
+    image: ngkangting/challenge:1.0
+    build: ./challenge
+    ports:
+      - "6302:6302"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/challenge
+
+  #################################
+  # Reward: The Reward microservice
+  #################################
+  reward:
+    image: ngkangting/reward:1.0
+    build: ./reward
+    restart: always
+    ports:
+      - "6303:6303"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
+
+  #################################
+  # Redemption: The Redemption microservice
+  #################################
+  redemption:
+    image: ngkangting/redemption:1.0
+    build: ./redemption
+    ports:
+      - "6304:6304"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
