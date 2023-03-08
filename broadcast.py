@@ -23,23 +23,18 @@ class Broadcast(db.Model):
 
     group_id = db.Column(db.Integer, primary_key = True)
     account_id = db.Column(db.Integer, nullable=False)
-    description = db.Column(db.String(64), nullable=False)
     lf_pax = db.Column(db.Integer, nullable=False)
     date_of_visit = db.Column(db.Date, nullable=False)
-    datetime_of_broadcast = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(64), nullable=False, default="In Progress")
+    datetime_of_broadcast = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     
-    def __init__(self, group_id,account_id, description, lf_pax, date_of_visit, datetime_of_broadcast,status):
+    def __init__(self, group_id, account_id, lf_pax,date_of_visit,):
         self.group_id = group_id
         self.account_id = account_id
-        self.description = description
         self.lf_pax = lf_pax
         self.date_of_visit = date_of_visit
-        self.datetime_of_broadcast = datetime_of_broadcast
-        self.status = status
 
     def json(self):
-        return {"group_id": self.group_id,"account_id": self.account_id,"description": self.description,"lf_pax": self.lf_pax,"date_of_visit": self.date_of_visit,"datetime_of_broadcast": self.datetime_of_broadcast,"status": self.status}
+        return {"group_id": self.group_id,"account_id": self.account_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
 
 with app.app_context():
     db.create_all()
@@ -82,12 +77,41 @@ def find_by_group_id(group_id):
         }
     ),404
 
-# @app.route("/broadcast/<group_id>" methods=['POST'])
-# def create_broadcast():
-#     data = request.get_json()
-#     broadcast = Broadcast(**data)
 
-#     if(Broadcast.query.filter_by())
+@app.route("/broadcast/<group_id>", methods=['POST'])
+def create_broadcast(group_id):
+    # now = datetime.now()
+
+    #Group_id = INT
+    #Account_id = INT
+    #lf_pax = INT
+    #Date format: YYYY-MM-DD
+    #Datetime format: YYYY-MM-DD hh:mm:ss[.fraction] fractions are needed to be sent from Postman...
+
+    data = request.get_json()
+    
+    broadcast = Broadcast(**data)
+    print(broadcast.json())
+
+    try:
+        db.session.add(broadcast)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred during creation of broadcast."
+            }
+        ),500
+    
+    return jsonify(
+        {
+            "code": 201,
+            "data":broadcast.json()
+        }
+    ),201
+
+
 
 
 

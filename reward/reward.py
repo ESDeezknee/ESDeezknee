@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from os import environ
 
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/reward'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -60,6 +61,26 @@ def get_all():
         {
             "code": 404,
             "message": "There are no rewards."
+        }
+    ), 404
+
+
+@app.route("/reward/active")
+def get_active_rewards():
+    activerewardlist = Reward.query.filter_by(is_active=True).all()
+    if len(activerewardlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "rewards": [reward.json() for reward in activerewardlist]
+                }
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no active rewards."
         }
     ), 404
 
