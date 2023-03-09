@@ -51,6 +51,22 @@ services:
       - "6002:6002"
 
   #################################
+  # Redemption: The Redemption microservice
+  #################################
+  broadcast:
+    image: scaryprix/broadcast:1.0
+    build: ./broadcast
+    ports:
+      - "6102:6102"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
+      accountURL: http://account:6000/account/
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
+
+
+
+  #################################
   # Mission: The Mission microservice
   #################################
   mission:
@@ -112,3 +128,5 @@ services:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
+
+
