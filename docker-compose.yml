@@ -41,6 +41,16 @@ services:
       rewardURL: http://reward:6303/reward/
 
   #################################
+  # Notification: The Notification microservice
+  #################################
+  notification:
+    image: ngkangting/notification:1.0
+    build: ./notification
+    restart: always
+    ports:
+      - "6002:6002"
+
+  #################################
   # Mission: The Mission microservice
   #################################
   mission:
