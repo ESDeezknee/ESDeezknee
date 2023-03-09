@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/order'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/is213'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -34,9 +34,13 @@ class Order(db.Model):
 
 
 with app.app_context():
-    db.init_app(app)
-    db.create_all()
+  db.init_app(app)
+  db.create_all()
+#   new_order = db.insert(Order).values(is_express=True, order_created=datetime.now(), account_id=1)
 
+#   new_order = order.insert().values(is_express=True, order_created=datetime.now(), account_id=1)
+#   db.session.add(new_order)
+#   db.session.commit()
 
 @app.get("/order")
 def get_all():
@@ -126,6 +130,18 @@ def delete_order(order_id):
         }
     ), 404
 
+@app.put("/order/<int:order_id>")
+def update_order(order_id):
+    if request.json() is None:
+        raise Exception("No data received.")
+    updated_order = Order.query.get_or_404(order_id=order_id)
+    data = request.get_json()
+    updated_order.is_express = data["is_express"]
+    updated_order.order_created = data["order_created"]
+    updated_order.account_id = data["account_id"]
+
+    db.session.commit()
+    return "Order updated.", 200
 
 if __name__ == '__main__':
     app.run(port=6201, debug=True)
