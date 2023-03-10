@@ -39,6 +39,9 @@ services:
       accountURL: http://account:6000/account/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
+      groupURL: http://group:6103/group/
+
+
 
   #################################
   # Notification: The Notification microservice
@@ -50,8 +53,20 @@ services:
     ports:
       - "6002:6002"
 
+#################################
+  # Create Group: The Create Group microservice
   #################################
-  # Redemption: The Redemption microservice
+  createGroup:
+    image: scaryprix/group:1.0
+    build: ./group
+    ports:
+      - "6103:6103"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
+      verificationURL: http://verification:6001/verification/
+
+  #################################
+  # Broadcast: The Broadcast microservice
   #################################
   broadcast:
     image: scaryprix/broadcast:1.0
@@ -60,9 +75,8 @@ services:
       - "6102:6102"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
-      accountURL: http://account:6000/account/
       verificationURL: http://verification:6001/verification/
-      loyaltyURL: http://loyalty:6301/loyalty/
+
 
 
 
