@@ -150,9 +150,15 @@ services:
     build:
       context: .
       dockerfile: notification/Dockerfile
+    depends_on:
+      - rabbitmq
     restart: always
+    networks:
+      - rabbitmq
     ports:
       - "6002:6002"
+    environment:
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # Create Group: The Create Group microservice

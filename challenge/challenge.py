@@ -9,6 +9,8 @@ from invokes import invoke_http
 
 import amqp_setup
 import pika
+import json
+
 
 
 app = Flask(__name__)
@@ -74,9 +76,9 @@ def find_by_challenge_id(challenge_id):
     challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
 
     if challenge:
-        message = "test"
+        message = json.dumps({ "code": "Testing"})
 
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info", body=message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.info", body=message, properties=pika.BasicProperties(delivery_mode = 2))
 
         return jsonify(
             {
