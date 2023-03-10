@@ -7,6 +7,7 @@ volumes:
 networks:
   kong-net:
     driver: bridge
+  rabbitmq:
 
 services:
   #################################
@@ -15,12 +16,17 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq_management
+    networks:
+      - rabbitmq
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
 
   #######################################
   # Postgres: The database used by Kong
@@ -213,12 +219,18 @@ services:
     build:
       context: .
       dockerfile: challenge/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - rabbitmq
     ports:
       - "6302:6302"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/challenge
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # Reward: The Reward microservice

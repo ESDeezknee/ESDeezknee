@@ -7,6 +7,10 @@ from datetime import datetime, timedelta
 
 from invokes import invoke_http
 
+import amqp_setup
+import pika
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -68,7 +72,12 @@ def get_all():
 @app.route("/challenge/<challenge_id>")
 def find_by_challenge_id(challenge_id):
     challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
+
     if challenge:
+        message = "test"
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="order.info", body=message)
+
         return jsonify(
             {
                 "code": 200,
