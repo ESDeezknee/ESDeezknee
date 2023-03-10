@@ -1,6 +1,6 @@
 FROM python:3-slim
 WORKDIR /usr/src/app
-COPY requirements.txt ./
+COPY common/requirements.txt common/invokes.py ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY ./invokes.py ./loyalty.py ./
+COPY loyalty/loyalty.py ./
 CMD [ "python", "./loyalty.py" ]

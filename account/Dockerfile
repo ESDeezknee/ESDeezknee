@@ -1,6 +1,6 @@
 FROM python:3-slim
 WORKDIR /usr/src/app
-COPY requirements.txt ./
+COPY common/requirements.txt common/invokes.py ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY ./account.py ./
+COPY account/account.py ./
 CMD [ "python", "./account.py" ]

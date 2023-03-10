@@ -19,7 +19,9 @@ services:
   #################################
   account:
     image: ngkangting/account:1.0
-    build: ./account
+    build: 
+      context: .
+      dockerfile: account/Dockerfile
     restart: always
     ports:
       - "6000:6000"
@@ -31,7 +33,10 @@ services:
   #################################
   verification:
     image: ngkangting/verification:1.0
-    build: ./verification
+    build: 
+      context: .
+      dockerfile: verification/Dockerfile
+
     restart: always
     ports:
       - "6001:6001"
@@ -48,7 +53,9 @@ services:
   #################################
   notification:
     image: ngkangting/notification:1.0
-    build: ./notification
+    build: 
+      context: .
+      dockerfile: notification/Dockerfile
     restart: always
     ports:
       - "6002:6002"
@@ -58,7 +65,9 @@ services:
   #################################
   createGroup:
     image: scaryprix/group:1.0
-    build: ./group
+    build: 
+      context: .
+      dockerfile: group/Dockerfile
     ports:
       - "6103:6103"
     environment:
@@ -70,7 +79,9 @@ services:
   #################################
   broadcast:
     image: scaryprix/broadcast:1.0
-    build: ./broadcast
+    build: 
+      context: .
+      dockerfile: broadcast/Dockerfile
     ports:
       - "6102:6102"
     environment:
@@ -85,7 +96,9 @@ services:
   #################################
   mission:
     image: ngkangting/mission:1.0
-    build: ./mission
+    build: 
+      context: .
+      dockerfile: mission/Dockerfile
     restart: always
     ports:
       - "6300:6300"
@@ -97,7 +110,9 @@ services:
   #################################
   loyalty:
     image: ngkangting/loyalty:1.0
-    build: ./loyalty
+    build: 
+      context: .
+      dockerfile: loyalty/Dockerfile
     restart: always
     ports:
       - "6301:6301"
@@ -110,7 +125,9 @@ services:
   #################################
   challenge:
     image: ngkangting/challenge:1.0
-    build: ./challenge
+    build: 
+      context: .
+      dockerfile: challenge/Dockerfile
     ports:
       - "6302:6302"
     environment:
@@ -123,7 +140,9 @@ services:
   #################################
   reward:
     image: ngkangting/reward:1.0
-    build: ./reward
+    build: 
+      context: .
+      dockerfile: reward/Dockerfile
     restart: always
     ports:
       - "6303:6303"
@@ -135,7 +154,9 @@ services:
   #################################
   redemption:
     image: ngkangting/redemption:1.0
-    build: ./redemption
+    build: 
+      context: .
+      dockerfile: redemption/Dockerfile
     ports:
       - "6304:6304"
     environment:
