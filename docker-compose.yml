@@ -175,6 +175,20 @@ services:
       verificationURL: http://verification:6001/verification/
 
   #################################
+  # Handle Group: The HandleGroup microservice
+  #################################
+  handleGroup:
+    image: scaryprix/handlegroup:1.0
+    build:
+      context: .
+      dockerfile: handleGroup/Dockerfile
+    ports:
+      - "6104:6104"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
+      verificationURL: http://verification:6001/verification/
+
+  #################################
   # Broadcast: The Broadcast microservice
   #################################
   broadcast:
