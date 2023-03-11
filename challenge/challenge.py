@@ -76,7 +76,8 @@ def find_by_challenge_id(challenge_id):
     challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
 
     if challenge:
-        message = json.dumps({ "code": "Testing"})
+        # message = json.dumps({ "type": "email", "first_name": "Benji", "email": "kangting.ng.2021@scis.smu.edu.sg" })
+        message = json.dumps({ "type": "sms", "first_name": "Benji", "phone_number": "+6597861048" })
 
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.info", body=message, properties=pika.BasicProperties(delivery_mode = 2))
 

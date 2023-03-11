@@ -1,79 +1,74 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from os import environ
-
 import json
 import pika
 import amqp_setup
 
 from notificationapi_python_server_sdk import (notificationapi)
 
-app = Flask(__name__)
+monitorBindingKey = '#'
 
-CORS(app)
 
-monitorBindingKey='#'
-
-def receiveOrderLog():
+def receiveNotificationLog():
     amqp_setup.check_setup()
-        
+
     queue_name = 'Notification'
-    
+
     # set up a consumer and start to wait for coming messages
-    amqp_setup.channel.basic_consume(queue=queue_name, on_message_callback=callback, auto_ack=True)
-    amqp_setup.channel.start_consuming() # an implicit loop waiting to receive messages; 
-    #it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
-
-def callback(channel, method, properties, body): # required signature for the callback; no return
-    print("This is notification.py...")
-    print()
-    processOrderLog(json.loads(body))
-    print() # print a new line feed
-
-def processOrderLog(order):
-    print("Received a successful order...")
-    print(order)
+    amqp_setup.channel.basic_consume(
+        queue=queue_name, on_message_callback=callback, auto_ack=True)
+    # an implicit loop waiting to receive messages;
+    amqp_setup.channel.start_consuming()
+    # it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
 
 
-@app.route("/notification", methods=['POST'])
-def send_notification():
-    data = request.get_json()
+# required signature for the callback; no return
+def callback(channel, method, properties, body):
+    print("This is notification.py...", flush=True)
+    print("Received message:", json.loads(body), flush=True)
 
-    print(data["first_name"])
+    data = json.loads(body)
 
-    try:
-        # init
-        notificationapi.init("4520cecngqlnq5guo9dbe26dte",
-                             "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    if data["type"] == "sms":
+      send_notification_sms(data["first_name"], data["phone_number"])
 
-        # send
-        notificationapi.send({
-          "notificationId": "esdeezknee", 
-          "templateId": "bbc3a00a-7752-4b01-9dbd-5d5c8e3faf41",
-          "user": {
-            "id": data["account_id"],
-            "email": data["email"],   # required for email notifications
-            "number": data["number"]    # required for SMS/Call
-          }, 
-          "mergeTags": {"firstName": data["first_name"]}
-        })
+    if data["type"] == "email":
+      send_notification_email(data["first_name"], data["email"])
 
-    except:
-        return jsonify(
-            {
-                "code": 500,
-                "message": "An error occurred during sending of notification."
-            }
-        ), 500
 
-    return jsonify(
-        {
-            "code": 201,
-            "data": "Notification successfully sent!"
-        }
-    ), 201
+def send_notification_email(first_name, email):
+    # init
+    notificationapi.init("4520cecngqlnq5guo9dbe26dte",
+                         "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    # send email
+    notificationapi.send({
+        "notificationId": "email",
+        "templateId": "default",
+        "user": {
+            "id": email,
+            "email": email,   # required for email notifications
+        },
+        "mergeTags": {"firstName": first_name}
+    })
+
+    print("Email successfully sent!", flush=True)
+
+
+def send_notification_sms(first_name, phone_number):
+    # init
+    notificationapi.init("4520cecngqlnq5guo9dbe26dte",
+                         "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    # send sms
+    notificationapi.send({
+        "notificationId": "sms",
+        "templateId": "default",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for email notifications
+        },
+        "mergeTags": {"firstName": first_name}
+    })
+
+    print("SMS successfully sent!", flush=True)
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6002, debug=True)
-    # receiveOrderLog()
+    receiveNotificationLog()
