@@ -23,14 +23,14 @@ class Broadcast(db.Model):
     __tablename__ = 'broadcast'
 
     group_id = db.Column(db.Integer, primary_key = True)
-    account_id = db.Column(db.Integer, nullable=False)
+    # account_id = db.Column(db.Integer, nullable=False)
     lf_pax = db.Column(db.Integer, nullable=False)
     date_of_visit = db.Column(db.Date, nullable=False)
     datetime_of_broadcast = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     
     def __init__(self, group_id, account_id, lf_pax,date_of_visit,):
         self.group_id = group_id
-        self.account_id = account_id
+        # self.account_id = account_id
         self.lf_pax = lf_pax
         self.date_of_visit = date_of_visit
 
@@ -132,12 +132,6 @@ def create_broadcast(group_id):
             "data":broadcast.json()
         }
     ),201
-
-
-
-
-
-
 
 
 
