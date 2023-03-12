@@ -7,6 +7,7 @@ import requests
 from invokes import invoke_http
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 CORS(app)
 
 group_URL = "http://127.0.0.1:6103/grouping"
