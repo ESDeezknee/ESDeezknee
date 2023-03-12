@@ -7,6 +7,7 @@ from datetime import datetime
 from invokes import invoke_http
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -20,7 +21,7 @@ verification_URL = environ.get('verificationURL')
 
 
 class Broadcast(db.Model):
-    __tablename__ = 'broadcast'
+    __tablename__ = 'broadcasts'
 
     group_id = db.Column(db.Integer, primary_key = True)
     # account_id = db.Column(db.Integer, nullable=False)

@@ -8,6 +8,7 @@ from datetime import datetime
 from invokes import invoke_http
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -20,7 +21,7 @@ verification_URL = environ.get('verificationURL')
 
 
 class Loyalty(db.Model):
-    __tablename__ = 'loyalty'
+    __tablename__ = 'loyaltys'
     account_id = db.Column(db.Integer, nullable=False,
                            primary_key=True, unique=True)
     available_points = db.Column(db.Integer, nullable=False, default=0)

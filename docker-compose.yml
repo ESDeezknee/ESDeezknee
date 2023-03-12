@@ -203,6 +203,20 @@ services:
       verificationURL: http://verification:6001/verification/
 
   #################################
+  # Handle Group: The HandleGroup microservice
+  #################################
+  handleGroup:
+    image: scaryprix/handlegroup:1.0
+    build:
+      context: .
+      dockerfile: handleGroup/Dockerfile
+    ports:
+      - "6104:6104"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
+      verificationURL: http://verification:6001/verification/
+
+  #################################
   # Mission: The Mission microservice
   #################################
   mission:
@@ -255,6 +269,20 @@ services:
   #################################
   # Reward: The Reward microservice
   #################################
+  reward-flask:
+    image: ngkangting/reward-flask:1.0
+    build:
+      context: .
+      dockerfile: reward-flask/Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
+
+  #################################
+  # Reward: The Reward microservice
+  #################################
   reward:
     image: ngkangting/reward:1.0
     build:
@@ -264,7 +292,10 @@ services:
     ports:
       - "6303:6303"
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
+      db_HOST: host.docker.internal
+      db_PORT: 3306
+      db_USER: is213
+      db_DATABASE: reward
 
   #################################
   # Redemption: The Redemption microservice

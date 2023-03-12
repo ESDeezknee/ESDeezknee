@@ -6,6 +6,7 @@ from invokes import invoke_http
 
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -15,7 +16,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 class Grouping(db.Model):
-    __tablename__ = 'grouping'
+    __tablename__ = 'groupings'
 
     grouping_id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")

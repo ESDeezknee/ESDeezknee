@@ -14,6 +14,7 @@ import json
 
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -27,7 +28,7 @@ loyalty_URL = environ.get('loyaltyURL')
 
 
 class Challenge(db.Model):
-    __tablename__ = 'challenge'
+    __tablename__ = 'challenges'
 
     challenge_id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)

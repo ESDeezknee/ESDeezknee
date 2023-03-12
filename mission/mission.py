@@ -6,6 +6,7 @@ from os import environ
 from datetime import datetime
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -16,7 +17,7 @@ CORS(app)
 
 
 class Mission(db.Model):
-    __tablename__ = 'mission'
+    __tablename__ = 'missions'
 
     mission_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)

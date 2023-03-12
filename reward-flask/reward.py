@@ -6,6 +6,7 @@ from os import environ
 from datetime import datetime
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -16,7 +17,7 @@ CORS(app)
 
 
 class Reward(db.Model):
-    __tablename__ = 'reward'
+    __tablename__ = 'rewards'
 
     reward_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, nullable=False)
@@ -222,4 +223,4 @@ def delete_reward(reward_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=6303, debug=True)
+    app.run(host='0.0.0.0', port=3000, debug=True)

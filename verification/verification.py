@@ -6,6 +6,7 @@ from os import environ
 from invokes import invoke_http
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
 CORS(app)
 
