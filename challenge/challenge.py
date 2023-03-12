@@ -12,7 +12,6 @@ import pika
 import json
 
 
-
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
@@ -105,12 +104,15 @@ def create_challenge():
         verification_URL + "account/" + str(challenge.account_id), method='GET')
 
     if account_result["code"] in range(500, 600):
+        print("error", flush=True)
+        print(account_result, flush=True)
         return jsonify(
             {
                 "code": 500,
                 "message": "Oops, something went wrong!"
             }
         ), 500
+
 
     if account_result["code"] in range(300, 500):
         return jsonify(
@@ -127,6 +129,8 @@ def create_challenge():
         verification_URL + "mission/" + str(challenge.mission_id), method='GET')
 
     if mission_result["code"] in range(500, 600):
+        print("error", flush=True)
+        print(mission_result, flush=True)
         return jsonify(
             {
                 "code": 500,
