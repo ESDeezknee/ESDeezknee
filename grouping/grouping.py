@@ -88,7 +88,8 @@ def create_grouping():
     return jsonify(
         {
             "code": 201,
-            "data": grouping.json()
+            "data": grouping.json(),
+            "message": "New group creation success."
         }
     ), 201
 

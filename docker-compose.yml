@@ -186,6 +186,7 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
       verificationURL: http://verification:6001/verification/
+  
 
   #################################
   # Broadcast: The Broadcast microservice
