@@ -13,7 +13,7 @@ CORS(app)
 account_URL = environ.get('accountURL')
 mission_URL = environ.get('missionURL')
 reward_URL = environ.get('rewardURL')
-group_URL = environ.get('groupURL')
+grouping_URL = environ.get('groupingURL')
 
 
 
@@ -32,10 +32,10 @@ def verify_reward(reward_id):
     return invoke_http(
         reward_URL + str(reward_id), method='GET')
 
-@app.route("/verification/group/<group_id>")
-def verify_group(group_id):
+@app.route("/verification/grouping/<grouping_id>")
+def verify_grouping(grouping_id):
     return invoke_http(
-        group_URL + str(group_id),  method='GET')
+        grouping_URL + str(grouping_id),  method='GET')
 
 
 if __name__ == '__main__':

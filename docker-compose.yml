@@ -140,7 +140,7 @@ services:
       accountURL: http://account:6000/account/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
-      groupURL: http://group:6103/group/
+      groupingURL: http://grouping:6103/grouping/
 
   #################################
   # Notification: The Notification microservice
@@ -161,21 +161,20 @@ services:
       RABBITMQ_HOST: rabbitmq
 
   #################################
-  # Create Group: The Create Group microservice
+  # Create Grouping: The Create Grouping microservice
   #################################
-  createGroup:
-    image: scaryprix/group:1.0
+  grouping:
+    image: scaryprix/grouping:1.0
     build:
       context: .
-      dockerfile: group/Dockerfile
+      dockerfile: grouping/Dockerfile
     ports:
       - "6103:6103"
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
-      verificationURL: http://verification:6001/verification/
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/grouping
 
   #################################
-  # Handle Group: The HandleGroup microservice
+  # Handle Group: The HandleGroup Complex microservice
   #################################
   handleGroup:
     image: scaryprix/handlegroup:1.0
@@ -200,20 +199,6 @@ services:
       - "6102:6102"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
-      verificationURL: http://verification:6001/verification/
-
-  #################################
-  # Handle Group: The HandleGroup microservice
-  #################################
-  handleGroup:
-    image: scaryprix/handlegroup:1.0
-    build:
-      context: .
-      dockerfile: handleGroup/Dockerfile
-    ports:
-      - "6104:6104"
-    environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
       verificationURL: http://verification:6001/verification/
 
   #################################

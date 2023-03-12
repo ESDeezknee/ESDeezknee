@@ -29,14 +29,14 @@ class Broadcast(db.Model):
     date_of_visit = db.Column(db.Date, nullable=False)
     datetime_of_broadcast = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     
-    def __init__(self, group_id, account_id, lf_pax,date_of_visit,):
+    def __init__(self, group_id, lf_pax,date_of_visit,):
         self.group_id = group_id
         # self.account_id = account_id
         self.lf_pax = lf_pax
         self.date_of_visit = date_of_visit
 
     def json(self):
-        return {"group_id": self.group_id,"account_id": self.account_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
+        return {"group_id": self.group_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
 
 with app.app_context():
     db.create_all()
@@ -83,14 +83,15 @@ def find_by_group_id(group_id):
 @app.route("/broadcast/<group_id>", methods=['POST'])
 def create_broadcast(group_id):
     data = request.get_json()
-    broadcast = Broadcast(**data)
+    broadcasts = Broadcast(**data)
 
     # Group_id = INT
     # Account_id = INT
     # lf_pax = INT
     # Date format: YYYY-MM-DD
     # Datetime is auto populated from SQL Server
-    group_result = invoke_http(verification_URL + "group/" + str(broadcast.group_id), method='GET')
+    group_result = invoke_http(verification_URL + "grouping/" + str(group_id), method='GET')
+    print(group_result)
     # Check Account Result is within the code range else return error msg
     if group_result["code"] in range(500, 600):
         return jsonify(
@@ -105,7 +106,7 @@ def create_broadcast(group_id):
             {
                 "code": 400,
                 "data": {
-                    "group_id": broadcast.account_id
+                    "group_id": broadcasts.group_id
                 },
                 "message": "Group does not exist."
             }
@@ -114,10 +115,10 @@ def create_broadcast(group_id):
     
 
     
-    print(broadcast.json())
+    # print(broadcasts.json())
 
     try:
-        db.session.add(broadcast)
+        db.session.add(broadcasts)
         db.session.commit()
     except:
         return jsonify(
@@ -130,7 +131,8 @@ def create_broadcast(group_id):
     return jsonify(
         {
             "code": 201,
-            "data":broadcast.json()
+            "data":broadcasts.json(),
+            "result": group_result
         }
     ),201
 
