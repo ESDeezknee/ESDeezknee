@@ -205,8 +205,31 @@ app.put("/reward/:reward_id", async (req, res) => {
     });
   }
 
+  // Update only the provided fields
+  const { name, description, quantity, exchange_points, image_url, is_active } =
+    req.body;
+  const updatedFields = {};
+  if (name !== undefined) {
+    updatedFields.name = name;
+  }
+  if (description !== undefined) {
+    updatedFields.description = description;
+  }
+  if (quantity !== undefined) {
+    updatedFields.quantity = quantity;
+  }
+  if (exchange_points !== undefined) {
+    updatedFields.exchange_points = exchange_points;
+  }
+  if (image_url !== undefined) {
+    updatedFields.image_url = image_url;
+  }
+  if (is_active !== undefined) {
+    updatedFields.is_active = is_active;
+  }
+
   try {
-    await reward.update(req.body);
+    await reward.update(updatedFields);
   } catch (error) {
     return res.status(500).json({
       code: 500,
