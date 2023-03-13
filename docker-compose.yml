@@ -1,5 +1,15 @@
 version: "3.8"
 
+volumes:
+  pgdata:
+  kongadata:
+
+networks:
+  kong-net:
+    driver: bridge
+  rabbitmq:
+  internal:
+
 services:
   #################################
   # RabbitMQ: AMQP
@@ -7,20 +17,112 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq_management
+    networks:
+      - rabbitmq
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:9.6
+    platform: linux/amd64
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong:2.0.4
+    platform: linux/amd64
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong:2.0.4
+    platform: linux/amd64
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  konga:
+    image: pantsel/konga
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: password
+      DB_DATABASE: konga_db
+    depends_on:
+      - kong
+    ports:
+      - "1337:1337"
+    volumes:
+      - kongadata:/app/kongadata
 
   #################################
   # Account: The Account microservice
   #################################
   account:
-    image: ngkangting/account:1.0
-    build: ./account
+    image: esdeezknee/account:1.0
+    build:
+      context: .
+      dockerfile: account/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6000:6000"
     environment:
@@ -30,13 +132,18 @@ services:
   # Verification: The Verification microservice
   #################################
   verification:
-    image: ngkangting/verification:1.0
-    build: ./verification
+    image: esdeezknee/verification:1.0
+    build:
+      context: .
+      dockerfile: verification/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6001:6001"
     environment:
       accountURL: http://account:6000/account/
+      groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
 
@@ -44,35 +151,79 @@ services:
   # Notification: The Notification microservice
   #################################
   notification:
-    image: ngkangting/notification:1.0
-    build: ./notification
+    image: esdeezknee/notification:1.0
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
+    depends_on:
+      - rabbitmq
     restart: always
+    networks:
+      - internal
+      - rabbitmq
     ports:
       - "6002:6002"
+    environment:
+      RABBITMQ_HOST: rabbitmq
 
   #################################
-  # Redemption: The Redemption microservice
+  # Create Grouping: The Create Grouping microservice
+  #################################
+  grouping:
+    image: esdeezknee/grouping:1.0
+    build:
+      context: .
+      dockerfile: grouping/Dockerfile
+    networks:
+      - internal
+    ports:
+      - "6103:6103"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/grouping
+
+  #################################
+  # Handle Group: The HandleGroup Complex microservice
+  #################################
+  handleGroup:
+    image: esdeezknee/handlegroup:1.0
+    build:
+      context: .
+      dockerfile: handleGroup/Dockerfile
+    networks:
+      - internal
+    ports:
+      - "6104:6104"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
+      verificationURL: http://verification:6001/verification/
+
+  #################################
+  # Broadcast: The Broadcast microservice
   #################################
   broadcast:
-    image: scaryprix/broadcast:1.0
-    build: ./broadcast
+    image: esdeezknee/broadcast:1.0
+    build:
+      context: .
+      dockerfile: broadcast/Dockerfile
+    networks:
+      - internal
     ports:
       - "6102:6102"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
-      accountURL: http://account:6000/account/
       verificationURL: http://verification:6001/verification/
-      loyaltyURL: http://loyalty:6301/loyalty/
-
-
 
   #################################
   # Mission: The Mission microservice
   #################################
   mission:
-    image: ngkangting/mission:1.0
-    build: ./mission
+    image: esdeezknee/mission:1.0
+    build:
+      context: .
+      dockerfile: mission/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6300:6300"
     environment:
@@ -82,9 +233,13 @@ services:
   # Loyalty: The Loyalty microservice
   #################################
   loyalty:
-    image: ngkangting/loyalty:1.0
-    build: ./loyalty
+    image: esdeezknee/loyalty:1.0
+    build:
+      context: .
+      dockerfile: loyalty/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6301:6301"
     environment:
@@ -95,38 +250,77 @@ services:
   # Challenge: The Challenge microservice
   #################################
   challenge:
-    image: ngkangting/challenge:1.0
-    build: ./challenge
+    image: esdeezknee/challenge:1.0
+    build:
+      context: .
+      dockerfile: challenge/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
     ports:
       - "6302:6302"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/challenge
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Reward: The Reward microservice
+  #################################
+  reward-flask:
+    image: esdeezknee/reward-flask:1.0
+    build:
+      context: .
+      dockerfile: reward-flask/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "3000:3000"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
 
   #################################
   # Reward: The Reward microservice
   #################################
   reward:
-    image: ngkangting/reward:1.0
-    build: ./reward
+    image: esdeezknee/reward:1.0
+    build:
+      context: .
+      dockerfile: reward/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6303:6303"
     environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
+      db_HOST: host.docker.internal
+      db_PORT: 3306
+      db_USER: is213
+      db_DATABASE: reward
 
   #################################
   # Redemption: The Redemption microservice
   #################################
   redemption:
-    image: ngkangting/redemption:1.0
-    build: ./redemption
+    image: esdeezknee/redemption:1.0
+    build:
+      context: .
+      dockerfile: redemption/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
     ports:
       - "6304:6304"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
-
-
+      RABBITMQ_HOST: rabbitmq

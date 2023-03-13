@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from os import environ
+from invokes import invoke_http
+
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/grouping'
+app.config['JSON_SORT_KEYS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -12,7 +16,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 class Grouping(db.Model):
-    __tablename__ = 'grouping'
+    __tablename__ = 'groupings'
 
     grouping_id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")
@@ -84,7 +88,8 @@ def create_grouping():
     return jsonify(
         {
             "code": 201,
-            "data": grouping.json()
+            "data": grouping.json(),
+            "message": "New group creation success."
         }
     ), 201
 

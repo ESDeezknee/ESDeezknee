@@ -7,7 +7,13 @@ from datetime import datetime, timedelta
 
 from invokes import invoke_http
 
+import random
+import amqp_setup
+import pika
+import json
+
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -21,11 +27,12 @@ loyalty_URL = environ.get('loyaltyURL')
 
 
 class Redemption(db.Model):
-    __tablename__ = 'redemption'
+    __tablename__ = 'redemptions'
 
     redemption_id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
     reward_id = db.Column(db.Integer, nullable=False)
+    redemption_code = db.Column(db.String(256), nullable=False)
     status = db.Column(db.String(64), nullable=False, default="Not Claimed")
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     modified = db.Column(db.DateTime, nullable=False,
@@ -36,11 +43,19 @@ class Redemption(db.Model):
         self.reward_id = reward_id
 
     def json(self):
-        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "status": self.status, "created": self.created, "modified": self.modified}
+        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "redemption_code": self.redemption_code, "status": self.status, "created": self.created, "modified": self.modified}
 
 
 with app.app_context():
     db.create_all()
+
+
+def generate_redemption_code():
+    code = ''
+    for i in range(4):
+        code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4)) + '-'
+    code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 2))
+    return code
 
 
 @app.route("/redemption")
@@ -130,7 +145,7 @@ def create_redemption():
                 "message": "Reward not found"
             }
         ), 400
-    
+
     if not reward_result["data"]["is_active"]:
         return jsonify(
             {
@@ -160,6 +175,8 @@ def create_redemption():
     if redeem_result["code"] in range(300, 500):
         return redeem_result
 
+    redemption.redemption_code = generate_redemption_code()
+
     try:
         db.session.add(redemption)
         db.session.commit()
@@ -170,6 +187,14 @@ def create_redemption():
                 "message": "An error occurred creating the redemption.",
             }
         ), 500
+
+    notification_message = {"type": "redeem", "reward_name": reward_result["data"]["name"], "first_name": account_result["data"]
+                            ["first_name"], "phone_number": account_result["data"]["phone"], "redemption_code": redemption.redemption_code}
+
+    message = json.dumps(notification_message)
+
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
 
     return jsonify(
         {
@@ -192,7 +217,8 @@ def update_redemption_claimed(redemption_id):
             }
         ), 404
 
-    redemption = Redemption.query.filter_by(redemption_id=redemption_id).first()
+    redemption = Redemption.query.filter_by(
+        redemption_id=redemption_id).first()
 
     if redemption.status == "Claimed":
         return jsonify(

@@ -7,7 +7,13 @@ from datetime import datetime, timedelta
 
 from invokes import invoke_http
 
+import amqp_setup
+import pika
+import json
+
+
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -21,7 +27,7 @@ loyalty_URL = environ.get('loyaltyURL')
 
 
 class Challenge(db.Model):
-    __tablename__ = 'challenge'
+    __tablename__ = 'challenges'
 
     challenge_id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
@@ -68,6 +74,7 @@ def get_all():
 @app.route("/challenge/<challenge_id>")
 def find_by_challenge_id(challenge_id):
     challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
+
     if challenge:
         return jsonify(
             {
@@ -261,6 +268,17 @@ def update_challenge_complete(challenge_id):
                 "message": "An error occurred updating the challenge."
             }
         ), 500
+
+    account_result = invoke_http(
+        verification_URL + "account/" + str(challenge.account_id), method='GET')
+
+    notification_message = {"type": "completion", "mission_name": mission_result["data"]["name"], "first_name": account_result["data"]
+                            ["first_name"], "phone_number": account_result["data"]["phone"], "award_points": mission_result["data"]["award_points"]}
+
+    message = json.dumps(notification_message)
+
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
 
     return jsonify(
         {
