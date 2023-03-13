@@ -20,6 +20,7 @@ class Payment(db.Model):
     paid = db.column(db.Boolean, default=False, nullable=False)
     price = db.column(db.Double, nullable=False)
     paymentDate = db.column(db.DateTime, nullable=False, default=datetime.now)
+    order_id = db.Column(db.Integer, nullable = False)
 
     def __init__(self, payment_id, paid, price, paymentDate):
         self.payment_id = payment_id

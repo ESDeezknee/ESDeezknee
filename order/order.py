@@ -1,17 +1,23 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from os import environ
 from sqlalchemy.orm import relationship
 
 from datetime import datetime
 
+from invokes import invoke_http
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/is213'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 db = SQLAlchemy(app)
 
 CORS(app)
+
+verification_URL = environ.get('verficationURL')
 
 
 class Order(db.Model):
@@ -144,4 +150,4 @@ def update_order(order_id):
     return "Order updated.", 200
 
 if __name__ == '__main__':
-    app.run(port=6201, debug=True)
+    app.run(host='0.0.0.0', port=6201, debug=True)

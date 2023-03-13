@@ -212,6 +212,22 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
       verificationURL: http://verification:6001/verification/
+<<<<<<< Updated upstream
+=======
+      loyaltyURL: http://loyalty:6301/loyalty/
+
+  #################################
+  # Order: The Order microservice
+  #################################
+  order:
+    image: zacharylian/order:1.0
+    build: ./order
+    ports:
+      - "6201:6201"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      verificationURL: http://verification:6001/verification/
+>>>>>>> Stashed changes
 
   #################################
   # Mission: The Mission microservice

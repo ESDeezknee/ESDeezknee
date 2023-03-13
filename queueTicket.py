@@ -20,6 +20,7 @@ class QueueTicket(db.Model):
     ride_times = db.Column(db.Integer, nullable=False, default=0)
     queue_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     account_id = db.Column(db.Integer, nullable = False)
+    order_id = db.Column(db.Integer, nullable = False)
     # tentative do not use FK
 
     def __init__(self, is_express, ride_times, order_created, account_id):
