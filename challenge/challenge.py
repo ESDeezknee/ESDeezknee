@@ -70,6 +70,26 @@ def get_all():
         }
     ), 404
 
+@app.route("/challenge/account/<account_id>")
+def get_all_challenges_by_account_id(account_id):
+    challengelist = Challenge.query.filter_by(account_id=account_id).all()
+    if len(challengelist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "challenges": [challenge.json() for challenge in challengelist],
+                }
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no challenges from account " + account_id + " ."
+        }
+    ), 404
+
+
 
 @app.route("/challenge/<challenge_id>")
 def find_by_challenge_id(challenge_id):

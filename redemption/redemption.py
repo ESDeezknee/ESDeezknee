@@ -78,6 +78,26 @@ def get_all():
     ), 404
 
 
+@app.route("/redemption/account/<account_id>")
+def get_all_redemptions_by_account_id(account_id):
+    redemptionlist = Redemption.query.filter_by(account_id=account_id).all()
+    if len(redemptionlist):
+        return jsonify(
+            {
+                "code": 200,
+                "data": {
+                    "redemptions": [redemption.json() for redemption in redemptionlist],
+                }
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "There are no redemptions from account " + account_id + " ."
+        }
+    ), 404
+
+
 @app.route("/redemption/<redemption_id>")
 def find_by_redemption_id(redemption_id):
     redemption = Redemption.query.filter_by(
