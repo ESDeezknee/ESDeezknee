@@ -311,11 +311,16 @@ services:
     build:
       context: .
       dockerfile: redemption/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6304:6304"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
+      RABBITMQ_HOST: rabbitmq

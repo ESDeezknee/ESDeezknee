@@ -8,6 +8,9 @@ from datetime import datetime, timedelta
 from invokes import invoke_http
 
 import random
+import amqp_setup
+import pika
+import json
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -53,6 +56,7 @@ def generate_redemption_code():
         code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4)) + '-'
     code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 2))
     return code
+
 
 @app.route("/redemption")
 def get_all():
@@ -141,7 +145,7 @@ def create_redemption():
                 "message": "Reward not found"
             }
         ), 400
-    
+
     if not reward_result["data"]["is_active"]:
         return jsonify(
             {
@@ -171,7 +175,7 @@ def create_redemption():
     if redeem_result["code"] in range(300, 500):
         return redeem_result
 
-    redemption.redemption_code = generate_redemption_code();
+    redemption.redemption_code = generate_redemption_code()
 
     try:
         db.session.add(redemption)
@@ -183,6 +187,14 @@ def create_redemption():
                 "message": "An error occurred creating the redemption.",
             }
         ), 500
+
+    notification_message = {"type": "redeem", "reward_name": reward_result["data"]["name"], "first_name": account_result["data"]
+                            ["first_name"], "phone_number": account_result["data"]["phone"], "redemption_code": redemption.redemption_code}
+
+    message = json.dumps(notification_message)
+
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
 
     return jsonify(
         {
@@ -205,7 +217,8 @@ def update_redemption_claimed(redemption_id):
             }
         ), 404
 
-    redemption = Redemption.query.filter_by(redemption_id=redemption_id).first()
+    redemption = Redemption.query.filter_by(
+        redemption_id=redemption_id).first()
 
     if redemption.status == "Claimed":
         return jsonify(

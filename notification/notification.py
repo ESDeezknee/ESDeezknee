@@ -39,8 +39,13 @@ def sms_callback(channel, method, properties, body):
 
     data = json.loads(body)
 
-    send_notification_challenge_complete_sms(data["mission_name"],
-        data["first_name"], data["phone_number"], data["award_points"])
+    if data["type"] == "completion":
+      send_notification_challenge_complete_sms(data["mission_name"],
+          data["first_name"], data["phone_number"], data["award_points"])
+
+    if data["type"] == "redeem":
+      send_notification_redemption_redeem_sms(data["reward_name"],
+          data["first_name"], data["phone_number"], data["redemption_code"])
 
 
 def send_notification_email(first_name, email):
@@ -71,12 +76,30 @@ def send_notification_challenge_complete_sms(mission_name, first_name, phone_num
         "templateId": "default",
         "user": {
             "id": phone_number,
-            "number": phone_number,   # required for email notifications
+            "number": phone_number,   # required for sms notifications
         },
         "mergeTags": {"firstName": first_name, "missionName": mission_name, "awardPoints": award_points}
     })
 
-    print("SMS successfully sent!", flush=True)
+    print("Challenge Completion SMS successfully sent!", flush=True)
+
+
+def send_notification_redemption_redeem_sms(reward_name, first_name, phone_number, redemption_code):
+    # init
+    notificationapi.init("4520cecngqlnq5guo9dbe26dte",
+                         "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    # send sms
+    notificationapi.send({
+        "notificationId": "sms",
+        "templateId": "6d251e1d-2e4e-45fc-b5d6-dc5f4630fd8a",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"firstName": first_name, "rewardName": reward_name, "redemptionCode": redemption_code}
+    })
+
+    print("Challenge Completion SMS successfully sent!", flush=True)
 
 
 if __name__ == '__main__':
