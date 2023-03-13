@@ -27,23 +27,20 @@ USE `grouping`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `group`
+-- Table structure for table `grouping`
 --
 
 DROP TABLE IF EXISTS `grouping`;
 CREATE TABLE IF NOT EXISTS `grouping` (
     `grouping_id` int(11) NOT NULL AUTO_INCREMENT,
+    `no_of_pax` int(2) NOT NULL,
     `description` varchar(256) NOT NULL,
     `status` boolean NOT NULL,
     PRIMARY KEY (`grouping_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `group`
---
 
-INSERT INTO `grouping` (`grouping_id`, `description`, `status`) VALUES
-(1, 'Grouping of 2 looking for 4 people to join', False);
+
 
 -- --------------------------------------------------------
 

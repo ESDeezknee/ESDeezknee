@@ -42,7 +42,6 @@ def create_group():
     }), 400
 
 def processCreateGroup(group):
-    print('\n-----Invoking create microservice-----')
     createGroup_result = invoke_http(group_URL, method='POST', json=group)
 
     code = createGroup_result["code"]
@@ -84,8 +83,8 @@ def broadcast():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
+## need to figure out how to link to frontend to get group_id 
 def processCreateBroadcast(broadcast_info):
-    print('\n-----Invoking broadcast microservice-----')
     url = broadcast_URL + "/1"
     createBroadcast_result = invoke_http(url, method='POST', json=broadcast_info)
 
@@ -100,9 +99,89 @@ def processCreateBroadcast(broadcast_info):
     else:
         return createBroadcast_result
 
+
 ## if a group chooses to join another group on broadcast listing
-## compute new LF_pax
-## if LF_pax == 0: delete broadcast 
+## first get all broadcast listing (scenario 1B steps 5, 6)
+@app.route("/handleGroup/broadcast_listings")
+def getAllBroadcasts():
+    all = invoke_http(broadcast_URL, method='GET')
+
+    code = all["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"getAllBroadcasts_result": all},
+            "message": "Broadcast failed."
+        }
+    
+    else:
+        return all
+
+## user from group 2 chooses to join group 1 (scenario 1B step 8)
+@app.route("/handleGroup/join_group")
+def join_group(): 
+    # if request.is_json:
+    #     try:
+    #         grouping_id_json = request.get_json()
+    #         grouping_id = grouping_id_json["grouping_id"]
+    #         group_details = findNoOfPax(grouping_id)
+    #         broadcast_details = findLFPax()
+    #         return group_details, broadcast_details
+
+    #     except Exception as e:
+    #         exc_type, exc_obj, exc_tb = sys.exc_info()
+    #         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    #         ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+    #         print(ex_str)
+
+    #         return jsonify({
+    #             "code": 500,
+    #             "message": "handleGroup.py internal error: " + ex_str
+    #         }), 500
+
+    # return jsonify({
+    #     "code": 400,
+    #     "message": "Invalid JSON input: " + str(request.get_data())
+    # }), 400
+
+    ## get no_of_pax of group 2 from grouping service
+    ## figure out how to get grouping_id from frontend
+    url_for_noofpax = group_URL + "/2" 
+    group_details = invoke_http(url_for_noofpax, method='GET')
+
+    code = group_details["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"findNoOfPax_result": group_details},
+            "message": "findNoOfPax failed."
+        }
+    
+    else:
+        no_of_pax = group_details["data"]["no_of_pax"]
+
+        ## get lf_pax of group 1 from broadcast
+        url_for_LFpax = broadcast_URL + "/1"
+        broadcast_details = invoke_http(url_for_LFpax, method='GET')
+        
+        code = broadcast_details["code"]
+        if code not in range(200,300):
+            return {
+                "code": 500,
+                "data": {"findLFPax_result": broadcast_details},
+                "message": "findNLFPax failed."
+            }
+        
+        else:
+            LF_pax = broadcast_details["data"]["lf_pax"]
+            
+            ## compute new LF_pax
+            new_LF_pax = LF_pax - no_of_pax
+
+            return {"no_of_pax": no_of_pax, "lf_pax": LF_pax, "new_lf_pax": new_LF_pax}
+
+            ## if LF_pax == 0: delete broadcast listing, create new group with updated no_of_pax
+
 
 
 if __name__ == '__main__':

@@ -19,15 +19,17 @@ class Grouping(db.Model):
     __tablename__ = 'groupings'
 
     grouping_id = db.Column(db.Integer, primary_key=True)
+    no_of_pax = db.Column(db.Integer)
     description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")
     status = db.Column(db.String(256), nullable=False, default="Started")
 
-    def __init__(self, description, status):
+    def __init__(self, no_of_pax, description, status):
+        self.no_of_pax = no_of_pax
         self.description = description
         self.status = status
 
     def json(self):
-        return {"grouping_id": self.grouping_id, "description": self.description, "status": self.status}
+        return {"grouping_id": self.grouping_id, "no_of_pax": self.no_of_pax, "description": self.description, "status": self.status}
 
 with app.app_context():
     db.create_all()  
