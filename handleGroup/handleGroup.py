@@ -120,30 +120,6 @@ def getAllBroadcasts():
 ## user from group 2 chooses to join group 1 (scenario 1B step 8)
 @app.route("/handleGroup/join_group")
 def join_group(): 
-    # if request.is_json:
-    #     try:
-    #         grouping_id_json = request.get_json()
-    #         grouping_id = grouping_id_json["grouping_id"]
-    #         group_details = findNoOfPax(grouping_id)
-    #         broadcast_details = findLFPax()
-    #         return group_details, broadcast_details
-
-    #     except Exception as e:
-    #         exc_type, exc_obj, exc_tb = sys.exc_info()
-    #         fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-    #         ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
-    #         print(ex_str)
-
-    #         return jsonify({
-    #             "code": 500,
-    #             "message": "handleGroup.py internal error: " + ex_str
-    #         }), 500
-
-    # return jsonify({
-    #     "code": 400,
-    #     "message": "Invalid JSON input: " + str(request.get_data())
-    # }), 400
-
     ## get no_of_pax of group 2 from grouping service
     ## figure out how to get grouping_id from frontend
     url_for_noofpax = group_URL + "/2" 
@@ -158,7 +134,7 @@ def join_group():
         }
     
     else:
-        no_of_pax = group_details["data"]["no_of_pax"]
+        no_of_pax_joining = group_details["data"]["no_of_pax"]
 
         ## get lf_pax of group 1 from broadcast
         url_for_LFpax = broadcast_URL + "/1"
@@ -176,13 +152,132 @@ def join_group():
             LF_pax = broadcast_details["data"]["lf_pax"]
             
             ## compute new LF_pax
-            new_LF_pax = LF_pax - no_of_pax
+            new_LF_pax = LF_pax - no_of_pax_joining
 
-            return {"no_of_pax": no_of_pax, "lf_pax": LF_pax, "new_lf_pax": new_LF_pax}
+            # return {"no_of_pax": no_of_pax_joining, "lf_pax": LF_pax, "new_lf_pax": new_LF_pax}
 
-            ## if LF_pax == 0: delete broadcast listing, create new group with updated no_of_pax
+            ## joining group with insufficient space
+            if new_LF_pax < 0:
+                return jsonify(
+                    {
+                        "code": 500,
+                        "data": {
+                            "grouping_id": 2,
+                            "message": "Number of pax in your group exceeds limit."
+                        }
+                    }
+                ), 500
+            
+            ## perfect match
+            elif new_LF_pax == 0:
+                deletion_details = invoke_http(url_for_LFpax, method='DELETE')
+                deletion_of_joining_group = invoke_http(url_for_noofpax, method='DELETE')
+                url = group_URL + "/1"
+                deletion_of_broadcasting_group = invoke_http(url, method='DELETE')
+                code1 = deletion_details["code"]
+                code2= deletion_of_joining_group["code"]
+                code3 = deletion_of_broadcasting_group["code"]
+                if code1 not in range(200,300) or code2 not in range(200,300) or code3 not in range(200,300):
+                    return jsonify({
+                        "code": 500,
+                        "data": {"deleteBroadcast_result": deletion_details},
+                        "message": "Failed to join group as deletion of broadcast/group(s) failed."
+                    }), 500
+                
+                else: 
+                    new_no_of_pax = LF_pax + no_of_pax_joining
+                    merged_group_details = {
+                        "description": "Complete group!",
+                        "no_of_pax": new_no_of_pax,
+                        "status": 1
+                    }
+                    create_group_result = processCreateGroup(merged_group_details)
+                    code = create_group_result["code"]
+                    if code not in range(200,300):
+                        return jsonify({
+                            "code": 500,
+                            "data": {"joinGroup_result": create_group_result},
+                            "message": "Failed to join group as group creation failed."
+                    })
 
+                    else: 
+                        ## help how do we get the latest group number????
+                        return jsonify(
+                            {
+                                "code": 200,
+                                "message": "Join group success! New group ID is "
+                            }
+                        ), 200
+            
+            ## still need more people 
+            elif new_LF_pax > 0:
+                new_no_of_pax = LF_pax + no_of_pax_joining
+                new_grouping_info = {
+                    "grouping_id": 1,
+                    "no_of_pax": new_no_of_pax,
+                    "description": "looking for more members",
+                    "status": 0,
+                }
+                updateGrouping_result = processUpdateGrouping(new_grouping_info)
+                code = updateGrouping_result["code"]
+                if code not in range(200,300):
+                    return jsonify({
+                        "code": 500,
+                        "data": {"updateGrouping_result": updateGrouping_result},
+                        "message": "Failed to join group as group update failed."
+                    }), 500
+                
+                new_broadcast_info = {
+                    "grouping_id": 1,
+                    "lf_pax": new_LF_pax,
+                }
+                updateBroadcast_result = processUpdateBroadcast(new_broadcast_info)
+                code = updateBroadcast_result["code"]
+                if code not in range(200,300):
+                        return jsonify({
+                            "code": 500,
+                            "data": {"updateBroadcast_result": updateBroadcast_result},
+                            "message": "Failed to join group as broadcast update failed."
+                    }), 500
+                else: 
+                    return jsonify(
+                        {
+                            "code": 200,
+                            "message": "Join group success! You are now part of group 1. We are in the midst of completing your group."
+                        }
+                    ), 200
+                
+                
 
+def processUpdateBroadcast(info):
+    url = broadcast_URL + "/1"
+    updateBroadcast_result = invoke_http(url, method='PUT', json=info)
+
+    code = updateBroadcast_result["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"updateBroadcast_result": updateBroadcast_result},
+            "message": "Failure to join group as broadcast update failed."
+        }
+    
+    else:
+        return updateBroadcast_result
+
+def processUpdateGrouping(info):
+    url = group_URL + "/1"
+    updateGrouping_result = invoke_http(url, method='PUT', json=info)
+
+    code = updateGrouping_result["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"updateGrouping_result": updateGrouping_result},
+            "message": "Failure to join group as group update failed."
+        }
+    
+    else:
+        return updateGrouping_result
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6104, debug=True)

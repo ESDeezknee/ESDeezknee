@@ -137,6 +137,82 @@ def create_broadcast(group_id):
     ),201
 
 
+@app.route("/broadcast/<group_id>", methods=['DELETE'])
+def delete_broadcast(group_id):
+    if (not Broadcast.query.filter_by(group_id=group_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "grouping_id": group_id
+                },
+                "message": "Broadcast for group " + group_id + " not found."
+            }
+        ), 404
+
+    broadcast = Broadcast.query.filter_by(group_id=group_id).first()
+
+    try:
+        db.session.delete(broadcast)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "grouping_id": group_id
+                },
+                "message": "An error occurred deleting the broadcast."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "message": "Broadcast for group " + group_id + " successfully deleted."
+        }
+    ), 200
+
+
+@app.route("/broadcast/<group_id>", methods=['PUT'])
+def update_broadcast(updated_info):
+    if (not Broadcast.query.filter_by(group_id=group_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "group_id": updated_info["grouping_id"]
+                },
+                "message": "Broadcast not found."
+            }
+        ), 404
+
+    broadcast = Broadcast.query.filter_by(group_id=updated_info["grouping_id"]).first()
+    data = request.get_json()
+
+    try:
+        broadcast.lf_pax = updated_info['lf_pax']
+        # broadcast.date_of_visit = updated_info['date_of_visit']
+        # broadcast.datetime_of_broadcast = updated_info['datetime_of_broadcast']
+        db.session.commit()
+
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "group_id": updated_info["grouping_id"]
+                },
+                "message": "An error occurred updating the broadcast."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "data": broadcast.json()
+        }
+    ), 200
 
 
 
