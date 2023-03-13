@@ -8,6 +8,7 @@ networks:
   kong-net:
     driver: bridge
   rabbitmq:
+  internal:
 
 services:
   #################################
@@ -115,11 +116,13 @@ services:
   # Account: The Account microservice
   #################################
   account:
-    image: ngkangting/account:1.0
+    image: esdeezknee/account:1.0
     build:
       context: .
       dockerfile: account/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6000:6000"
     environment:
@@ -129,24 +132,26 @@ services:
   # Verification: The Verification microservice
   #################################
   verification:
-    image: ngkangting/verification:1.0
+    image: esdeezknee/verification:1.0
     build:
       context: .
       dockerfile: verification/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6001:6001"
     environment:
       accountURL: http://account:6000/account/
+      groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
-      groupingURL: http://grouping:6103/grouping/
 
   #################################
   # Notification: The Notification microservice
   #################################
   notification:
-    image: ngkangting/notification:1.0
+    image: esdeezknee/notification:1.0
     build:
       context: .
       dockerfile: notification/Dockerfile
@@ -154,6 +159,7 @@ services:
       - rabbitmq
     restart: always
     networks:
+      - internal
       - rabbitmq
     ports:
       - "6002:6002"
@@ -164,10 +170,12 @@ services:
   # Create Grouping: The Create Grouping microservice
   #################################
   grouping:
-    image: scaryprix/grouping:1.0
+    image: esdeezknee/grouping:1.0
     build:
       context: .
       dockerfile: grouping/Dockerfile
+    networks:
+      - internal
     ports:
       - "6103:6103"
     environment:
@@ -177,25 +185,28 @@ services:
   # Handle Group: The HandleGroup Complex microservice
   #################################
   handleGroup:
-    image: scaryprix/handlegroup:1.0
+    image: esdeezknee/handlegroup:1.0
     build:
       context: .
       dockerfile: handleGroup/Dockerfile
+    networks:
+      - internal
     ports:
       - "6104:6104"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
       verificationURL: http://verification:6001/verification/
-  
 
   #################################
   # Broadcast: The Broadcast microservice
   #################################
   broadcast:
-    image: scaryprix/broadcast:1.0
+    image: esdeezknee/broadcast:1.0
     build:
       context: .
       dockerfile: broadcast/Dockerfile
+    networks:
+      - internal
     ports:
       - "6102:6102"
     environment:
@@ -206,11 +217,13 @@ services:
   # Mission: The Mission microservice
   #################################
   mission:
-    image: ngkangting/mission:1.0
+    image: esdeezknee/mission:1.0
     build:
       context: .
       dockerfile: mission/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6300:6300"
     environment:
@@ -220,11 +233,13 @@ services:
   # Loyalty: The Loyalty microservice
   #################################
   loyalty:
-    image: ngkangting/loyalty:1.0
+    image: esdeezknee/loyalty:1.0
     build:
       context: .
       dockerfile: loyalty/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6301:6301"
     environment:
@@ -235,7 +250,7 @@ services:
   # Challenge: The Challenge microservice
   #################################
   challenge:
-    image: ngkangting/challenge:1.0
+    image: esdeezknee/challenge:1.0
     build:
       context: .
       dockerfile: challenge/Dockerfile
@@ -243,6 +258,7 @@ services:
       - rabbitmq
     restart: always
     networks:
+      - internal
       - rabbitmq
     ports:
       - "6302:6302"
@@ -256,11 +272,13 @@ services:
   # Reward: The Reward microservice
   #################################
   reward-flask:
-    image: ngkangting/reward-flask:1.0
+    image: esdeezknee/reward-flask:1.0
     build:
       context: .
       dockerfile: reward-flask/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "3000:3000"
     environment:
@@ -270,11 +288,13 @@ services:
   # Reward: The Reward microservice
   #################################
   reward:
-    image: ngkangting/reward:1.0
+    image: esdeezknee/reward:1.0
     build:
       context: .
       dockerfile: reward/Dockerfile
     restart: always
+    networks:
+      - internal
     ports:
       - "6303:6303"
     environment:
@@ -287,10 +307,12 @@ services:
   # Redemption: The Redemption microservice
   #################################
   redemption:
-    image: ngkangting/redemption:1.0
+    image: esdeezknee/redemption:1.0
     build:
       context: .
       dockerfile: redemption/Dockerfile
+    networks:
+      - internal
     ports:
       - "6304:6304"
     environment:

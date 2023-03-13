@@ -10,28 +10,36 @@ monitorBindingKey = '#'
 def receiveNotificationLog():
     amqp_setup.check_setup()
 
-    queue_name = 'Notification'
+    email_queue_name = 'Email'
+    sms_queue_name = 'SMS'
 
     # set up a consumer and start to wait for coming messages
     amqp_setup.channel.basic_consume(
-        queue=queue_name, on_message_callback=callback, auto_ack=True)
+        queue=email_queue_name, on_message_callback=email_callback, auto_ack=True)
+    amqp_setup.channel.basic_consume(
+        queue=sms_queue_name, on_message_callback=sms_callback, auto_ack=True)
     # an implicit loop waiting to receive messages;
     amqp_setup.channel.start_consuming()
     # it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
 
 
 # required signature for the callback; no return
-def callback(channel, method, properties, body):
+def email_callback(channel, method, properties, body):
     print("This is notification.py...", flush=True)
-    print("Received message:", json.loads(body), flush=True)
+    print("Received email message:", json.loads(body), flush=True)
 
     data = json.loads(body)
 
-    if data["type"] == "sms":
-      send_notification_sms(data["first_name"], data["phone_number"])
+    send_notification_email(data["first_name"], data["email"])
 
-    if data["type"] == "email":
-      send_notification_email(data["first_name"], data["email"])
+
+def sms_callback(channel, method, properties, body):
+    print("This is notification.py...", flush=True)
+    print("Received sms message:", json.loads(body), flush=True)
+
+    data = json.loads(body)
+
+    send_notification_sms(data["first_name"], data["phone_number"])
 
 
 def send_notification_email(first_name, email):

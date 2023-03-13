@@ -22,6 +22,11 @@ def verify_account(account_id):
     return invoke_http(
         account_URL + str(account_id), method='GET')
 
+@app.route("/verification/grouping/<grouping_id>")
+def verify_grouping(grouping_id):
+    return invoke_http(
+        grouping_URL + str(grouping_id),  method='GET')
+
 @app.route("/verification/mission/<mission_id>")
 def verify_mission(mission_id):
     return invoke_http(
@@ -31,12 +36,6 @@ def verify_mission(mission_id):
 def verify_reward(reward_id):
     return invoke_http(
         reward_URL + str(reward_id), method='GET')
-
-@app.route("/verification/grouping/<grouping_id>")
-def verify_grouping(grouping_id):
-    return invoke_http(
-        grouping_URL + str(grouping_id),  method='GET')
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6001, debug=True)
