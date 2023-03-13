@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 
 from invokes import invoke_http
 
+import random
+
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
@@ -27,6 +29,7 @@ class Redemption(db.Model):
     redemption_id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
     reward_id = db.Column(db.Integer, nullable=False)
+    redemption_code = db.Column(db.String(256), nullable=False)
     status = db.Column(db.String(64), nullable=False, default="Not Claimed")
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     modified = db.Column(db.DateTime, nullable=False,
@@ -37,12 +40,19 @@ class Redemption(db.Model):
         self.reward_id = reward_id
 
     def json(self):
-        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "status": self.status, "created": self.created, "modified": self.modified}
+        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "redemption_code": self.redemption_code, "status": self.status, "created": self.created, "modified": self.modified}
 
 
 with app.app_context():
     db.create_all()
 
+
+def generate_redemption_code():
+    code = ''
+    for i in range(4):
+        code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 4)) + '-'
+    code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 2))
+    return code
 
 @app.route("/redemption")
 def get_all():
@@ -160,6 +170,8 @@ def create_redemption():
 
     if redeem_result["code"] in range(300, 500):
         return redeem_result
+
+    redemption.redemption_code = generate_redemption_code();
 
     try:
         db.session.add(redemption)

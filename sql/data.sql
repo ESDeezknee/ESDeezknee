@@ -1,11 +1,17 @@
 USE `account`;
 
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 0, 1, '2023-01-01 18:00:00');
+(1, 'Benji', 'Ng', '2000-01-01', 23, 'M', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 0, 1, '2023-01-01 18:00:00');
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(2, 'Jason', 'Smith', '1999-01-01', 24, 'M', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 1, 1, '2023-01-01 18:00:00');
+(2, 'Wei Lun', 'Teo', '1999-01-01', 24, 'F', 'weilun.teo.2021@scis.smu.edu.sg', '+6585339293', 1, 1, '2023-01-01 18:00:00');
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(3, 'Jane', 'White', '2001-01-01', 22, 'F', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 0, 1, '2023-01-01 18:00:00');
+(3, 'Zachary', 'Lian', '2001-01-01', 22, 'M', 'zacharylian.2021@scis.smu.edu.sg', '+6592977881', 0, 1, '2023-01-01 18:00:00');
+INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
+(4, 'Joel', 'Tan', '2001-01-01', 22, 'M', 'joel.tan.2021@scis.smu.edu.sg', '+6590605085', 0, 1, '2023-01-01 18:00:00');
+INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
+(5, 'Keith', 'Law', '2001-01-01', 22, 'M', 'keith.law.2021@scis.smu.edu.sg', '+6594761445', 0, 1, '2023-01-01 18:00:00');
+INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
+(6, 'Vanessa', 'Lee', '2001-01-01', 22, 'F', 'vanessa.lee.2021@scis.smu.edu.sg', '+6597634941', 0, 1, '2023-01-01 18:00:00');
 
 USE `loyalty`;
 
@@ -31,6 +37,6 @@ USE `reward`;
 
 
 INSERT INTO `rewards` (`reward_id`, `name`, `description`, `quantity`, `exchange_points`, `image_url`, `is_active`, `created`, `modified`) VALUES
-(1, 'Singapore Flyer Admission Ticket', 'Exchange 200 points to redeem a pair of Singapore Flyer Admission Tickets!', 2, 200, null, 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
+(1, 'Singapore Flyer Admission Ticket', 'Exchange 200 points to redeem a pair of Singapore Flyer Admission Tickets!', 2, 200, "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1273,h_849/activities/wfkpyhhihrjdztfshifx/SingaporeFlyerTicket.webp", 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
 INSERT INTO `rewards` (`reward_id`, `name`, `description`, `quantity`, `exchange_points`, `image_url`, `is_active`, `created`, `modified`) VALUES
-(2, 'Gardens By The Bay Admission Ticket', 'Exchange 1000 points to redeem a pair of Gardens By The Bay Admission Tickets!', 2, 1000, null, 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
+(2, 'Gardens By The Bay Admission Ticket', 'Exchange 1000 points to redeem a pair of Gardens By The Bay Admission Tickets!', 2, 1000, "https://www.gardensbythebay.com.sg/content/dam/gbb-2021/image/things-to-do/attractions/flower-dome/gallery/flower-dome-05.jpg", 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
