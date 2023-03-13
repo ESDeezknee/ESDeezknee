@@ -1,11 +1,11 @@
 USE `account`;
 
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'john.doe@mail.com', '98765432', 0, 1, '2023-01-01 18:00:00');
+(1, 'John', 'Doe', '2000-01-01', 23, 'M', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 0, 1, '2023-01-01 18:00:00');
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(2, 'Jason', 'Smith', '1999-01-01', 24, 'M', 'jason.smith@mail.com', '91234567', 1, 1, '2023-01-01 18:00:00');
+(2, 'Jason', 'Smith', '1999-01-01', 24, 'M', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 1, 1, '2023-01-01 18:00:00');
 INSERT INTO `accounts` (`account_id`, `first_name`, `last_name`, `date_of_birth`, `age`, `gender`, `email`, `phone`, `is_express`, `is_active`, `created`) VALUES
-(3, 'Jane', 'White', '2001-01-01', 22, 'F', 'jane.white@mail.com', '90123456', 0, 1, '2023-01-01 18:00:00');
+(3, 'Jane', 'White', '2001-01-01', 22, 'F', 'kangting.ng.2021@scis.smu.edu.sg', '+6597861048', 0, 1, '2023-01-01 18:00:00');
 
 USE `loyalty`;
 

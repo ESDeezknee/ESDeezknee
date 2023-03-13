@@ -76,11 +76,6 @@ def find_by_challenge_id(challenge_id):
     challenge = Challenge.query.filter_by(challenge_id=challenge_id).first()
 
     if challenge:
-        # message = json.dumps({ "type": "email", "first_name": "Benji", "email": "kangting.ng.2021@scis.smu.edu.sg" })
-        message = json.dumps({ "type": "sms", "first_name": "Benji", "phone_number": "+6597861048" })
-
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms", body=message, properties=pika.BasicProperties(delivery_mode = 2))
-
         return jsonify(
             {
                 "code": 200,
@@ -104,8 +99,6 @@ def create_challenge():
         verification_URL + "account/" + str(challenge.account_id), method='GET')
 
     if account_result["code"] in range(500, 600):
-        print("error", flush=True)
-        print(account_result, flush=True)
         return jsonify(
             {
                 "code": 500,
@@ -129,8 +122,6 @@ def create_challenge():
         verification_URL + "mission/" + str(challenge.mission_id), method='GET')
 
     if mission_result["code"] in range(500, 600):
-        print("error", flush=True)
-        print(mission_result, flush=True)
         return jsonify(
             {
                 "code": 500,
@@ -278,6 +269,13 @@ def update_challenge_complete(challenge_id):
                 "message": "An error occurred updating the challenge."
             }
         ), 500
+
+    account_result = invoke_http(
+        verification_URL + "account/" + str(challenge.account_id), method='GET')
+
+    message = json.dumps({ "first_name": account_result["data"]["first_name"], "phone_number": account_result["data"]["phone"] })
+
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms", body=message, properties=pika.BasicProperties(delivery_mode = 2))
 
     return jsonify(
         {
