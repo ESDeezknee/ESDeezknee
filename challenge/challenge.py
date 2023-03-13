@@ -273,7 +273,7 @@ def update_challenge_complete(challenge_id):
     account_result = invoke_http(
         verification_URL + "account/" + str(challenge.account_id), method='GET')
 
-    message = json.dumps({ "first_name": account_result["data"]["first_name"], "phone_number": account_result["data"]["phone"] })
+    message = json.dumps({ "mission_name": mission_result["data"]["name"], "first_name": account_result["data"]["first_name"], "phone_number": account_result["data"]["phone"], "award_points": mission_result["data"]["award_points"] })
 
     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms", body=message, properties=pika.BasicProperties(delivery_mode = 2))
 

@@ -39,7 +39,8 @@ def sms_callback(channel, method, properties, body):
 
     data = json.loads(body)
 
-    send_notification_sms(data["first_name"], data["phone_number"])
+    send_notification_challenge_complete_sms(data["mission_name"],
+        data["first_name"], data["phone_number"], data["award_points"])
 
 
 def send_notification_email(first_name, email):
@@ -60,7 +61,7 @@ def send_notification_email(first_name, email):
     print("Email successfully sent!", flush=True)
 
 
-def send_notification_sms(first_name, phone_number):
+def send_notification_challenge_complete_sms(mission_name, first_name, phone_number, award_points):
     # init
     notificationapi.init("4520cecngqlnq5guo9dbe26dte",
                          "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
@@ -72,7 +73,7 @@ def send_notification_sms(first_name, phone_number):
             "id": phone_number,
             "number": phone_number,   # required for email notifications
         },
-        "mergeTags": {"firstName": first_name}
+        "mergeTags": {"firstName": first_name, "missionName": mission_name, "awardPoints": award_points}
     })
 
     print("SMS successfully sent!", flush=True)
