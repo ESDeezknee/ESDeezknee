@@ -212,6 +212,42 @@ services:
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
       verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
+
+  #################################
+  # Order: The Order microservice
+  #################################
+  order:
+    image: esdeezknee/order:1.0
+    build: 
+      context: .
+      dockerfile: order/Dockerfile
+    networks:
+      - internal
+    ports:
+      - "6201:6201"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      verificationURL: http://verification:6001/verification/
+      paymentURL: http://payment:6203/payment/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      promoURL: http://loyalty:6204/promo/
+
+  #################################
+  # Promo: The PromoCode microservice
+  #################################
+  promo:
+    image: esdeezknee/promo:1.0
+    build:
+      context: .
+      dockerfile: promo/Dockerfile
+    networks:
+      - internal
+    ports:
+      - "6204:6204"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/promo
+      verificationURL: http://verification:6001/verification/
 
   #################################
   # Mission: The Mission microservice

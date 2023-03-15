@@ -5,7 +5,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/is213'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/queueTicket'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -20,6 +20,7 @@ class QueueTicket(db.Model):
     ride_times = db.Column(db.Integer, nullable=False, default=0)
     queue_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     account_id = db.Column(db.Integer, nullable = False)
+    order_id = db.Column(db.Integer, nullable = False)
     # tentative do not use FK
 
     def __init__(self, is_express, ride_times, order_created, account_id):
@@ -119,6 +120,20 @@ def delete_order(queue_id):
             "message": "queueTicket not found."
         }
     ), 404
+
+@app.put("/queueTicket/<int:queue_id>")
+def update_queue(queue_id):
+    if request.json() is None:
+        raise Exception("No data received.")
+    updated_queue = QueueTicket.query.get_or_404(queue_id=queue_id)
+    data = request.get_json()
+    updated_queue.is_express = data["is_express"]
+    updated_queue.ride_times = data["ride_times"]
+    updated_queue.queue_created = data["queue_created"]
+    updated_queue.account_id = data["account_id"]
+
+    db.session.commit()
+    return "Queue updated.", 200
 
 if __name__ == '__main__':
     app.run(port=6202, debug=True)
