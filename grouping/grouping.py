@@ -19,15 +19,17 @@ class Grouping(db.Model):
     __tablename__ = 'groupings'
 
     grouping_id = db.Column(db.Integer, primary_key=True)
+    no_of_pax = db.Column(db.Integer)
     description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")
     status = db.Column(db.String(256), nullable=False, default="Started")
 
-    def __init__(self, description, status):
+    def __init__(self, no_of_pax, description, status):
+        self.no_of_pax = no_of_pax
         self.description = description
         self.status = status
 
     def json(self):
-        return {"grouping_id": self.grouping_id, "description": self.description, "status": self.status}
+        return {"grouping_id": self.grouping_id, "no_of_pax": self.no_of_pax, "description": self.description, "status": self.status}
 
 with app.app_context():
     db.create_all()  
@@ -93,6 +95,81 @@ def create_grouping():
         }
     ), 201
 
+@app.route("/grouping/<grouping_id>", methods=['DELETE'])
+def delete_grouping(grouping_id):
+    if (not Grouping.query.filter_by(grouping_id=grouping_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "grouping_id": grouping_id
+                },
+                "message": "Group " + grouping_id + "not found."
+            }
+        ), 404
+
+    grouping = Grouping.query.filter_by(grouping_id=grouping_id).first()
+
+    try:
+        db.session.delete(grouping)
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "grouping_id": grouping_id
+                },
+                "message": "An error occurred while deleting the group."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "message": "Group " + grouping_id + " successfully deleted."
+        }
+    ), 200
+
+
+@app.route("/grouping/<grouping_id>", methods=['PUT'])
+def update_grouping(updated_info):
+    # if (not Grouping.query.filter_by(grouping_id=updated_info["grouping_id"]).first()):
+    #     return jsonify(
+    #         {
+    #             "code": 404,
+    #             "data": {
+    #                 "grouping_id": updated_info["grouping_id"]                },
+    #             "message": "Grouping not found."
+    #         }
+    #     ), 404
+    updated_grouping_id = updated_info["grouping_id"]
+    grouping = Grouping.query.filter_by(grouping_id=updated_grouping_id).first()
+    # data = request.get_json()
+
+    try:
+        grouping.no_of_pax = updated_info['no_of_pax']
+        grouping.description = updated_info['description']
+        grouping.status = updated_info['status']
+        db.session.commit()
+
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "data": {
+                    "group_id": updated_grouping_id
+                },
+                "message": "An error occurred updating the broadcast."
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "code": 200,
+            "data": grouping.json()
+        }
+    ), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6103, debug=True)
