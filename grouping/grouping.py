@@ -90,8 +90,10 @@ def create_grouping():
     return jsonify(
         {
             "code": 201,
-            "data": grouping.json(),
-            "message": "New group creation success."
+            "data": {"grouping_id": grouping.json(),
+                     "message": "New group creation success."
+                     }
+            
         }
     ), 201
 
@@ -102,9 +104,9 @@ def delete_grouping(grouping_id):
             {
                 "code": 404,
                 "data": {
-                    "grouping_id": grouping_id
-                },
-                "message": "Group " + grouping_id + "not found."
+                    "grouping_id": grouping_id,
+                    "message": "Group " + grouping_id + "not found."
+                }   
             }
         ), 404
 
@@ -118,9 +120,9 @@ def delete_grouping(grouping_id):
             {
                 "code": 500,
                 "data": {
-                    "grouping_id": grouping_id
-                },
-                "message": "An error occurred while deleting the group."
+                    "grouping_id": grouping_id,
+                    "message": "An error occurred while deleting the group."
+                }
             }
         ), 500
 
@@ -132,25 +134,24 @@ def delete_grouping(grouping_id):
     ), 200
 
 
-@app.route("/grouping/<grouping_id>", methods=['PUT'])
-def update_grouping(updated_info):
-    # if (not Grouping.query.filter_by(grouping_id=updated_info["grouping_id"]).first()):
-    #     return jsonify(
-    #         {
-    #             "code": 404,
-    #             "data": {
-    #                 "grouping_id": updated_info["grouping_id"]                },
-    #             "message": "Grouping not found."
-    #         }
-    #     ), 404
-    updated_grouping_id = updated_info["grouping_id"]
-    grouping = Grouping.query.filter_by(grouping_id=updated_grouping_id).first()
-    # data = request.get_json()
+@app.route("/grouping/<grouping_id>", methods=['PATCH'])
+def update_grouping(grouping_id):
+    if (not Grouping.query.filter_by(grouping_id=grouping_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "grouping_id": int(grouping_id),
+                    "message": "Grouping not found."               
+                    }
+            }
+        ), 404
+    grouping = Grouping.query.filter_by(grouping_id=grouping_id).first()
+    data = request.get_json()
 
     try:
-        grouping.no_of_pax = updated_info['no_of_pax']
-        grouping.description = updated_info['description']
-        grouping.status = updated_info['status']
+        grouping.no_of_pax -= data['no_of_pax']
+        grouping.status = "Group has been updated to match"
         db.session.commit()
 
     except:
@@ -158,9 +159,9 @@ def update_grouping(updated_info):
             {
                 "code": 500,
                 "data": {
-                    "group_id": updated_grouping_id
-                },
-                "message": "An error occurred updating the broadcast."
+                    "group_id": grouping_id,
+                    "message": "An error occurred updating the broadcast."
+                },   
             }
         ), 500
 

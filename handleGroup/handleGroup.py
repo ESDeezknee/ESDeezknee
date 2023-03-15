@@ -124,7 +124,6 @@ def join_group():
     ## figure out how to get grouping_id from frontend
     url_for_noofpax = group_URL + "/2" 
     group_details = invoke_http(url_for_noofpax, method='GET')
-
     code = group_details["code"]
     if code not in range(200,300):
         return {
@@ -251,7 +250,7 @@ def join_group():
 
 def processUpdateBroadcast(info):
     url = broadcast_URL + "/1"
-    updateBroadcast_result = invoke_http(url, method='PUT', json=info)
+    updateBroadcast_result = invoke_http(url, method='PATCH', json=info)
 
     code = updateBroadcast_result["code"]
     if code not in range(200,300):
@@ -266,7 +265,7 @@ def processUpdateBroadcast(info):
 
 def processUpdateGrouping(info):
     url = group_URL + "/1"
-    updateGrouping_result = invoke_http(url, method='PUT', json=info)
+    updateGrouping_result = invoke_http(url, method='PATCH', json=info)
 
     code = updateGrouping_result["code"]
     if code not in range(200,300):

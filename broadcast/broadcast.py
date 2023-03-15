@@ -106,9 +106,9 @@ def create_broadcast(group_id):
             {
                 "code": 400,
                 "data": {
-                    "group_id": broadcasts.group_id
-                },
-                "message": "Group does not exist."
+                    "group_id": broadcasts.group_id,
+                    "message": "Group does not exist."
+                }
             }
         ), 400
     
@@ -144,9 +144,9 @@ def delete_broadcast(group_id):
             {
                 "code": 404,
                 "data": {
-                    "grouping_id": group_id
-                },
-                "message": "Broadcast for group " + group_id + " not found."
+                    "grouping_id": group_id,
+                    "message": "Broadcast for group " + group_id + " not found."
+                }
             }
         ), 404
 
@@ -160,9 +160,9 @@ def delete_broadcast(group_id):
             {
                 "code": 500,
                 "data": {
-                    "grouping_id": group_id
-                },
-                "message": "An error occurred deleting the broadcast."
+                    "grouping_id": group_id,
+                    "message": "An error occurred deleting the broadcast."
+                }
             }
         ), 500
 
@@ -174,26 +174,27 @@ def delete_broadcast(group_id):
     ), 200
 
 
-@app.route("/broadcast/<group_id>", methods=['PUT'])
-def update_broadcast(updated_info):
+@app.route("/broadcast/<group_id>", methods=['PATCH'])
+def update_broadcast(group_id):
     if (not Broadcast.query.filter_by(group_id=group_id).first()):
         return jsonify(
             {
                 "code": 404,
                 "data": {
-                    "group_id": updated_info["grouping_id"]
+                    "group_id": int(group_id),
+                    "message": "Broadcast not found."
                 },
-                "message": "Broadcast not found."
+                
             }
         ), 404
 
-    broadcast = Broadcast.query.filter_by(group_id=updated_info["grouping_id"]).first()
+    broadcast = Broadcast.query.filter_by(group_id=group_id).first()
     data = request.get_json()
 
     try:
-        broadcast.lf_pax = updated_info['lf_pax']
-        # broadcast.date_of_visit = updated_info['date_of_visit']
-        # broadcast.datetime_of_broadcast = updated_info['datetime_of_broadcast']
+        now = datetime.now()
+        broadcast.lf_pax -= data['lf_pax']
+        broadcast.datetime_of_broadcast = now
         db.session.commit()
 
     except:
@@ -201,9 +202,10 @@ def update_broadcast(updated_info):
             {
                 "code": 500,
                 "data": {
-                    "group_id": updated_info["grouping_id"]
+                    "group_id": group_id,
+                    "message": "An error occurred updating the broadcast."
                 },
-                "message": "An error occurred updating the broadcast."
+                
             }
         ), 500
 
