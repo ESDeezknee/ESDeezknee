@@ -2,11 +2,11 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
-from sqlalchemy.orm import relationship
+import sys
+import os
 
 from datetime import datetime
 
-from invokes import invoke_http
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
@@ -17,137 +17,48 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verficationURL')
+verification_URL = environ.get('verificationURL')
+payment_URL = environ.get('paymentURL')
+loyalty_URL = environ.get('loyaltyURL')
+promo_URL = environ.get('promoURL')
 
-
-class Order(db.Model):
-    __tablename__ = 'order'
-
-    order_id = db.Column(db.Integer, primary_key=True)
-    is_express = db.Column(db.Boolean, default=False, nullable=False)
-    order_created = db.Column(
-        db.DateTime, nullable=False, default=datetime.now)
-    account_id = db.Column(db.Integer, nullable=False)
-    # tentative do not use FK
-
-    def __init__(self, is_express, order_created, account_id):
-        self.is_express = is_express
-        self.order_created = order_created
-        self.account_id = account_id
-
-    def json(self):
-        return {"order_id": self.order_id, "is_express": self.is_express, "order_created": self.order_created, "account_id": self.account_id}
-
-
-with app.app_context():
-  db.init_app(app)
-  db.create_all()
-#   new_order = db.insert(Order).values(is_express=True, order_created=datetime.now(), account_id=1)
-
-#   new_order = order.insert().values(is_express=True, order_created=datetime.now(), account_id=1)
-#   db.session.add(new_order)
-#   db.session.commit()
-
-@app.get("/order")
-def get_all():
-    orderList = Order.query.all()
-    if len(orderList):
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "orders": [order.json() for order in orderList]
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "There are no orders."
-        }
-    ), 404
-
-
-@app.get("/order/<int:order_id>")
-def get_by_id(order_id):
-    order = Order.query.filter_by(order_id=order_id).first()
-    if order:
-        return jsonify(
-            {
-                "code": 200,
-                "data": order.json()
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Order not found."
-        }
-    ), 404
 
 
 @app.post("/order")
-def create_order():
-    if request.json is None:
-        raise Exception("No data received.")
-    try:
-        data = request.get_json()
-        new_order = Order(**data)
-        db.session.add(new_order)
-        db.session.commit()
-        db.session.refresh(new_order)
-    except:
-        return jsonify(
-            {
+def get_order():
+    # Simple check of input format and data of the request are JSON
+    if request.is_json:
+        try:
+            orderRequest = request.get_json()
+            print("\nReceived an order in JSON:", orderRequest)
+
+            # do the actual work
+            result = place_order(orderRequest)
+            print('\nresult: ', result)
+            return jsonify(result), result["code"]
+
+        except Exception as e:
+            # Unexpected error in code
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+            print(ex_str)
+
+            return jsonify({
                 "code": 500,
-                "data": {
-                    "order_id": new_order.order_id
-                },
-                "message": "An error occurred creating the order."
-            }
-        ), 500
+                "message": "order.py internal error: " + ex_str
+            }), 500
 
-    return jsonify(
-        {
-            "code": 201,
-            "data": new_order.json()
-        }
-    ), 201
+    return jsonify({
+        "code": 400,
+        "message": "Invalid JSON input: " + str(request.get_data())
+    }), 400
 
+def place_order(orderRequest):
+    
 
-@app.delete("/order/<int:order_id>")
-def delete_order(order_id):
-    order = Order.query.filter_by(order_id=order_id).first()
-    if order:
-        db.session.delete(order)
-        db.session.commit()
-        return jsonify(
-            {
-                "code": 200,
-                "data": {
-                    "order_id": order.order_id
-                }
-            }
-        )
-    return jsonify(
-        {
-            "code": 404,
-            "message": "Order not found."
-        }
-    ), 404
-
-@app.put("/order/<int:order_id>")
-def update_order(order_id):
-    if request.json() is None:
-        raise Exception("No data received.")
-    updated_order = Order.query.get_or_404(order_id=order_id)
-    data = request.get_json()
-    updated_order.is_express = data["is_express"]
-    updated_order.order_created = data["order_created"]
-    updated_order.account_id = data["account_id"]
-
-    db.session.commit()
-    return "Order updated.", 200
 
 if __name__ == '__main__':
+    print("This is flask " + os.path.basename(__file__) +
+          " for placing an order...")
     app.run(host='0.0.0.0', port=6201, debug=True)

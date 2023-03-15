@@ -40,3 +40,11 @@ INSERT INTO `rewards` (`reward_id`, `name`, `description`, `quantity`, `exchange
 (1, 'Singapore Flyer Admission Ticket', 'Exchange 200 points to redeem a pair of Singapore Flyer Admission Tickets!', 2, 200, "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1273,h_849/activities/wfkpyhhihrjdztfshifx/SingaporeFlyerTicket.webp", 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
 INSERT INTO `rewards` (`reward_id`, `name`, `description`, `quantity`, `exchange_points`, `image_url`, `is_active`, `created`, `modified`) VALUES
 (2, 'Gardens By The Bay Admission Ticket', 'Exchange 1000 points to redeem a pair of Gardens By The Bay Admission Tickets!', 2, 1000, "https://www.gardensbythebay.com.sg/content/dam/gbb-2021/image/things-to-do/attractions/flower-dome/gallery/flower-dome-05.jpg", 1, '2023-01-01 18:00:00', '2023-01-01 18:00:00');
+
+USE `promo`;
+
+
+INSERT INTO `promo` (`order_id`, `is_express`, `promo_created`, `account_id`, `promo_code`) VALUES
+(1, 0, '2023-01-01 18:00:00', 1, '123456');
+INSERT INTO `promo` (`order_id`, `is_express`, `promo_created`, `account_id`, `promo_code`) VALUES
+(2, 0, '2023-01-01 18:00:00', 2, '123457');
