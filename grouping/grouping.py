@@ -150,8 +150,9 @@ def update_grouping(grouping_id):
     data = request.get_json()
 
     try:
-        grouping.no_of_pax -= data['no_of_pax']
-        grouping.status = "Group has been updated to match"
+        grouping.no_of_pax = data['no_of_pax']
+        grouping.description = data['description']
+        grouping.status = data['status']
         db.session.commit()
 
     except:
@@ -160,7 +161,7 @@ def update_grouping(grouping_id):
                 "code": 500,
                 "data": {
                     "group_id": grouping_id,
-                    "message": "An error occurred updating the broadcast."
+                    "message": "An error occurred updating the grouping."
                 },   
             }
         ), 500

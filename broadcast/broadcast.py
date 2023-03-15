@@ -193,7 +193,7 @@ def update_broadcast(group_id):
 
     try:
         now = datetime.now()
-        broadcast.lf_pax -= data['lf_pax']
+        broadcast.lf_pax = data['lf_pax']
         broadcast.datetime_of_broadcast = now
         db.session.commit()
 
