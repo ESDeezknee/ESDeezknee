@@ -5,6 +5,9 @@ import os, sys
 
 import requests
 from invokes import invoke_http
+import amqp_setup
+import pika
+import json
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -187,6 +190,8 @@ def join_group():
 
                     else: 
                         delete_broadcast_result = processDeleteBroadcast(1)
+                        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body="Your Group has been fully filled, Please Log back in!", properties=pika.BasicProperties(delivery_mode=2))
                         code = delete_broadcast_result["code"]
                         if code not in range (200,300):
                             return jsonify({

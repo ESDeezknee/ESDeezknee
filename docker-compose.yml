@@ -189,13 +189,19 @@ services:
     build:
       context: .
       dockerfile: handleGroup/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6104:6104"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
       verificationURL: http://verification:6001/verification/
+      RABBITMQ_HOST: rabbitmq
+
 
   #################################
   # Broadcast: The Broadcast microservice
