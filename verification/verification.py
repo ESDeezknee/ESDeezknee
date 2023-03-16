@@ -14,6 +14,7 @@ account_URL = environ.get('accountURL') or "http://localhost:6000/account/"
 mission_URL = environ.get('missionURL') or "http://localhost:6300/mission/"
 reward_URL = environ.get('rewardURL') or "http://localhost:6303/reward/"
 grouping_URL = environ.get('groupingURL') or "http://localhost:6103/grouping/"
+promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 
 
 
@@ -36,6 +37,11 @@ def verify_mission(mission_id):
 def verify_reward(reward_id):
     return invoke_http(
         reward_URL + str(reward_id), method='GET')
+
+@app.route("/verification/promo/<promo_id>")
+def verify_promo(promo_id):
+    return invoke_http(
+        reward_URL + str(promo_id), method='GET')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6001, debug=True)

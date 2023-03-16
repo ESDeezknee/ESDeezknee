@@ -34,7 +34,7 @@ services:
   #######################################
   kong-database:
     image: postgres:9.6
-    platform: linux/amd64
+    platform: linux/arm64/v8
     restart: always
     networks:
       - kong-net
@@ -148,6 +148,7 @@ services:
       groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
+      promoURL: http://promo:6204/promo/
 
   #################################
   # Notification: The Notification microservice
@@ -226,7 +227,7 @@ services:
       loyaltyURL: http://loyalty:6301/loyalty/
 
   #################################
-  # Order: The Order microservice
+  # Order: The Order Complex microservice
   #################################
   order:
     image: esdeezknee/order:1.0
@@ -243,7 +244,7 @@ services:
       verificationURL: http://verification:6001/verification/
       paymentURL: http://payment:6203/payment/
       loyaltyURL: http://loyalty:6301/loyalty/
-      promoURL: http://loyalty:6204/promo/
+      promoURL: http://promo:6204/promo/
 
   #################################
   # Promo: The PromoCode microservice

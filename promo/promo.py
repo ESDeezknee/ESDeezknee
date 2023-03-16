@@ -7,8 +7,6 @@ from invokes import invoke_http
 
 import json
 import random
-import pika
-import amqp_setup
 
 from datetime import datetime
 
@@ -34,10 +32,12 @@ class Promo(db.Model):
     account_id = db.Column(db.Integer, nullable=False)
     promo_code = db.Column(db.String(256), nullable=False)
 
-    def __init__(self, promo_code, order_id, account_id):
+    def __init__(self, is_express, promo_code, order_id, account_id, promo_created):
+        self.is_express = is_express
         self.promo_code = promo_code
         self.order_id = order_id
         self.account_id = account_id
+        self.promo_created = promo_created
 
     def json(self):
         return {"order_id": self.order_id, "is_express": self.is_express, "promo_created": self.promo_created, "account_id": self.account_id, "promo_code": self.promo_code}
@@ -99,7 +99,8 @@ def create_promo():
     data = request.get_json()
     new_promo = Promo(**data)
     account_result = invoke_http(
-        verification_URL + "account/" + str(new_promo.account_id), method='GET')
+        verification_URL + "promo/" + str(new_promo.account_id), method='GET')
+    print(account_result)
 
     if account_result["code"] in range(500, 600):
         return jsonify(

@@ -2,8 +2,13 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
-import sys
-import os
+import sys, os
+
+import requests
+from invokes import invoke_http
+import amqp_setup
+import pika
+import json
 
 from datetime import datetime
 
@@ -25,7 +30,7 @@ promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 
 
 @app.post("/order")
-def get_order():
+def post_order():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
         try:

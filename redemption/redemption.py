@@ -254,7 +254,7 @@ def update_redemption_claimed(redemption_id):
     try:
         redemption.status = "Claimed"
         db.session.commit()
-
+    
     except:
         return jsonify(
             {
