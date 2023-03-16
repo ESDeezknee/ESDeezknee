@@ -22,8 +22,8 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL')
-loyalty_URL = environ.get('loyaltyURL')
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 
 
 class Redemption(db.Model):

@@ -21,7 +21,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verficationURL')
+verification_URL = environ.get('verficationURL') or "http://localhost:6001/verification/"
 
 
 class Promo(db.Model):

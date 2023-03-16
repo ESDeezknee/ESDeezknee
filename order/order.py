@@ -17,10 +17,10 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL')
-payment_URL = environ.get('paymentURL')
-loyalty_URL = environ.get('loyaltyURL')
-promo_URL = environ.get('promoURL')
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
+loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
+promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 
 
 

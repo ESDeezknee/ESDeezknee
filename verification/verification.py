@@ -10,10 +10,10 @@ app.config['JSON_SORT_KEYS'] = False
 
 CORS(app)
 
-account_URL = environ.get('accountURL')
-mission_URL = environ.get('missionURL')
-reward_URL = environ.get('rewardURL')
-grouping_URL = environ.get('groupingURL')
+account_URL = environ.get('accountURL') or "http://localhost:6000/account/"
+mission_URL = environ.get('missionURL') or "http://localhost:6300/mission/"
+reward_URL = environ.get('rewardURL') or "http://localhost:6303/reward/"
+grouping_URL = environ.get('groupingURL') or "http://localhost:6103/grouping/"
 
 
 

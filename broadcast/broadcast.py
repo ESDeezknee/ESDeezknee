@@ -16,7 +16,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL')
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 
 
 
