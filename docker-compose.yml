@@ -126,6 +126,7 @@ services:
     ports:
       - "6000:6000"
     environment:
+      PYTHONUNBUFFERED: 1
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/account
 
   #################################
@@ -142,6 +143,7 @@ services:
     ports:
       - "6001:6001"
     environment:
+      PYTHONUNBUFFERED: 1
       accountURL: http://account:6000/account/
       groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
@@ -164,6 +166,7 @@ services:
     ports:
       - "6002:6002"
     environment:
+      PYTHONUNBUFFERED: 1
       RABBITMQ_HOST: rabbitmq
 
   #################################
@@ -180,6 +183,7 @@ services:
       - "6103:6103"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/grouping
+      PYTHONUNBUFFERED: 1
 
   #################################
   # Handle Group: The HandleGroup Complex microservice
@@ -199,9 +203,9 @@ services:
       - "6104:6104"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/handleGroup
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       RABBITMQ_HOST: rabbitmq
-
 
   #################################
   # Broadcast: The Broadcast microservice
@@ -217,6 +221,7 @@ services:
       - "6102:6102"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/broadcast
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
 
@@ -225,7 +230,7 @@ services:
   #################################
   order:
     image: esdeezknee/order:1.0
-    build: 
+    build:
       context: .
       dockerfile: order/Dockerfile
     networks:
@@ -234,6 +239,7 @@ services:
       - "6201:6201"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/order
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       paymentURL: http://payment:6203/payment/
       loyaltyURL: http://loyalty:6301/loyalty/
@@ -253,6 +259,7 @@ services:
       - "6204:6204"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/promo
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
   #################################
@@ -270,6 +277,7 @@ services:
       - "6300:6300"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/mission
+      PYTHONUNBUFFERED: 1
 
   #################################
   # Loyalty: The Loyalty microservice
@@ -286,6 +294,7 @@ services:
       - "6301:6301"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/loyalty
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
   #################################
@@ -306,6 +315,7 @@ services:
       - "6302:6302"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/challenge
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
       RABBITMQ_HOST: rabbitmq
@@ -363,6 +373,7 @@ services:
       - "6304:6304"
     environment:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/redemption
+      PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
       RABBITMQ_HOST: rabbitmq
