@@ -15,6 +15,9 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
+verification_URL = environ.get('verificationURL')
+
+
 class Grouping(db.Model):
     __tablename__ = 'groupings'
 

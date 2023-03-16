@@ -46,6 +46,9 @@ def sms_callback(channel, method, properties, body):
     if data["type"] == "redeem":
       send_notification_redemption_redeem_sms(data["reward_name"],
           data["first_name"], data["phone_number"], data["redemption_code"])
+      
+    if data["type"] == "inform":
+        send_notification_handleGroup_sms(data["number_pax"],data["first_name"],data["phone_number"])
 
 
 def send_notification_email(first_name, email):
@@ -100,6 +103,21 @@ def send_notification_redemption_redeem_sms(reward_name, first_name, phone_numbe
     })
 
     print("Challenge Completion SMS successfully sent!", flush=True)
+
+def send_notification_handleGroup_sms(number_pax, first_name,phone_number):
+    notificationapi.init("f130gmogsmq75oiffj86pj22o",
+                         "1m9bajhvi84ssqo49hd97srlg6huer14f2ii7mp1l986tjc74rgv")
+    # send sms
+    notificationapi.send({
+        "notificationId": "inform_full_group",
+        "templateId": "default",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"firstName": first_name, "numberPax": number_pax}
+    })
+    print("Notification SMS about full group successfully sent!", flush=True)
 
 
 if __name__ == '__main__':

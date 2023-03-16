@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-
 import os, sys
+from os import environ
 
 import requests
 from invokes import invoke_http
@@ -13,6 +13,7 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 CORS(app)
 
+verification_URL = environ.get('verificationURL')
 group_URL = "http://grouping:6103/grouping"
 broadcast_URL =  "http://broadcast:6102/broadcast"
 
@@ -175,6 +176,7 @@ def join_group():
                     new_no_of_pax = LF_pax + no_of_pax_joining
                     merged_group_details = {
                         "grouping_id": 1,
+                        "list_account": [4,6],
                         "description": "Complete group!",
                         "no_of_pax": new_no_of_pax,
                         "status": "Match complete!"
@@ -190,8 +192,12 @@ def join_group():
 
                     else: 
                         delete_broadcast_result = processDeleteBroadcast(1)
-                        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                     body="Your Group has been fully filled, Please Log back in!", properties=pika.BasicProperties(delivery_mode=2))
+                        for account in update_group_result["data"]["list_account"]:
+                                account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
+                                notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
+                                message = json.dumps(notification_message)
+                                amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                            body=message, properties=pika.BasicProperties(delivery_mode=2))
                         code = delete_broadcast_result["code"]
                         if code not in range (200,300):
                             return jsonify({
