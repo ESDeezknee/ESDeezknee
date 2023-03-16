@@ -31,7 +31,7 @@ class Grouping(db.Model):
         self.status = status
 
     def json(self):
-        return {"grouping_id": self.grouping_id, "no_of_pax": self.no_of_pax, "description": self.description, "status": self.status}
+        return {"grouping_id": self.grouping_id,"list_account":self.list_account, "no_of_pax": self.no_of_pax, "description": self.description, "status": self.status}
 
 with app.app_context():
     db.create_all()  
@@ -107,7 +107,7 @@ def delete_grouping(grouping_id):
                 "code": 404,
                 "data": {
                     "grouping_id": grouping_id,
-                    "message": "Group " + grouping_id + "not found."
+                    "message": "Group " + grouping_id + " not found."
                 }   
             }
         ), 404
@@ -163,7 +163,7 @@ def update_grouping(grouping_id):
             {
                 "code": 500,
                 "data": {
-                    "group_id": grouping_id,
+                    "group_id": int(grouping_id),
                     "message": "An error occurred updating the grouping."
                 },   
             }
