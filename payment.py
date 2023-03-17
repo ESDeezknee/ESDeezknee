@@ -3,66 +3,56 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
 import stripe
+import time
+import uuid
 
 stripe.api_key = "sk_test_51Mje25ExUYBuMhthy0bqpXVWnlkZCIaXAXYGZnywGjHeaXHJt10zluQUIdouAkoTDwPGhl5qgFJjStOUJODO1uyH00nseC9g53"
 
 from datetime import datetime
 
 app = Flask(__name__, static_url_path="", static_folder="paymenttest")
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/payment'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/payment'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
-# CORS(app)
+CORS(app)
 
-# class Payment(db.Model):
-#     __tablename__ = 'payment'
+class Payment(db.Model):
+    __tablename__ = 'payment'
 
-#     payment_id = db.Column(db.Integer, primary_key=True)
-#     order_id = db.Column(db.Integer, nullable=False)
-#     account_id = db.Column(db.Integer, nullable=False)
-#     paid = db.Column(db.Boolean, nullable=False)
-#     price = db.Column(db.Float, nullable=False)
-#     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    payment_id = db.Column(db.Integer, primary_key=True)
+    order_id = db.Column(db.String, nullable=False)
+    account_id = db.Column(db.Integer, nullable=False)
+    paid = db.Column(db.Boolean, nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-#     def __init__(self, payment_id, order_id, account_id, paid, price, paymentDate):
-#         self.payment_id = payment_id
-#         self.order_id = order_id
-#         self.account_id = account_id
-#         self.paid = paid
-#         self.price = price
-#         self.paymentDate = paymentDate
+    def __init__(self, payment_id, order_id, account_id, paid, price, paymentDate):
+        self.payment_id = payment_id
+        self.order_id = order_id
+        self.account_id = account_id
+        self.paid = paid
+        self.price = price
+        self.paymentDate = datetime.now()
     
-#     def json(self):
-#         return {"payment_id": self.payment_id, "order_id": self.order_id, "account_id": self.account_id, "paid": self.paid, "price": self.price, "paymentDate": self.paymentDate}
-    
-# with app.app_context():
-#     db.init_app(app)
-#     db.create_all()
-
-
-upgrade_charge = stripe.Charge.create(
-    amount = 8000,
-    currency = "SGD",
-    source = "tok_visa",
-    description = "Upgrade to Express Ticket Charge"
-)
-
-payment_intent = stripe.PaymentIntent.create(
-    amount = upgrade_charge.amount,
-    currency = upgrade_charge.currency,
-    payment_method_types = ["card"]
-)
+    def json(self):
+        return {"payment_id": self.payment_id, 
+                "order_id": self.order_id, 
+                "account_id": self.account_id, 
+                "paid": self.paid, 
+                "price": self.price, 
+                "paymentDate": self.paymentDate
+            }
 
 #Our domain url
 YOUR_DOMAIN = "http://127.0.0.1:6203"
 
+session_ids = []
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
-
         checkout_session = stripe.checkout.Session.create(
             line_items = [
                 {
@@ -71,33 +61,25 @@ def create_checkout_session():
                 }
             ],
             mode = "payment",
-            success_url = YOUR_DOMAIN + "/success.html",
+            success_url = YOUR_DOMAIN + "/retrieve-payment-data",
             cancel_url = YOUR_DOMAIN + "/cancel.html"
         )
+        session_ids.append(checkout_session.id)
     except Exception as e:
         return str(e)
-    
+
     return redirect(checkout_session.url, code=303)
 
-# Get the payment intent ID
-payment_intent_id = payment_intent.id
+# able to retrieve paid/unpaid, payment_statuses[0] is first payment
+@app.route('/retrieve-payment-data', methods=['GET'])
+def retrieve_payment_data():
+    payment_statuses = []
+    for session_id in session_ids:
+    # Retrieve the details of a session with a specific ID
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_statuses.append(session.payment_status)
 
-# Retrieve the payment intent
-payment_intent = stripe.PaymentIntent.retrieve(payment_intent_id)
-
-# Check status of payment intent
-if payment_intent.status == "succeeded":
-    print("Payment succeeded!")
-else:
-    print("Payment failed.")
-
-print(upgrade_charge)
-print(upgrade_charge.id)
-charge_status = stripe.Charge.retrieve(upgrade_charge.id)
-if charge_status == 'succeeded':
-    print('Payment Done!')
-else:
-    print('Payment not done!')
+    return payment_statuses
 
 
 # @app.get("/payment")
