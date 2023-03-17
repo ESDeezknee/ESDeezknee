@@ -19,7 +19,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verficationURL') or "http://localhost:6001/verification/"
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 
 
 class Promo(db.Model):
@@ -120,7 +120,7 @@ def create_promo():
             }
         ), 500
 
-    if account_result["code"] in range(300, 500):
+    if queue_result["code"] in range(300, 500):
         return jsonify(
             {
                 "code": 400,

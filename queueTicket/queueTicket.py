@@ -4,10 +4,11 @@ from flask_cors import CORS
 import os, sys
 from os import environ
 
+from invokes import invoke_http
 import requests
 import json
-import pika
-import amqp_setup
+# import pika
+# import amqp_setup
 
 from datetime import datetime
 
@@ -16,6 +17,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
@@ -26,30 +28,29 @@ db = SQLAlchemy(app)
 CORS(app)
 
 class QueueTicket(db.Model):
-    __tablename__ = 'queueticket'
+    __tablename__ = 'queuetickets'
 
     queue_id = db.Column(db.Integer, primary_key=True)
     is_express = db.Column(db.Boolean, default=False, nullable=False)
-    ride_times = db.Column(db.Integer, nullable=False, default=0)
     queue_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     account_id = db.Column(db.Integer, nullable = False)
-    order_id = db.Column(db.Integer, nullable = False)
+    payment_method = db.Column(db.String(64), nullable=False)
 
 
-    def __init__(self, is_express, ride_times, order_created, account_id, queue_created):
+    def __init__(self, queue_id, is_express, account_id, queue_created, payment_method):
+        self.queue_id = queue_id
         self.is_express = is_express
-        self.ride_times = ride_times
-        self.order_created = order_created
-        self.account_id = account_id
         self.queue_created = queue_created
+        self.account_id = account_id
+        self.payment_method = payment_method
 
     def json(self):
-        return {"queue_id": self.queue_id, "is_express": self.is_express, "ride_times":self.ride_times, "queue_created": self.queue_created, "account_id": self.account_id}
+        return {"queue_id": self.queue_id, "is_express": self.is_express, "account_id":self.account_id, "queue_created": self.queue_created, "payment_method": self.payment_method}
 
 with app.app_context():
   db.create_all()
 
-@app.route("/queueticket")
+@app.get("/queueticket")
 def get_all():
     queueList = QueueTicket.query.all()
     if len(queueList):
@@ -85,31 +86,67 @@ def get_by_id(queue_id):
         }
     ), 404
 
-@app.post("/queueticket")
-def create_queueTicket():
+@app.route("/queueticket", methods=['POST'])
+def create_queueticket():
     if request.json is None:
         raise Exception("No data received.")
+    
+    data = request.get_json()
+    new_queue = QueueTicket(**data)
+
+    existing_queue = QueueTicket.query.filter_by(
+        account_id=new_queue.account_id).first()
+
+    if (existing_queue):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "account_id": existing_queue.account_id
+                },
+                "message": "queueticket already exists."
+            }
+        ), 400
+
+    account_result = invoke_http(
+        verification_URL + "account/" + str(new_queue.account_id), method='GET')
+
+    if account_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong! Account"
+            }
+        ), 500
+
+    if account_result["code"] in range(300, 500):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "account_id": new_queue.account_id
+                },
+                "message": "Account does not exist."
+            }
+        ), 400
+
     try:
-        data = request.get_json()
-        new_queueticket = QueueTicket(**data)
-        db.session.add(new_queueticket)
+        db.session.add(new_queue)
         db.session.commit()
-        db.session.refresh(new_queueticket)
+
     except:
         return jsonify(
             {
                 "code": 500,
-                "data": {
-                    "queue_id": new_queueticket.queue_id
-                },
                 "message": "An error occurred creating the queueticket."
             }
         ), 500
 
+
     return jsonify(
         {
             "code": 201,
-            "data": new_queueticket.json()
+            "data": new_queue.json()
         }
     ), 201
 
@@ -141,9 +178,9 @@ def update_queue(queue_id):
     updated_queue = QueueTicket.query.get_or_404(queue_id=queue_id)
     data = request.get_json()
     updated_queue.is_express = data["is_express"]
-    updated_queue.ride_times = data["ride_times"]
     updated_queue.queue_created = data["queue_created"]
     updated_queue.account_id = data["account_id"]
+    updated_queue.payment_method = data["payment_method"]
 
     db.session.commit()
     return "Queue updated.", 200

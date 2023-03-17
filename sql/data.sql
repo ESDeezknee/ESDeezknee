@@ -49,3 +49,12 @@ INSERT INTO `promos` (`queue_id`, `account_id`, `promo_code`) VALUES
 INSERT INTO `promos` (`queue_id`, `account_id`, `promo_code`) VALUES
 (2, 2, '123456');
 
+USE `queueticket`;
+
+
+INSERT INTO `queuetickets` (`queue_id`, `is_express`, `queue_created`, `account_id`, `payment_method`) VALUES
+(1, 1, '2023-01-01 18:00:00', 1, 'Promo Code');
+INSERT INTO `queuetickets` (`queue_id`, `is_express`, `queue_created`, `account_id`, `payment_method`) VALUES
+(2, 1, '2023-01-01 18:00:00', 2, 'Stripe');
+INSERT INTO `queuetickets` (`queue_id`, `is_express`, `queue_created`, `account_id`, `payment_method`) VALUES
+(3, 1, '2023-01-01 18:00:00', 3, 'Loyalty');
