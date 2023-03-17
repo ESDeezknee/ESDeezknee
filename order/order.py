@@ -26,6 +26,7 @@ verification_URL = environ.get('verificationURL') or "http://localhost:6001/veri
 payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
+queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
 
 
 
@@ -59,7 +60,7 @@ def post_order():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-def place_order(orderRequest):
+# def place_order(orderRequest):
     
 
 

@@ -44,7 +44,8 @@ INSERT INTO `rewards` (`reward_id`, `name`, `description`, `quantity`, `exchange
 USE `promo`;
 
 
-INSERT INTO `promo` (`order_id`, `is_express`, `promo_created`, `account_id`, `promo_code`) VALUES
-(1, 0, '2023-01-01 18:00:00', 1, '123456');
-INSERT INTO `promo` (`order_id`, `is_express`, `promo_created`, `account_id`, `promo_code`) VALUES
-(2, 0, '2023-01-01 18:00:00', 2, '123457');
+INSERT INTO `promos` (`queue_id`, `account_id`, `promo_code`) VALUES
+(1, 1, '123456');
+INSERT INTO `promos` (`queue_id`, `account_id`, `promo_code`) VALUES
+(2, 2, '123456');
+

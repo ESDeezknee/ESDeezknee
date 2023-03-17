@@ -245,6 +245,7 @@ services:
       paymentURL: http://payment:6203/payment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
+      queueURL: http://queueticket:6202/queueticket/
 
   #################################
   # Promo: The PromoCode microservice
@@ -262,6 +263,26 @@ services:
       dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/promo
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
+
+  #################################
+  # queueticket: The Queue microservice
+  #################################
+  queueticket:
+    image: esdeezknee/queueticket:1.0
+    build:
+      context: .
+      dockerfile: queueticket/Dockerfile
+    networks:
+      - internal
+    ports:
+      - "6202:6202"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/queueticket
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      paymentURL: http://payment:6203/payment/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      promoURL: http://promo:6204/promo/
 
   #################################
   # Mission: The Mission microservice

@@ -23,35 +23,24 @@ verification_URL = environ.get('verficationURL') or "http://localhost:6001/verif
 
 
 class Promo(db.Model):
-    __tablename__ = 'promo'
+    __tablename__ = 'promos'
 
-    order_id = db.Column(db.Integer, primary_key=True)
-    is_express = db.Column(db.Boolean, default=False, nullable=False)
-    promo_created = db.Column(
-        db.DateTime, nullable=False, default=datetime.now)
+    queue_id = db.Column(db.Integer, primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
     promo_code = db.Column(db.String(256), nullable=False)
 
-    def __init__(self, is_express, promo_code, order_id, account_id, promo_created):
-        self.is_express = is_express
-        self.promo_code = promo_code
-        self.order_id = order_id
+    def __init__(self, queue_id, account_id, promo_code):
+        self.queue_id = queue_id
         self.account_id = account_id
-        self.promo_created = promo_created
+        self.promo_code = promo_code
+
 
     def json(self):
-        return {"order_id": self.order_id, "is_express": self.is_express, "promo_created": self.promo_created, "account_id": self.account_id, "promo_code": self.promo_code}
+        return {"queue_id": self.queue_id, "account_id": self.account_id, "promo_code": self.promo_code}
 
 
 with app.app_context():
   db.create_all()
-
-def generate_promo_code():
-    code = ''
-    for i in range(6):
-        code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 6)) + '-'
-    code += ''.join(random.sample('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', 2))
-    return code
 
 @app.get("/promo")
 def get_all():
@@ -73,9 +62,9 @@ def get_all():
     ), 404
 
 
-@app.get("/promo/<int:promo_code>")
-def get_by_id(promo_code):
-    promo = Promo.query.filter_by(promo_code=promo_code).first()
+@app.get("/promo/<int:account_id>")
+def get_by_id(account_id):
+    promo = Promo.query.filter_by(account_id=account_id).first()
     if promo:
         return jsonify(
             {
@@ -99,14 +88,13 @@ def create_promo():
     data = request.get_json()
     new_promo = Promo(**data)
     account_result = invoke_http(
-        verification_URL + "promo/" + str(new_promo.account_id), method='GET')
-    print(account_result)
+        verification_URL + "account/" + str(new_promo.account_id), method='GET')
 
     if account_result["code"] in range(500, 600):
         return jsonify(
             {
                 "code": 500,
-                "message": "Oops, something went wrong!"
+                "message": "Oops, something went wrong! Account"
             }
         ), 500
 
@@ -120,9 +108,30 @@ def create_promo():
                 "message": "Account does not exist."
             }
         ), 400
-
-    new_promo.promo_code = generate_promo_code()
     
+    queue_result = invoke_http(
+        verification_URL + "queueticket/" + str(new_promo.queue_id), method='GET')
+
+    if queue_result["code"] in range(500, 600):
+        return jsonify(
+            {
+                "code": 500,
+                "message": "Oops, something went wrong! Queue"
+            }
+        ), 500
+
+    if account_result["code"] in range(300, 500):
+        return jsonify(
+            {
+                "code": 400,
+                "data": {
+                    "queue_id": new_promo.queue_id
+                },
+                "message": "queueticket does not exist."
+            }
+        ), 400
+
+
     try:
         db.session.add(new_promo)
         db.session.commit()
@@ -135,14 +144,6 @@ def create_promo():
             }
         ), 500
 
-    # notification_message = {"type": "redeem", "reward_name": reward_result["data"]["name"], "first_name": account_result["data"]
-    #                         ["first_name"], "phone_number": account_result["data"]["phone"], "redemption_code": redemption.redemption_code}
-
-    # message = json.dumps(notification_message)
-
-    # amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-    #                                  body=message, properties=pika.BasicProperties(delivery_mode=2))
-
 
     return jsonify(
         {
@@ -152,9 +153,9 @@ def create_promo():
     ), 201
 
 
-@app.delete("/promo/<int:promo_code>")
-def delete_promo(promo_code):
-    promo = Promo.query.filter_by(promo_code=promo_code).first()
+@app.delete("/promo/<int:account_id>")
+def delete_promo(account_id):
+    promo = Promo.query.filter_by(account_id=account_id).first()
     if promo:
         db.session.delete(promo)
         db.session.commit()
@@ -173,16 +174,14 @@ def delete_promo(promo_code):
         }
     ), 404
 
-@app.put("/promo/<int:promo_code>")
-def update_promo(promo_code):
+@app.put("/promo/<int:account_id>")
+def update_promo(account_id):
     if request.json() is None:
         raise Exception("No data received.")
-    updated_promo = Promo.query.get_or_404(promo_code=promo_code)
+    updated_promo = Promo.query.get_or_404(account_id=account_id)
     data = request.get_json()
-
-    updated_promo.promo_code = generate_promo_code()
     updated_promo.account_id = data["account_id"]
-
+    updated_promo.queue_id = data["queue_id"]
     db.session.commit()
     return "Promo updated.", 200
 
