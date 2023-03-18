@@ -116,7 +116,6 @@ def create_promo():
             {
                 "code": 500,
                 "message": "Oops, something went wrong! Queue",
-                "asdf": queue_result
             }
         ), 500
 

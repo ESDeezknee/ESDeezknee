@@ -32,20 +32,18 @@ class QueueTicket(db.Model):
 
     queue_id = db.Column(db.Integer, primary_key=True, nullable=False)
     is_express = db.Column(db.Boolean, default=False, nullable=False)
-    queue_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     account_id = db.Column(db.Integer, nullable = False)
     payment_method = db.Column(db.String(256), nullable=False)
 
 
-    def __init__(self, queue_id, is_express, account_id, queue_created, payment_method):
+    def __init__(self, queue_id, is_express, account_id, payment_method):
         self.queue_id = queue_id
         self.is_express = is_express
-        self.queue_created = queue_created
         self.account_id = account_id
         self.payment_method = payment_method
 
     def json(self):
-        return {"queue_id": self.queue_id, "is_express": self.is_express, "account_id":self.account_id, "queue_created": self.queue_created, "payment_method": self.payment_method}
+        return {"queue_id": self.queue_id, "is_express": self.is_express, "account_id":self.account_id, "payment_method": self.payment_method}
 
 with app.app_context():
   db.create_all()
@@ -138,7 +136,8 @@ def create_queueticket():
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the queueticket."
+                "message": "An error occurred creating the queueticket.",
+                "asdf": new_queue
             }
         ), 500
 
@@ -178,7 +177,6 @@ def update_queue(queue_id):
     updated_queue = QueueTicket.query.get_or_404(queue_id=queue_id)
     data = request.get_json()
     updated_queue.is_express = data["is_express"]
-    updated_queue.queue_created = data["queue_created"]
     updated_queue.account_id = data["account_id"]
     updated_queue.payment_method = data["payment_method"]
 
