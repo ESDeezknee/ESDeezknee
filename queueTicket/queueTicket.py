@@ -30,11 +30,11 @@ CORS(app)
 class QueueTicket(db.Model):
     __tablename__ = 'queuetickets'
 
-    queue_id = db.Column(db.Integer, primary_key=True)
+    queue_id = db.Column(db.Integer, primary_key=True, nullable=False)
     is_express = db.Column(db.Boolean, default=False, nullable=False)
     queue_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     account_id = db.Column(db.Integer, nullable = False)
-    payment_method = db.Column(db.String(64), nullable=False)
+    payment_method = db.Column(db.String(256), nullable=False)
 
 
     def __init__(self, queue_id, is_express, account_id, queue_created, payment_method):

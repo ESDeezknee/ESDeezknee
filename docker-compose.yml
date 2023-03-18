@@ -149,6 +149,7 @@ services:
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
       promoURL: http://promo:6204/promo/
+      queueURL: http://promo:6202/queueticket/
 
   #################################
   # Notification: The Notification microservice

@@ -40,7 +40,7 @@ def verify_reward(reward_id):
         reward_URL + str(reward_id), method='GET')
 
 @app.route("/verification/queueticket/<queue_id>")
-def verify_promo(queue_id):
+def verify_queue(queue_id):
     return invoke_http(
         queue_URL + str(queue_id), method='GET')
 

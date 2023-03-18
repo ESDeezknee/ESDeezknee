@@ -24,19 +24,18 @@ verification_URL = environ.get('verificationURL') or "http://localhost:6001/veri
 
 class Promo(db.Model):
     __tablename__ = 'promos'
-
-    queue_id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, nullable=False)
+    account_id = db.Column(db.Integer, primary_key=True, nullable=False)
+    queue_id = db.Column(db.Integer, nullable=False)
     promo_code = db.Column(db.String(256), nullable=False)
 
-    def __init__(self, queue_id, account_id, promo_code):
-        self.queue_id = queue_id
+    def __init__(self, account_id, queue_id, promo_code):
         self.account_id = account_id
+        self.queue_id = queue_id
         self.promo_code = promo_code
 
 
     def json(self):
-        return {"queue_id": self.queue_id, "account_id": self.account_id, "promo_code": self.promo_code}
+        return {"account_id": self.account_id, "queue_id": self.queue_id, "promo_code": self.promo_code}
 
 
 with app.app_context():
@@ -94,7 +93,7 @@ def create_promo():
         return jsonify(
             {
                 "code": 500,
-                "message": "Oops, something went wrong! Account"
+                "message": "Oops, something went wrong! Account",
             }
         ), 500
 
@@ -116,7 +115,8 @@ def create_promo():
         return jsonify(
             {
                 "code": 500,
-                "message": "Oops, something went wrong! Queue"
+                "message": "Oops, something went wrong! Queue",
+                "asdf": queue_result
             }
         ), 500
 
