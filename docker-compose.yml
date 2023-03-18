@@ -34,7 +34,7 @@ services:
   #######################################
   kong-database:
     image: postgres:9.6
-    platform: linux/arm64/v8
+    platform: linux/amd64
     restart: always
     networks:
       - kong-net
@@ -149,6 +149,7 @@ services:
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
       promoURL: http://promo:6204/promo/
+      queueURL: http://queueticket:6202/queueticket/
 
   #################################
   # Notification: The Notification microservice
@@ -399,3 +400,21 @@ services:
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
       RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Stripe: The External Payment Microservice
+  #################################
+  payment:
+    image: esdeezknee/payment:1.0
+    build:
+      context: .
+      dockerfile: payment/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6203:6203"
+    environment:
+      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/payment
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
