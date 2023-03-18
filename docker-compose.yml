@@ -34,7 +34,7 @@ services:
   #######################################
   kong-database:
     image: postgres:9.6
-    platform: linux/arm64/v8
+    platform: linux/amd64
     restart: always
     networks:
       - kong-net

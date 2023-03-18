@@ -1,11 +1,10 @@
 from flask import Flask, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from sqlalchemy.orm import relationship
 from os import environ
 import stripe
 
-stripe.api_key = "sk_test_51Mje25ExUYBuMhthy0bqpXVWnlkZCIaXAXYGZnywGjHeaXHJt10zluQUIdouAkoTDwPGhl5qgFJjStOUJODO1uyH00nseC9g53"
+stripe.api_key = environ['STRIPE_API_KEY']
 
 from datetime import datetime
 
@@ -23,9 +22,9 @@ verification_URL = environ.get('verificationURL') or "http://localhost:6001/veri
 class Payment(db.Model):
     __tablename__ = 'payment'
 
-    payment_id = db.Column(db.string(265), primary_key=True)
+    payment_id = db.Column(db.String(265), primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.string(265), nullable=False)
+    status = db.Column(db.String(265), nullable=False)
     price = db.Column(db.Float, nullable=False)
     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
