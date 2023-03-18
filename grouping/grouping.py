@@ -25,7 +25,7 @@ class Grouping(db.Model):
     list_account = db.Column(db.JSON)
     no_of_pax = db.Column(db.Integer)
     description = db.Column(db.String(256), nullable=False, default="grouping has been created. Members have not been added")
-    status = db.Column(db.String(256), nullable=False, default="Started")
+    status = db.Column(db.String(256), nullable=False, default="Started") ## started, in progress, complete
 
     def __init__(self,list_account, no_of_pax, description, status):
         self.list_account = list_account

@@ -33,9 +33,10 @@ USE `grouping`;
 DROP TABLE IF EXISTS `grouping`;
 CREATE TABLE IF NOT EXISTS `grouping` (
     `grouping_id` int(11) NOT NULL AUTO_INCREMENT,
+    `list_account` JSON NOT NULL,
     `no_of_pax` int(2) NOT NULL,
     `description` varchar(256) NOT NULL,
-    `status` boolean NOT NULL,
+    `status` varchar(256) NOT NULL,
     PRIMARY KEY (`grouping_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 

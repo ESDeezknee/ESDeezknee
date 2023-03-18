@@ -45,20 +45,6 @@ def create_group():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
-def processCreateGroup(group):
-    createGroup_result = invoke_http(group_URL, method='POST', json=group)
-
-    code = createGroup_result["code"]
-    if code not in range(200,300):
-        return {
-            "code": 500,
-            "data": {"createGroup_result": createGroup_result},
-            "message": "New group creation failed."
-        }
-
-    else: 
-        return createGroup_result
-
     
 ## incl if statement for when users click on "broadcast group" after group creation
 @app.route("/handleGroup/broadcast", methods=["POST"])
@@ -86,22 +72,6 @@ def broadcast():
         "code": 400,
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
-
-## need to figure out how to link to frontend to get group_id 
-def processCreateBroadcast(broadcast_info):
-    url = broadcast_URL + "/1"
-    createBroadcast_result = invoke_http(url, method='POST', json=broadcast_info)
-
-    code = createBroadcast_result["code"]
-    if code not in range(200,300):
-        return {
-            "code": 500,
-            "data": {"createBroadcast_result": createBroadcast_result},
-            "message": "Broadcast failed."
-        }
-    
-    else:
-        return createBroadcast_result
 
 
 ## if a group chooses to join another group on broadcast listing
@@ -157,9 +127,7 @@ def join_group():
             ## compute new LF_pax
             new_LF_pax = LF_pax - no_of_pax_joining
 
-            # return {"no_of_pax": no_of_pax_joining, "lf_pax": LF_pax, "new_lf_pax": new_LF_pax}
-
-            ## joining group with insufficient space
+            ## case 1: joining group with insufficient space
             if new_LF_pax < 0:
                 return jsonify(
                     {
@@ -171,108 +139,182 @@ def join_group():
                     }
                 ), 500
             
-            ## perfect match
+            ## case 2: perfect match
             elif new_LF_pax == 0:
                     new_no_of_pax = LF_pax + no_of_pax_joining
-                    merged_group_details = {
-                        "grouping_id": 1,
-                        "list_account": [4,6],
-                        "description": "Complete group!",
-                        "no_of_pax": new_no_of_pax,
-                        "status": "Match complete!"
-                    }
-                    update_group_result = processUpdateGrouping(merged_group_details)
-                    code = update_group_result["code"]
+                    ## get account_id of broadcasted group
+                    grouping_details_result = getGroupingDetails(1)
+                    code = grouping_details_result["code"]
                     if code not in range(200,300):
                         return jsonify({
                             "code": 500,
-                            "data": {"joinGroup_result": update_group_result},
-                            "message": "Failed to join group as group update failed."
+                            "data": {"joinGroup_result": grouping_details_result},
+                            "message": "Failed to join group as collection of broadcasted group details failed."
                     })
 
                     else: 
-                        delete_broadcast_result = processDeleteBroadcast(1)
-                        for account in update_group_result["data"]["list_account"]:
-                                account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
-                                notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
-                                message = json.dumps(notification_message)
-                                amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                            body=message, properties=pika.BasicProperties(delivery_mode=2))
-                        code = delete_broadcast_result["code"]
-                        if code not in range (200,300):
+                        account_list = grouping_details_result["data"]["list_account"]
+                        ## need to get acct id of joining group from frontend
+                        account_list.append(6)
+
+                        merged_group_details = {
+                            "grouping_id": 1,
+                            "list_account": account_list,
+                            "description": "Complete group!",
+                            "no_of_pax": new_no_of_pax,
+                            "status": "Complete"
+                        }
+                        update_group_result = processUpdateGrouping(merged_group_details)
+                        code = update_group_result["code"]
+                        if code not in range(200,300):
                             return jsonify({
                                 "code": 500,
-                                "data": {"joinGroup_result": delete_broadcast_result},
-                                "message": "Failed to join group as group deletion failed."
-                            })
-                        
+                                "data": {"joinGroup_result": update_group_result},
+                                "message": "Failed to join group as group update failed."
+                        })
+
                         else: 
-                            ## get group number from frontend
-                            delete_joining_group_result = processDeleteGroup(2)
-                            code = delete_joining_group_result["code"]
+                            delete_broadcast_result = processDeleteBroadcast(1)
+                            for account in update_group_result["data"]["list_account"]:
+                                    account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
+                                    notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
+                                    message = json.dumps(notification_message)
+                                    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                                body=message, properties=pika.BasicProperties(delivery_mode=2))
+                            code = delete_broadcast_result["code"]
                             if code not in range (200,300):
                                 return jsonify({
                                     "code": 500,
-                                    "data": {"joinGroup_result": delete_joining_group_result},
+                                    "data": {"joinGroup_result": delete_broadcast_result},
                                     "message": "Failed to join group as group deletion failed."
                                 })
-                            else:
-                            ## get group number from frontend
-                                return jsonify(
-                                    {
-                                        "code": 200,
-                                        "message": "Join group success! You are now part of Group 1"
-                                    }
-                                ), 200
+                            
+                            else: 
+                                ## get group number from frontend
+                                delete_joining_group_result = processDeleteGroup(2)
+                                code = delete_joining_group_result["code"]
+                                if code not in range (200,300):
+                                    return jsonify({
+                                        "code": 500,
+                                        "data": {"joinGroup_result": delete_joining_group_result},
+                                        "message": "Failed to join group as group deletion failed."
+                                    })
+                                else:
+                                ## get group number from frontend
+                                    grouping_id = str(1)
+                                    return jsonify(
+                                        {
+                                            "code": 200,
+                                            "message": "Join group success! You are now part of Group " + grouping_id
+                                        }
+                                    ), 200
             
-            ## still need more people 
+            ## case 3: still need more people 
             elif new_LF_pax > 0:
                 new_no_of_pax = LF_pax + no_of_pax_joining
-                new_grouping_info = {
-                    "grouping_id": 1,
-                    "no_of_pax": new_no_of_pax,
-                    "description": "looking for more members",
-                    "status": "looking for more members",
-                }
-                updateGrouping_result = processUpdateGrouping(new_grouping_info)
-                code = updateGrouping_result["code"]
+                ## get account_id of broadcasted group, get grouping_id frm frontend
+                grouping_details_result = getGroupingDetails(1)
+                code = grouping_details_result["code"]
                 if code not in range(200,300):
                     return jsonify({
                         "code": 500,
-                        "data": {"updateGrouping_result": updateGrouping_result},
-                        "message": "Failed to join group as group update failed."
-                    }), 500
-                
-                new_broadcast_info = {
-                    "grouping_id": 1,
-                    "lf_pax": new_LF_pax,
-                }
-                updateBroadcast_result = processUpdateBroadcast(new_broadcast_info)
-                code = updateBroadcast_result["code"]
-                if code not in range(200,300):
-                        return jsonify({
-                            "code": 500,
-                            "data": {"updateBroadcast_result": updateBroadcast_result},
-                            "message": "Failed to join group as broadcast update failed."
-                    }), 500
+                        "data": {"joinGroup_result": grouping_details_result},
+                        "message": "Failed to join group as collection of broadcasted group details failed."
+                })
+
                 else: 
-                    delete_joining_group_result = processDeleteGroup(2)
-                    code = delete_joining_group_result["code"]
-                    if code not in range (200,300):
+                    account_list = grouping_details_result["data"]["list_account"]
+                    ## need to get acct id of joining group from frontend
+                    account_list.append(6)
+                    new_grouping_info = {
+                        "grouping_id": 1,
+                        "list_account": account_list,
+                        "no_of_pax": new_no_of_pax,
+                        "description": "looking for more members",
+                        "status": "In Progress",
+                    }
+                    updateGrouping_result = processUpdateGrouping(new_grouping_info)
+                    code = updateGrouping_result["code"]
+                    if code not in range(200,300):
                         return jsonify({
                             "code": 500,
-                            "data": {"joinGroup_result": delete_joining_group_result},
-                            "message": "Failed to join group as group deletion failed."
-                        })
+                            "data": {"updateGrouping_result": updateGrouping_result},
+                            "message": "Failed to join group as group update failed."
+                        }), 500
+                    
+                    new_broadcast_info = {
+                        "grouping_id": 1,
+                        "lf_pax": new_LF_pax,
+                    }
+                    updateBroadcast_result = processUpdateBroadcast(new_broadcast_info)
+                    code = updateBroadcast_result["code"]
+                    if code not in range(200,300):
+                            return jsonify({
+                                "code": 500,
+                                "data": {"updateBroadcast_result": updateBroadcast_result},
+                                "message": "Failed to join group as broadcast update failed."
+                        }), 500
                     else: 
-                        return jsonify(
-                            {
-                                "code": 200,
-                                "message": "Join group success! You are now part of group 1. We are in the midst of completing your group."
-                            }
-                        ), 200
-                
-                
+                        delete_joining_group_result = processDeleteGroup(2)
+                        code = delete_joining_group_result["code"]
+                        if code not in range (200,300):
+                            return jsonify({
+                                "code": 500,
+                                "data": {"joinGroup_result": delete_joining_group_result},
+                                "message": "Failed to join group as group deletion failed."
+                            })
+                        else: 
+                            new_LF_pax = str(new_LF_pax)
+                            return jsonify(
+                                {
+                                    "code": 200,
+                                    "message": "Join group success! You are now part of group 1. We are in the midst of finding " + new_LF_pax + " more people to complete your group."
+                                }
+                            ), 200
+                    
+def processCreateGroup(group):
+    createGroup_result = invoke_http(group_URL, method='POST', json=group)
+
+    code = createGroup_result["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"createGroup_result": createGroup_result},
+            "message": "New group creation failed."
+        }
+
+    else: 
+        return createGroup_result        
+
+## need to figure out how to link to frontend to get group_id 
+def processCreateBroadcast(broadcast_info):
+    url = broadcast_URL + "/1"
+    createBroadcast_result = invoke_http(url, method='POST', json=broadcast_info)
+
+    code = createBroadcast_result["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"createBroadcast_result": createBroadcast_result},
+            "message": "Broadcast failed."
+        }
+    
+    else:
+        return createBroadcast_result        
+    
+def getGroupingDetails(grouping_id):
+    url = group_URL + "/1"
+    groupingDetails_result = invoke_http(url, method="GET", json=grouping_id)
+    code = groupingDetails_result["code"]
+    if code not in range(200,300):
+        return {
+            "code": 500,
+            "data": {"groupingDetails_result": groupingDetails_result},
+            "message": "Failure to join group as broadcast update failed."
+        }
+    
+    else:
+        return groupingDetails_result
 
 def processUpdateBroadcast(info):
     url = broadcast_URL + "/1"
