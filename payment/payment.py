@@ -2,16 +2,15 @@ from flask import Flask, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
+from os import environ
 import stripe
-import time
-import uuid
 
 stripe.api_key = "sk_test_51Mje25ExUYBuMhthy0bqpXVWnlkZCIaXAXYGZnywGjHeaXHJt10zluQUIdouAkoTDwPGhl5qgFJjStOUJODO1uyH00nseC9g53"
 
 from datetime import datetime
 
 app = Flask(__name__, static_url_path="", static_folder="paymenttest")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/payment'
+app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
@@ -19,13 +18,14 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-class Payment(db.Model):
-    __tablename__ = 'payments'
+verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 
-    payment_id = db.Column(db.Integer, primary_key=True)
-    order_id = db.Column(db.String, nullable=False)
+class Payment(db.Model):
+    __tablename__ = 'payment'
+
+    payment_id = db.Column(db.string(265), primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String, nullable=False)
+    status = db.Column(db.string(265), nullable=False)
     price = db.Column(db.Float, nullable=False)
     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
@@ -43,6 +43,9 @@ class Payment(db.Model):
                 "price": self.price, 
                 "paymentDate": self.paymentDate
             }
+
+with app.app_context():
+    db.create_all()
 
 #Our domain url
 YOUR_DOMAIN = "http://127.0.0.1:6203"
@@ -138,9 +141,6 @@ def create_order():
         return jsonify(
             {
                 "code": 500,
-                "data": {
-                    "order_id": new_payment.payment_id
-                },
                 "message": "An error occurred creating the payment."
             }
         ), 500
@@ -172,8 +172,6 @@ def delete_payment(payment_id):
             "message": "Order not found."
         }
     ), 404
-
-
 
 
 if __name__ == '__main__':
