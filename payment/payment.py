@@ -22,9 +22,9 @@ verification_URL = environ.get('verificationURL') or "http://localhost:6001/veri
 class Payment(db.Model):
     __tablename__ = 'payment'
 
-    payment_id = db.Column(db.String(265), primary_key=True)
+    payment_id = db.Column(db.String(128), primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(265), nullable=False)
+    status = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
