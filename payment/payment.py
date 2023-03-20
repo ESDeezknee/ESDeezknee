@@ -2,11 +2,13 @@ from flask import Flask, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
+
+from datetime import datetime
+from invokes import invoke_http
+
 import stripe
 
 stripe.api_key = environ.get('STRIPE_API_KEY')
-
-from datetime import datetime
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
@@ -17,7 +19,7 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+account_URL = environ.get('accountURL') or "http://localhost:6000/account/"
 
 class Payment(db.Model):
     __tablename__ = 'payment'
@@ -48,6 +50,8 @@ with app.app_context():
 
 session_id = ""
 
+current_user = invoke_http(account_URL, method='GET')
+
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     global session_id
@@ -76,12 +80,13 @@ def create_checkout_session():
 def retrieve_payment_data():
 
     global session_id
+    global current_user
 
     session = stripe.checkout.Session.retrieve(session_id)
     payment_status = session.payment_status
 
     if payment_status == 'paid':
-        payment = Payment(payment_id=session_id, account_id="", status=payment_status, price=8, paymentDate=datetime.now())
+        payment = Payment(payment_id=session_id, account_id=current_user, status=payment_status, price=8, paymentDate=datetime.now())
         db.session.add(payment)
         db.session.commit()
 
