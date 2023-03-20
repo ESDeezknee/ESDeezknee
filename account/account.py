@@ -15,7 +15,6 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-
 class Account(db.Model):
     __tablename__ = 'accounts'
 
@@ -31,10 +30,11 @@ class Account(db.Model):
     is_active = db.Column(db.Boolean, default=False, nullable=False)
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    def __init__(self, first_name, last_name, date_of_birth, gender, email, phone, is_express, is_active):
+    def __init__(self, first_name, last_name, date_of_birth, age, gender, email, phone, is_express, is_active):
         self.first_name = first_name
         self.last_name = last_name
         self.date_of_birth = date_of_birth
+        self.age = age
         self.gender = gender
         self.email = email
         self.phone = phone
@@ -45,8 +45,25 @@ class Account(db.Model):
         return {"account_id": self.account_id, "first_name": self.first_name, "last_name": self.last_name, "date_of_birth": self.date_of_birth, "age": self.age, "gender": self.gender, "email": self.email, "phone": self.phone, "is_express": self.is_express, "is_active": self.is_active, "created": self.created}
 
 
+
 with app.app_context():
     db.create_all()
+    existing_account_1 = db.session.query(Account).filter(Account.account_id==1).first()
+    if not existing_account_1:
+      new_account_1 = Account(first_name="Benji", last_name="Ng", date_of_birth="2000-01-01", age=23, gender="M", email="kangting.ng.2021@scis.smu.edu.sg", phone="+6597861048", is_express=0, is_active=1)
+      new_account_2 = Account(first_name="Wei Lun", last_name="Teo", date_of_birth="2002-01-01", age=21, gender="F", email="weilun.teo.2021@scis.smu.edu.sg", phone="+6585339293", is_express=1, is_active=1)
+      new_account_3 = Account(first_name="Zachary", last_name="Lian", date_of_birth="2000-01-01", age=23, gender="M", email="zacharylian.2021@scis.smu.edu.sg", phone="+6592977881", is_express=1, is_active=1)
+      new_account_4 = Account(first_name="Joel", last_name="Tan", date_of_birth="2000-01-01", age=23, gender="M", email="joel.tan.2021@scis.smu.edu.sg", phone="+6590605085", is_express=0, is_active=1)
+      new_account_5 = Account(first_name="Keith", last_name="Law", date_of_birth="2000-01-01", age=23, gender="M", email="keith.law.2021@scis.smu.edu.sg", phone="+6594761445", is_express=0, is_active=1)
+      new_account_6 = Account(first_name="Vanessa", last_name="Lee", date_of_birth="2002-01-01", age=21, gender="F", email="vanessa.lee.2021@scis.smu.edu.sg", phone="+6597634941", is_express=0, is_active=1)
+      db.session.add(new_account_1)
+      db.session.add(new_account_2)
+      db.session.add(new_account_3)
+      db.session.add(new_account_4)
+      db.session.add(new_account_5)
+      db.session.add(new_account_6)
+      db.session.commit()
+
 
 
 @app.route("/account")

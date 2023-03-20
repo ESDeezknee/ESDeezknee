@@ -40,6 +40,22 @@ class Loyalty(db.Model):
 
 with app.app_context():
     db.create_all()
+    existing_loyalty_1 = db.session.query(Loyalty).filter(Loyalty.account_id==1).first()
+    if not existing_loyalty_1:
+      new_loyalty_1 = Loyalty(account_id=1, available_points=1000, redeemed_points=0, total_points=1000)
+      new_loyalty_2 = Loyalty(account_id=2, available_points=500, redeemed_points=0, total_points=500)
+      new_loyalty_3 = Loyalty(account_id=3, available_points=100, redeemed_points=0, total_points=100)
+      new_loyalty_4 = Loyalty(account_id=4, available_points=1500, redeemed_points=0, total_points=1500)
+      new_loyalty_5 = Loyalty(account_id=5, available_points=1000, redeemed_points=0, total_points=1000)
+      new_loyalty_6 = Loyalty(account_id=6, available_points=0, redeemed_points=0, total_points=0)
+      db.session.add(new_loyalty_1)
+      db.session.add(new_loyalty_2)
+      db.session.add(new_loyalty_3)
+      db.session.add(new_loyalty_4)
+      db.session.add(new_loyalty_5)
+      db.session.add(new_loyalty_6)
+      db.session.commit()
+
 
 
 @app.route("/loyalty")
