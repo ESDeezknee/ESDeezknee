@@ -346,26 +346,11 @@ services:
   #################################
   # Reward: The Reward microservice
   #################################
-  reward-flask:
-    image: esdeezknee/reward-flask:1.0
-    build:
-      context: .
-      dockerfile: reward-flask/Dockerfile
-    restart: always
-    networks:
-      - internal
-    ports:
-      - "3000:3000"
-    environment:
-      dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/reward
-
-  #################################
-  # Reward: The Reward microservice
-  #################################
   reward:
     image: esdeezknee/reward:1.0
     build:
       context: .
+
       dockerfile: reward/Dockerfile
     restart: always
     networks:

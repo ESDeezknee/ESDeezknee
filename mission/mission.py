@@ -46,13 +46,13 @@ with app.app_context():
     db.create_all()
     existing_mission_1 = db.session.query(Mission).filter(Mission.mission_id==1).first()
     if not existing_mission_1:
-      new_mission_1 = Mission(name="Are you afraid of the mummy?", description="Ride Revenge of the Mummy 5 times to gain 500 points!", difficulty="Medium", duration=5.0, award_points=500, is_active=1)
-      new_mission_2 = Mission(name="Get wet at Jurassic Park Rapids Adventure!", description="Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!", difficulty="Easy", duration=5.0, award_points=1000, is_active=1)
-      new_mission_3 = Mission(name="Go on an adventure with Puss in Boots!", description="Ride Puss in Boots Journey 3 times to gain 100 points!", difficulty="Easy", duration=2.0, award_points=100, is_active=1)
-      db.session.add(new_mission_1)
-      db.session.add(new_mission_2)
-      db.session.add(new_mission_3)
-      db.session.commit()
+        new_mission_1 = Mission(name="Are you afraid of the mummy?", description="Ride Revenge of the Mummy 5 times to gain 500 points!", difficulty="Medium", duration=5.0, award_points=500, is_active=1)
+        new_mission_2 = Mission(name="Get wet at Jurassic Park Rapids Adventure!", description="Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!", difficulty="Easy", duration=5.0, award_points=1000, is_active=1)
+        new_mission_3 = Mission(name="Go on an adventure with Puss in Boots!", description="Ride Puss in Boots Journey 3 times to gain 100 points!", difficulty="Easy", duration=2.0, award_points=100, is_active=1)
+        db.session.add(new_mission_1)
+        db.session.add(new_mission_2)
+        db.session.add(new_mission_3)
+        db.session.commit()
 
 
 
