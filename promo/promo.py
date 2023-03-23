@@ -40,6 +40,13 @@ class Promo(db.Model):
 
 with app.app_context():
   db.create_all()
+  existing_promo_1 = db.session.query(Promo).filter(Promo.queue_id==1).first()
+  if not existing_promo_1:
+      new_promo_1 = Promo(queue_id=1, account_id=1, promo_code="123456")
+      new_promo_2 = Promo(queue_id=2, account_id=2, promo_code="123456")
+      db.session.add(new_promo_1)
+      db.session.add(new_promo_2)
+      db.session.commit()
 
 @app.get("/promo")
 def get_all():
