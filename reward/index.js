@@ -20,7 +20,7 @@ const sequelize = new Sequelize(
 );
 
 const Reward = sequelize.define(
-  "Reward",
+  "reward",
   {
     reward_id: {
       type: DataTypes.INTEGER,
@@ -73,44 +73,53 @@ const Reward = sequelize.define(
   try {
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
-    console.log("Connection has been established successfully.");
 
-    const rewards = [
-      {
-        name: "Singapore Flyer Admission Ticket",
-        description:
-          "Exchange 200 points to redeem a pair of Singapore Flyer Admission Tickets!",
-        quantity: 2,
-        exchange_points: 200,
-        image_url:
-          "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1273,h_849/activities/wfkpyhhihrjdztfshifx/SingaporeFlyerTicket.webp",
-        is_active: 1,
-      },
-      {
-        name: "Gardens By The Bay Admission Ticket",
-        description:
-          "Exchange 1000 points to redeem a pair of Gardens By The Bay Admission Tickets!",
-        quantity: 2,
-        exchange_points: 1000,
-        image_url:
-          "https://www.gardensbythebay.com.sg/content/dam/gbb-2021/image/things-to-do/attractions/flower-dome/gallery/flower-dome-05.jpg",
-        is_active: 1,
-      },
-    ];
+    const tableExists = await sequelize
+      .getQueryInterface()
+      .showAllTables()
+      .then((result) => result.includes("rewards"));
 
-    // Check if the data has already been seeded
     const seededRewards = await Reward.findAll();
     if (seededRewards.length === 0) {
       // Seed the data if the table is empty
-      await User.bulkCreate(rewards);
+      await seedData();
       console.log("Seeded data successfully");
     } else {
       console.log("Data has already been seeded");
     }
+
+    console.log("Connection has been established successfully.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
 })();
+
+async function seedData() {
+  const rewards = [
+    {
+      name: "Singapore Flyer Admission Ticket",
+      description:
+        "Exchange 200 points to redeem a pair of Singapore Flyer Admission Tickets!",
+      quantity: 2,
+      exchange_points: 200,
+      image_url:
+        "https://res.klook.com/images/fl_lossy.progressive,q_65/c_fill,w_1273,h_849/activities/wfkpyhhihrjdztfshifx/SingaporeFlyerTicket.webp",
+      is_active: 1,
+    },
+    {
+      name: "Gardens By The Bay Admission Ticket",
+      description:
+        "Exchange 1000 points to redeem a pair of Gardens By The Bay Admission Tickets!",
+      quantity: 2,
+      exchange_points: 1000,
+      image_url:
+        "https://www.gardensbythebay.com.sg/content/dam/gbb-2021/image/things-to-do/attractions/flower-dome/gallery/flower-dome-05.jpg",
+      is_active: 1,
+    },
+  ];
+
+  await Reward.bulkCreate(rewards);
+}
 
 // Get all rewards
 app.get("/reward", async (req, res) => {
