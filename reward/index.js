@@ -69,31 +69,6 @@ const Reward = sequelize.define(
   }
 );
 
-(async () => {
-  try {
-    await sequelize.authenticate();
-    await sequelize.sync({ force: false });
-
-    const tableExists = await sequelize
-      .getQueryInterface()
-      .showAllTables()
-      .then((result) => result.includes("rewards"));
-
-    const seededRewards = await Reward.findAll();
-    if (seededRewards.length === 0) {
-      // Seed the data if the table is empty
-      await seedData();
-      console.log("Seeded data successfully");
-    } else {
-      console.log("Data has already been seeded");
-    }
-
-    console.log("Connection has been established successfully.");
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
-})();
-
 async function seedData() {
   const rewards = [
     {
@@ -120,6 +95,31 @@ async function seedData() {
 
   await Reward.bulkCreate(rewards);
 }
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync({ force: false });
+
+    const tableExists = await sequelize
+      .getQueryInterface()
+      .showAllTables()
+      .then((result) => result.includes("rewards"));
+
+    const seededRewards = await Reward.findAll();
+    if (seededRewards.length === 0) {
+      // Seed the data if the table is empty
+      await seedData();
+      console.log("Seeded data successfully");
+    } else {
+      console.log("Data has already been seeded");
+    }
+
+    console.log("Connection has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+})();
 
 // Get all rewards
 app.get("/reward", async (req, res) => {
