@@ -14,10 +14,12 @@ services:
   #################################
   # Database: MySQL
   #################################
-  database:
+  mysql-database:
     image: mysql:5.7
     platform: linux/amd64
     restart: always
+    networks:
+      - internal
     command: --init-file /data/application/init.sql
     volumes:
       - ./init.sql:/data/application/init.sql
@@ -26,6 +28,7 @@ services:
       MYSQL_DATABASE: root
       MYSQL_USER: is213
       MYSQL_PASSWORD: password
+
     ports:
       - 3306:3306
 
@@ -35,7 +38,7 @@ services:
   phpmyadmin:
     image: phpmyadmin:5.2.0
     depends_on:
-      - database
+      - mysql-database
     restart: always
     ports:
       - 5013:80
@@ -169,7 +172,7 @@ services:
       context: .
       dockerfile: verification/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -193,7 +196,7 @@ services:
       context: .
       dockerfile: notification/Dockerfile
     depends_on:
-      - database
+      - mysql-database
       - rabbitmq
     restart: always
     networks:
@@ -214,7 +217,7 @@ services:
       context: .
       dockerfile: grouping/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -233,7 +236,7 @@ services:
       context: .
       dockerfile: handleGroup/Dockerfile
     depends_on:
-      - database
+      - mysql-database
       - rabbitmq
     restart: always
     networks:
@@ -256,7 +259,7 @@ services:
       context: .
       dockerfile: broadcast/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -277,7 +280,7 @@ services:
       context: .
       dockerfile: order/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -301,7 +304,7 @@ services:
       context: .
       dockerfile: promo/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -321,7 +324,7 @@ services:
       context: .
       dockerfile: queueticket/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -344,15 +347,14 @@ services:
       context: .
       dockerfile: mission/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
     ports:
       - "6300:6300"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/mission
-      PYTHONUNBUFFERED: 1
+      dbURL: root:root@tcp(mysql-database:3306)/mission
 
   #################################
   # Loyalty: The Loyalty microservice
@@ -363,7 +365,7 @@ services:
       context: .
       dockerfile: loyalty/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -383,7 +385,7 @@ services:
       context: .
       dockerfile: challenge/Dockerfile
     depends_on:
-      - database
+      - mysql-database
       - rabbitmq
     restart: always
     networks:
@@ -407,7 +409,7 @@ services:
       context: .
       dockerfile: reward/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
@@ -429,7 +431,7 @@ services:
       context: .
       dockerfile: redemption/Dockerfile
     depends_on:
-      - database
+      - mysql-database
       - rabbitmq
     restart: always
     networks:
@@ -453,7 +455,7 @@ services:
       context: .
       dockerfile: payment/Dockerfile
     depends_on:
-      - database
+      - mysql-database
     restart: always
     networks:
       - internal
