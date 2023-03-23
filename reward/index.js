@@ -11,7 +11,7 @@ const dbURL = process.env.dbURL;
 const sequelize = new Sequelize(
   process.env.db_DATABASE,
   process.env.db_USER,
-  "",
+  process.env.db_PASSWORD,
   {
     host: process.env.db_HOST,
     port: process.env.db_PORT,
@@ -100,11 +100,6 @@ async function seedData() {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ force: false });
-
-    const tableExists = await sequelize
-      .getQueryInterface()
-      .showAllTables()
-      .then((result) => result.includes("rewards"));
 
     const seededRewards = await Reward.findAll();
     if (seededRewards.length === 0) {
