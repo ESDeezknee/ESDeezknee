@@ -95,7 +95,7 @@ def create_grouping():
     return jsonify(
         {
             "code": 201,
-            "data": {"grouping_id": grouping.json(),
+            "data": {"group_obj": grouping.json(),
                      "message": "New group creation success."
                      }
             
