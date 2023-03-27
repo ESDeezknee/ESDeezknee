@@ -8,4 +8,8 @@
 
 ### Customer Participates in Challenges
 
-testestest
+## phpMyAdmin
+
+Server Name: mysql-database
+Username: root
+Password: root
