@@ -467,3 +467,28 @@ services:
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/payment
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
+
+
+#################################
+  # Icebreakers: The Icebreakers microservice
+  #################################
+  icebreaker:
+    image: esdeezknee/icebreakers:1.0
+    build:
+      context: .
+      dockerfile: icebreakers/Dockerfile
+    depends_on:
+      - mysql-database
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6109:6109"
+    environment:
+      MYSQL_HOST: host.docker.internal
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_DATABASE: icebreakers
+    # volumes:
+    #   - .:/var/www/html
