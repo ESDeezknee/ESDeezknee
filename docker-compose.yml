@@ -28,7 +28,6 @@ services:
       MYSQL_DATABASE: root
       MYSQL_USER: is213
       MYSQL_PASSWORD: password
-
     ports:
       - 3306:3306
 
@@ -468,8 +467,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
-
-#################################
+  #################################
   # Icebreakers: The Icebreakers microservice
   #################################
   icebreaker:
