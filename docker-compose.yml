@@ -40,6 +40,8 @@ services:
     depends_on:
       - mysql-database
     restart: always
+    networks:
+      - internal
     ports:
       - 5013:80
     environment:
