@@ -189,129 +189,129 @@ func main() {
 
 
 		
-		// Create mission endpoint
-		router.POST("/mission", func(c *gin.Context) {
-			var mission Mission
+		// // Create mission endpoint
+		// router.POST("/mission", func(c *gin.Context) {
+		// 	var mission Mission
 	
-			if err := c.ShouldBindJSON(&mission); err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"code":    http.StatusBadRequest,
-					"message": "Invalid input",
-				})
-				return
-			}
+		// 	if err := c.ShouldBindJSON(&mission); err != nil {
+		// 		c.JSON(http.StatusBadRequest, gin.H{
+		// 			"code":    http.StatusBadRequest,
+		// 			"message": "Invalid input",
+		// 		})
+		// 		return
+		// 	}
 		
-			existingMission, err := getMissionByName(mission.Name)
+		// 	existingMission, err := getMissionByName(mission.Name)
 		
-			if existingMission != nil {
-				c.JSON(http.StatusBadRequest, gin.H{
-					"code":    http.StatusBadRequest,
-					"data":    gin.H{"mission_id": existingMission.MissionID},
-					"message": "Mission already exists",
-				})
-				return
-			}
+		// 	if existingMission != nil {
+		// 		c.JSON(http.StatusBadRequest, gin.H{
+		// 			"code":    http.StatusBadRequest,
+		// 			"data":    gin.H{"mission_id": existingMission.MissionID},
+		// 			"message": "Mission already exists",
+		// 		})
+		// 		return
+		// 	}
 		
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"code":    http.StatusInternalServerError,
-					"message": "An error occurred creating the mission",
-				})
-				return
-			}
+		// 	if err != nil {
+		// 		c.JSON(http.StatusInternalServerError, gin.H{
+		// 			"code":    http.StatusInternalServerError,
+		// 			"message": "An error occurred creating the mission",
+		// 		})
+		// 		return
+		// 	}
 		
-			if err := addMission(&mission); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"code":    http.StatusInternalServerError,
-					"message": "An error occurred creating the mission",
-				})
-				return
-			}
+		// 	if err := addMission(&mission); err != nil {
+		// 		c.JSON(http.StatusInternalServerError, gin.H{
+		// 			"code":    http.StatusInternalServerError,
+		// 			"message": "An error occurred creating the mission",
+		// 		})
+		// 		return
+		// 	}
 		
-			c.JSON(http.StatusCreated, gin.H{
-				"code": http.StatusCreated,
-				"data": mission,
-			})
-		})
+		// 	c.JSON(http.StatusCreated, gin.H{
+		// 		"code": http.StatusCreated,
+		// 		"data": mission,
+		// 	})
+		// })
 
-		// Update mission endpoint
-		router.PUT("/mission/:mission_id", func(c *gin.Context) {
-				missionID := c.Param("mission_id")
+		// // Update mission endpoint
+		// router.PUT("/mission/:mission_id", func(c *gin.Context) {
+		// 		missionID := c.Param("mission_id")
 
-				mission := &Mission{}
-				if err := db.Where("mission_id = ?", missionID).First(mission).Error; err != nil {
-						c.JSON(http.StatusNotFound, gin.H{
-								"code": http.StatusNotFound,
-								"data": gin.H{
-										"mission_id": missionID,
-								},
-								"message": "Mission not found.",
-						})
-						return
-				}
+		// 		mission := &Mission{}
+		// 		if err := db.Where("mission_id = ?", missionID).First(mission).Error; err != nil {
+		// 				c.JSON(http.StatusNotFound, gin.H{
+		// 						"code": http.StatusNotFound,
+		// 						"data": gin.H{
+		// 								"mission_id": missionID,
+		// 						},
+		// 						"message": "Mission not found.",
+		// 				})
+		// 				return
+		// 		}
 
-				var data Mission
-				if err := c.ShouldBindJSON(&data); err != nil {
-						c.JSON(http.StatusBadRequest, gin.H{
-								"code":    http.StatusBadRequest,
-								"message": "Invalid request payload",
-						})
-						return
-				}
+		// 		var data Mission
+		// 		if err := c.ShouldBindJSON(&data); err != nil {
+		// 				c.JSON(http.StatusBadRequest, gin.H{
+		// 						"code":    http.StatusBadRequest,
+		// 						"message": "Invalid request payload",
+		// 				})
+		// 				return
+		// 		}
 
-				mission.Name = data.Name
-				mission.Description = data.Description
-				mission.Difficulty = data.Difficulty
-				mission.Duration = data.Duration
-				mission.AwardPoints = data.AwardPoints
-				mission.IsActive = data.IsActive
+		// 		mission.Name = data.Name
+		// 		mission.Description = data.Description
+		// 		mission.Difficulty = data.Difficulty
+		// 		mission.Duration = data.Duration
+		// 		mission.AwardPoints = data.AwardPoints
+		// 		mission.IsActive = data.IsActive
 
-				if err := db.Save(mission).Error; err != nil {
-						c.JSON(http.StatusInternalServerError, gin.H{
-								"code": http.StatusInternalServerError,
-								"data": gin.H{
-										"mission_id": missionID,
-								},
-								"message": "An error occurred updating the mission.",
-						})
-						return
-				}
+		// 		if err := db.Save(mission).Error; err != nil {
+		// 				c.JSON(http.StatusInternalServerError, gin.H{
+		// 						"code": http.StatusInternalServerError,
+		// 						"data": gin.H{
+		// 								"mission_id": missionID,
+		// 						},
+		// 						"message": "An error occurred updating the mission.",
+		// 				})
+		// 				return
+		// 		}
 
-				c.JSON(http.StatusOK, gin.H{
-						"code": http.StatusOK,
-						"data": mission,
-				})
-		})
+		// 		c.JSON(http.StatusOK, gin.H{
+		// 				"code": http.StatusOK,
+		// 				"data": mission,
+		// 		})
+		// })
 
-		// Delete mission
-		router.DELETE("/mission/:mission_id", func(c *gin.Context) {
-				missionID := c.Param("mission_id")
-				mission := Mission{}
-				err := db.Where("mission_id = ?", missionID).First(&mission).Error
-				if err != nil {
-						c.JSON(http.StatusNotFound, gin.H{
-								"code":    http.StatusNotFound,
-								"data":    gin.H{"mission_id": missionID},
-								"message": "Mission not found.",
-						})
-						return
-				}
+		// // Delete mission
+		// router.DELETE("/mission/:mission_id", func(c *gin.Context) {
+		// 		missionID := c.Param("mission_id")
+		// 		mission := Mission{}
+		// 		err := db.Where("mission_id = ?", missionID).First(&mission).Error
+		// 		if err != nil {
+		// 				c.JSON(http.StatusNotFound, gin.H{
+		// 						"code":    http.StatusNotFound,
+		// 						"data":    gin.H{"mission_id": missionID},
+		// 						"message": "Mission not found.",
+		// 				})
+		// 				return
+		// 		}
 	
-			err = db.Delete(&mission).Error
-			if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{
-							"code":    http.StatusInternalServerError,
-							"data":    gin.H{"mission_id": missionID},
-							"message": "An error occurred deleting the mission.",
-					})
-					return
-			}
+		// 	err = db.Delete(&mission).Error
+		// 	if err != nil {
+		// 			c.JSON(http.StatusInternalServerError, gin.H{
+		// 					"code":    http.StatusInternalServerError,
+		// 					"data":    gin.H{"mission_id": missionID},
+		// 					"message": "An error occurred deleting the mission.",
+		// 			})
+		// 			return
+		// 	}
 	
-			c.JSON(http.StatusOK, gin.H{
-					"code":    http.StatusOK,
-					"message": "Mission with ID " + missionID + " successfully deleted."
-			})
-		})
+		// 	c.JSON(http.StatusOK, gin.H{
+		// 			"code":    http.StatusOK,
+		// 			"message": "Mission with ID " + missionID + " successfully deleted."
+		// 	})
+		// })
 
   	router.Run(":6300")
 }
