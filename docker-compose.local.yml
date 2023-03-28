@@ -1,0 +1,409 @@
+version: "3.8"
+
+volumes:
+  pgdata:
+  kongadata:
+
+networks:
+  kong-net:
+    driver: bridge
+  rabbitmq:
+  internal:
+
+services:
+  #################################
+  # RabbitMQ: AMQP
+  #################################
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_management
+    networks:
+      - rabbitmq
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:9.6
+    platform: linux/amd64
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong:2.0.4
+    platform: linux/amd64
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong:2.0.4
+    platform: linux/amd64
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  konga:
+    image: pantsel/konga
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: password
+      DB_DATABASE: konga_db
+    depends_on:
+      - kong
+    ports:
+      - "1337:1337"
+    volumes:
+      - kongadata:/app/kongadata
+
+  #################################
+  # Account: The Account microservice
+  #################################
+  account:
+    image: esdeezknee/account:1.0
+    build:
+      context: .
+      dockerfile: account/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6000:6000"
+    environment:
+      PYTHONUNBUFFERED: 1
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
+
+  #################################
+  # Verification: The Verification microservice
+  #################################
+  verification:
+    image: esdeezknee/verification:1.0
+    build:
+      context: .
+      dockerfile: verification/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6001:6001"
+    environment:
+      PYTHONUNBUFFERED: 1
+      accountURL: http://account:6000/account/
+      groupingURL: http://grouping:6103/grouping/
+      missionURL: http://mission:6300/mission/
+      rewardURL: http://reward:6303/reward/
+      promoURL: http://promo:6204/promo/
+      queueURL: http://queueticket:6202/queueticket/
+
+  #################################
+  # Notification: The Notification microservice
+  #################################
+  notification:
+    image: esdeezknee/notification:1.0
+    build:
+      context: .
+      dockerfile: notification/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
+    ports:
+      - "6002:6002"
+    environment:
+      PYTHONUNBUFFERED: 1
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Create Grouping: The Create Grouping microservice
+  #################################
+  grouping:
+    image: esdeezknee/grouping:1.0
+    build:
+      context: .
+      dockerfile: grouping/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6103:6103"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/grouping
+      PYTHONUNBUFFERED: 1
+
+  #################################
+  # Handle Group: The HandleGroup Complex microservice
+  #################################
+  handleGroup:
+    image: esdeezknee/handlegroup:1.0
+    build:
+      context: .
+      dockerfile: handleGroup/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
+    ports:
+      - "6104:6104"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/handleGroup
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Broadcast: The Broadcast microservice
+  #################################
+  broadcast:
+    image: esdeezknee/broadcast:1.0
+    build:
+      context: .
+      dockerfile: broadcast/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6102:6102"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/broadcast
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
+
+  #################################
+  # Order: The Order Complex microservice
+  #################################
+  order:
+    image: esdeezknee/order:1.0
+    build:
+      context: .
+      dockerfile: order/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6201:6201"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/order
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      paymentURL: http://payment:6203/payment/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      promoURL: http://promo:6204/promo/
+      queueURL: http://queueticket:6202/queueticket/
+
+  #################################
+  # Promo: The PromoCode microservice
+  #################################
+  promo:
+    image: esdeezknee/promo:1.0
+    build:
+      context: .
+      dockerfile: promo/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6204:6204"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/promo
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+
+  #################################
+  # queueticket: The Queue microservice
+  #################################
+  queueticket:
+    image: esdeezknee/queueticket:1.0
+    build:
+      context: .
+      dockerfile: queueticket/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6202:6202"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/queueticket
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      paymentURL: http://payment:6203/payment/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      promoURL: http://promo:6204/promo/
+
+  #################################
+  # Mission: The Mission microservice
+  #################################
+  mission:
+    image: esdeezknee/mission:1.0
+    build:
+      context: .
+      dockerfile: mission/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6300:6300"
+    environment:
+      dbURL: root:root@tcp(host.docker.internal:3306)/mission
+
+  #################################
+  # Loyalty: The Loyalty microservice
+  #################################
+  loyalty:
+    image: esdeezknee/loyalty:1.0
+    build:
+      context: .
+      dockerfile: loyalty/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6301:6301"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/loyalty
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+
+  #################################
+  # Challenge: The Challenge microservice
+  #################################
+  challenge:
+    image: esdeezknee/challenge:1.0
+    build:
+      context: .
+      dockerfile: challenge/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
+    ports:
+      - "6302:6302"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/challenge
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Reward: The Reward microservice
+  #################################
+  reward:
+    image: esdeezknee/reward:1.0
+    build:
+      context: .
+      dockerfile: reward/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6303:6303"
+    environment:
+      db_HOST: host.docker.internal
+      db_PORT: 3306
+      db_USER: root
+      db_PASSWORD: root
+      db_DATABASE: reward
+
+  #################################
+  # Redemption: The Redemption microservice
+  #################################
+  redemption:
+    image: esdeezknee/redemption:1.0
+    build:
+      context: .
+      dockerfile: redemption/Dockerfile
+    depends_on:
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
+    ports:
+      - "6304:6304"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/redemption
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Stripe: The External Payment Microservice
+  #################################
+  payment:
+    image: esdeezknee/payment:1.0
+    build:
+      context: .
+      dockerfile: payment/Dockerfile
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6203:6203"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/payment
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
