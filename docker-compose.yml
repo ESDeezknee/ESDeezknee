@@ -20,7 +20,7 @@ services:
     restart: always
     networks:
       - internal
-    command: --init-file /data/application/init.sql
+    command: --init-file /data/application/init.sql --innodb-use-native-aio=0
     volumes:
       - ./init.sql:/data/application/init.sql
     environment:
