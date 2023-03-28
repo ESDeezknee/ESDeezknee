@@ -355,7 +355,7 @@ services:
     ports:
       - "6300:6300"
     environment:
-      dbURL: root:root@tcp(mysql-database:3306)/mission
+      dbURL: root:root@tcp(host.docker.internal:3306)/mission
 
   #################################
   # Loyalty: The Loyalty microservice

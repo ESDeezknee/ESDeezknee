@@ -3,6 +3,7 @@ const app = express();
 const { Sequelize, DataTypes } = require("sequelize");
 const cors = require("cors");
 const { Op } = require("sequelize");
+const retry = require("retry");
 
 app.use(express.json());
 app.use(cors());
@@ -18,6 +19,13 @@ const sequelize = new Sequelize(
     dialect: "mysql",
   }
 );
+
+const operation = retry.operation({
+  retries: 5,
+  factor: 3,
+  minTimeout: 1000,
+  maxTimeout: 30000,
+});
 
 const Reward = sequelize.define(
   "reward",
@@ -96,10 +104,23 @@ async function seedData() {
   await Reward.bulkCreate(rewards);
 }
 
-(async () => {
+// define a function to test the database connection
+const testConnection = async () => {
   try {
     await sequelize.authenticate();
+    console.log("Connection has been established successfully.");
+    return true;
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    return false;
+  }
+};
+
+// define a function to sync the models with the database
+const syncModels = async () => {
+  try {
     await sequelize.sync({ force: false });
+    console.log("Models synced with database.");
 
     const seededRewards = await Reward.findAll();
     if (seededRewards.length === 0) {
@@ -110,11 +131,22 @@ async function seedData() {
       console.log("Data has already been seeded");
     }
 
-    console.log("Connection has been established successfully.");
+    return true;
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
+    console.error("Unable to sync models with database:", error);
+    return false;
   }
-})();
+};
+
+// run the retry operation for the connection and sync
+operation.attempt(async (currentAttempt) => {
+  console.log(`Attempt ${currentAttempt} to connect and sync models.`);
+  const connectionSuccess = await testConnection();
+  const syncSuccess = await syncModels();
+  if (!connectionSuccess || !syncSuccess) {
+    throw new Error("Connection or sync failed.");
+  }
+});
 
 // Get all rewards
 app.get("/reward", async (req, res) => {
