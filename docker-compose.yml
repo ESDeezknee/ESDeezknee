@@ -323,7 +323,7 @@ services:
     image: esdeezknee/queueticket:1.0
     build:
       context: .
-      dockerfile: queueticket/Dockerfile
+      dockerfile: queueTicket/Dockerfile
     depends_on:
       - mysql-database
     restart: always
