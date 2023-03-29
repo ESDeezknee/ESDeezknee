@@ -124,7 +124,7 @@ services:
     networks:
       - internal
     ports:
-      - "6000:6000"
+      - "6003:6003"
     environment:
       PYTHONUNBUFFERED: 1
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
@@ -144,7 +144,7 @@ services:
       - "6001:6001"
     environment:
       PYTHONUNBUFFERED: 1
-      accountURL: http://account:6000/account/
+      accountURL: http://account:6003/account/
       groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/

@@ -12,6 +12,22 @@ networks:
 
 services:
   #################################
+  # Frontend
+  #################################
+  frontend:
+    image: esdeezknee/frontend:1.0
+    build:
+      context: .
+      dockerfile: ESDeezknee-Frontend/Dockerfile
+    depends_on:
+      - mysql-database
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "5173:5173"
+
+  #################################
   # Database: MySQL
   #################################
   mysql-database:
@@ -159,7 +175,7 @@ services:
     networks:
       - internal
     ports:
-      - "6000:6000"
+      - "6003:6003"
     environment:
       PYTHONUNBUFFERED: 1
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
@@ -181,7 +197,7 @@ services:
       - "6001:6001"
     environment:
       PYTHONUNBUFFERED: 1
-      accountURL: http://account:6000/account/
+      accountURL: http://account:6003/account/
       groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
       rewardURL: http://reward:6303/reward/
@@ -323,7 +339,7 @@ services:
     image: esdeezknee/queueticket:1.0
     build:
       context: .
-      dockerfile: queueticket/Dockerfile
+      dockerfile: queueTicket/Dockerfile
     depends_on:
       - mysql-database
     restart: always
