@@ -127,7 +127,7 @@ services:
       - "6000:6000"
     environment:
       PYTHONUNBUFFERED: 1
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/account
 
   #################################
   # Verification: The Verification microservice
@@ -185,7 +185,7 @@ services:
     ports:
       - "6103:6103"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/grouping
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/grouping
       PYTHONUNBUFFERED: 1
 
   #################################
@@ -205,7 +205,7 @@ services:
     ports:
       - "6104:6104"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/handleGroup
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/handleGroup
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       RABBITMQ_HOST: rabbitmq
@@ -224,7 +224,7 @@ services:
     ports:
       - "6102:6102"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/broadcast
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/broadcast
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
@@ -243,7 +243,7 @@ services:
     ports:
       - "6201:6201"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/order
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/order
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       paymentURL: http://payment:6203/payment/
@@ -265,7 +265,7 @@ services:
     ports:
       - "6204:6204"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/promo
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/promo
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
@@ -283,7 +283,7 @@ services:
     ports:
       - "6202:6202"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/queueticket
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/queueticket
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       paymentURL: http://payment:6203/payment/
@@ -304,7 +304,7 @@ services:
     ports:
       - "6300:6300"
     environment:
-      dbURL: root:root@tcp(host.docker.internal:3306)/mission
+      dbURL: root:root@tcp(host.docker.internal:8889)/mission
 
   #################################
   # Loyalty: The Loyalty microservice
@@ -320,7 +320,7 @@ services:
     ports:
       - "6301:6301"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/loyalty
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/loyalty
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
@@ -341,7 +341,7 @@ services:
     ports:
       - "6302:6302"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/challenge
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/challenge
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
@@ -362,7 +362,7 @@ services:
       - "6303:6303"
     environment:
       db_HOST: host.docker.internal
-      db_PORT: 3306
+      db_PORT: 8889
       db_USER: root
       db_PASSWORD: root
       db_DATABASE: reward
@@ -384,7 +384,7 @@ services:
     ports:
       - "6304:6304"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/redemption
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/redemption
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
@@ -404,6 +404,6 @@ services:
     ports:
       - "6203:6203"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/payment
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/payment
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/

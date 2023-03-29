@@ -7,8 +7,8 @@ from os import environ
 from invokes import invoke_http
 import requests
 import json
-# import pika
-# import amqp_setup
+import pika
+import amqp_setup
 
 from datetime import datetime
 
@@ -18,9 +18,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
-payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
-loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
-promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 
 
 db = SQLAlchemy(app)
@@ -140,6 +137,16 @@ def create_queueticket():
         ), 400
 
     try:
+        notification_message = {
+            "type": "inform",
+            "account_id": new_queue.account_id,
+            "phone_number": account_result.phone_number,
+            "message": "You have successfully created a queueticket."
+        }
+        message = json.dumps(notification_message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
+
         db.session.add(new_queue)
         db.session.commit()
 
