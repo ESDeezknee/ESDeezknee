@@ -1,3 +1,3 @@
 [submodule "ESDeezknee-Frontend"]
-	path = ESDeezknee
+	path = ESDeezknee-Frontend
 	url = https://github.com/ESDeezknee/ESDeezknee-Frontend.git
