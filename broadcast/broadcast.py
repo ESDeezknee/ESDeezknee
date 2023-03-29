@@ -25,18 +25,18 @@ class Broadcast(db.Model):
 
     group_id = db.Column(db.Integer, primary_key = True)
     # account_id = db.Column(db.Integer, nullable=False)
-    lf_pax = db.Column(db.Integer, nullable=False)
-    date_of_visit = db.Column(db.Date, nullable=False)
-    datetime_of_broadcast = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    looking_for_pax = db.Column(db.Integer, nullable=False)
+    visit_date = db.Column(db.Date, nullable=False)
+    broadcast_date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     
-    def __init__(self, group_id, lf_pax,date_of_visit,):
+    def __init__(self, group_id, looking_for_pax,visit_date):
         self.group_id = group_id
         # self.account_id = account_id
-        self.lf_pax = lf_pax
-        self.date_of_visit = date_of_visit
+        self.looking_for_pax = looking_for_pax
+        self.visit_date = visit_date
 
     def json(self):
-        return {"group_id": self.group_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
+        return {"group_id": self.group_id,"looking_for_pax": self.looking_for_pax,"visit_date":self.visit_date,"broadcast_date":self.broadcast_date}
 
 with app.app_context():
     db.create_all()
@@ -106,9 +106,10 @@ def create_broadcast(group_id):
             {
                 "code": 400,
                 "data": {
-                    "group_id": broadcasts.group_id,
+                    "group_id": broadcasts.group_id
+                },
                     "message": "Group does not exist."
-                }
+
             }
         ), 400
     
@@ -131,8 +132,7 @@ def create_broadcast(group_id):
     return jsonify(
         {
             "code": 201,
-            "data":broadcasts.json(),
-            "result": group_result
+            "data":broadcasts.json()
         }
     ),201
 
@@ -144,9 +144,10 @@ def delete_broadcast(group_id):
             {
                 "code": 404,
                 "data": {
-                    "grouping_id": group_id,
+                    "grouping_id": group_id
+                },
                     "message": "Broadcast for group " + group_id + " not found."
-                }
+
             }
         ), 404
 
@@ -160,9 +161,10 @@ def delete_broadcast(group_id):
             {
                 "code": 500,
                 "data": {
-                    "grouping_id": group_id,
-                    "message": "An error occurred deleting the broadcast."
-                }
+                    "grouping_id": group_id
+                },
+                "message": "An error occurred deleting the broadcast."
+
             }
         ), 500
 
@@ -182,8 +184,9 @@ def update_broadcast(group_id):
                 "code": 404,
                 "data": {
                     "group_id": int(group_id),
-                    "message": "Broadcast not found."
                 },
+                    "message": "Broadcast not found."
+
                 
             }
         ), 404
@@ -193,8 +196,8 @@ def update_broadcast(group_id):
 
     try:
         now = datetime.now()
-        broadcast.lf_pax = data['lf_pax']
-        broadcast.datetime_of_broadcast = now
+        broadcast.looking_for_pax = data['looking_for_pax']
+        broadcast.broadcast_date = now
         db.session.commit()
 
     except:
@@ -203,9 +206,8 @@ def update_broadcast(group_id):
                 "code": 500,
                 "data": {
                     "group_id": group_id,
-                    "message": "An error occurred updating the broadcast."
                 },
-                
+                    "message": "An error occurred updating the broadcast."
             }
         ), 500
 

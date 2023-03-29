@@ -109,7 +109,7 @@ def join_group():
     else:
         no_of_pax_joining = group_details["data"]["no_of_pax"]
 
-        ## get lf_pax of group 1 from broadcast
+        ## get looking_for_pax of group 1 from broadcast
         url_for_LFpax = broadcast_URL + "/1"
         broadcast_details = invoke_http(url_for_LFpax, method='GET')
         
@@ -122,26 +122,27 @@ def join_group():
             }
         
         else:
-            LF_pax = broadcast_details["data"]["lf_pax"]
+            looking_for_pax = broadcast_details["data"]["looking_for_pax"]
             
-            ## compute new LF_pax
-            new_LF_pax = LF_pax - no_of_pax_joining
+            ## compute new looking_for_pax
+            new_looking_for_pax = looking_for_pax - no_of_pax_joining
 
             ## case 1: joining group with insufficient space
-            if new_LF_pax < 0:
+            if new_looking_for_pax < 0:
                 return jsonify(
                     {
                         "code": 500,
                         "data": {
-                            "grouping_id": 2,
+                            "grouping_id": 2
+                        },
                             "message": "Number of pax in your group exceeds limit."
-                        }
+
                     }
                 ), 500
             
             ## case 2: perfect match
-            elif new_LF_pax == 0:
-                    new_no_of_pax = LF_pax + no_of_pax_joining
+            elif new_looking_for_pax == 0:
+                    new_no_of_pax = looking_for_pax + no_of_pax_joining
                     ## get account_id of broadcasted group
                     grouping_details_result = getGroupingDetails(1)
                     code = grouping_details_result["code"]
@@ -153,13 +154,13 @@ def join_group():
                     })
 
                     else: 
-                        account_list = grouping_details_result["data"]["list_account"]
+                        account_list = grouping_details_result["data"]["group_leaders"]
                         ## need to get acct id of joining group from frontend
                         account_list.append(6)
 
                         merged_group_details = {
                             "grouping_id": 1,
-                            "list_account": account_list,
+                            "group_leaders": account_list,
                             "description": "Complete group!",
                             "no_of_pax": new_no_of_pax,
                             "status": "Complete"
@@ -175,7 +176,7 @@ def join_group():
 
                         else: 
                             delete_broadcast_result = processDeleteBroadcast(1)
-                            for account in update_group_result["data"]["list_account"]:
+                            for account in update_group_result["data"]["group_leaders"]:
                                     account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
                                     notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
                                     message = json.dumps(notification_message)
@@ -210,8 +211,8 @@ def join_group():
                                     ), 200
             
             ## case 3: still need more people 
-            elif new_LF_pax > 0:
-                new_no_of_pax = LF_pax + no_of_pax_joining
+            elif new_looking_for_pax > 0:
+                new_no_of_pax = looking_for_pax + no_of_pax_joining
                 ## get account_id of broadcasted group, get grouping_id frm frontend
                 grouping_details_result = getGroupingDetails(1)
                 code = grouping_details_result["code"]
@@ -223,12 +224,12 @@ def join_group():
                 })
 
                 else: 
-                    account_list = grouping_details_result["data"]["list_account"]
+                    account_list = grouping_details_result["data"]["group_leaders"]
                     ## need to get acct id of joining group from frontend
                     account_list.append(6)
                     new_grouping_info = {
                         "grouping_id": 1,
-                        "list_account": account_list,
+                        "group_leaders": account_list,
                         "no_of_pax": new_no_of_pax,
                         "description": "looking for more members",
                         "status": "In Progress",
@@ -244,7 +245,7 @@ def join_group():
                     
                     new_broadcast_info = {
                         "grouping_id": 1,
-                        "lf_pax": new_LF_pax,
+                        "looking_for_pax": new_looking_for_pax,
                     }
                     updateBroadcast_result = processUpdateBroadcast(new_broadcast_info)
                     code = updateBroadcast_result["code"]
@@ -264,11 +265,11 @@ def join_group():
                                 "message": "Failed to join group as group deletion failed."
                             })
                         else: 
-                            new_LF_pax = str(new_LF_pax)
+                            new_looking_for_pax = str(new_looking_for_pax)
                             return jsonify(
                                 {
                                     "code": 200,
-                                    "message": "Join group success! You are now part of group 1. We are in the midst of finding " + new_LF_pax + " more people to complete your group."
+                                    "message": "Join group success! You are now part of group 1. We are in the midst of finding " + new_looking_for_pax + " more people to complete your group."
                                 }
                             ), 200
                     
@@ -279,7 +280,7 @@ def processCreateGroup(group):
     if code not in range(200,300):
         return {
             "code": 500,
-            "data": {"createGroup_result": createGroup_result},
+            "createGroup_result": createGroup_result,
             "message": "New group creation failed."
         }
 
@@ -295,7 +296,7 @@ def processCreateBroadcast(broadcast_info):
     if code not in range(200,300):
         return {
             "code": 500,
-            "data": {"createBroadcast_result": createBroadcast_result},
+            "createBroadcast_result": createBroadcast_result,
             "message": "Broadcast failed."
         }
     

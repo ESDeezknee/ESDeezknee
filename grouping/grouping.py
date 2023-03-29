@@ -46,9 +46,7 @@ def get_all():
         return jsonify(
             {
                 "code": 200,
-                "data": {
-                    "groupings": [grouping.json() for grouping in groupinglist]
-                }
+                "groupings": [grouping.json() for grouping in groupinglist]
             }
         )
     return jsonify(
@@ -65,7 +63,7 @@ def find_by_grouping_id(grouping_id):
         return jsonify(
             {
                 "code": 200,
-                "data": grouping.json()
+                "groupings": grouping.json()
             }
         )
     return jsonify(
@@ -95,10 +93,9 @@ def create_grouping():
     return jsonify(
         {
             "code": 201,
-            "data": {"group_obj": grouping.json(),
-                     "message": "New group creation success."
-                     }
-            
+            "group_obj": grouping.json(),
+            "message": "New group creation success."
+
         }
     ), 201
 
@@ -108,10 +105,8 @@ def delete_grouping(grouping_id):
         return jsonify(
             {
                 "code": 404,
-                "data": {
-                    "grouping_id": grouping_id,
-                    "message": "Group " + grouping_id + " not found."
-                }   
+                "grouping_id": grouping_id,
+                "message": "Group " + grouping_id + " not found."
             }
         ), 404
 
