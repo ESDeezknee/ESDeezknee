@@ -50,7 +50,16 @@ with app.app_context():
 
 session_id = ""
 
+@app.route('/<int:payment_id>', methods=['GET'])
+async def process_payment(payment_id):
+    global session_id
+    session_id = payment_id
+
 current_user = invoke_http(account_URL, method='GET')
+
+@app.route('/')
+def hello():
+    return 'Hello from the payment Microservice!'
 
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
@@ -76,7 +85,7 @@ def create_checkout_session():
     return redirect(checkout_session.url, code=303)
 
 # if payment is successful, it will push the relevant data to the db
-@app.route('/retrieve-payment-data', methods=['POST'])
+@app.route('/retrieve-payment-data/<str:session_id>', methods=['POST'])
 def retrieve_payment_data():
 
     global session_id
