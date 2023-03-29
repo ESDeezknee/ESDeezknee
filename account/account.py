@@ -104,5 +104,23 @@ def find_by_account_id(account_id):
     ), 404
 
 
+@app.route("/account/email/<email>")
+def find_by_email(email):
+    account = Account.query.filter_by(email=email).first()
+    if account:
+        return jsonify(
+            {
+                "code": 200,
+                "data": account.json()
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Account not found."
+        }
+    ), 404
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6000, debug=True)
