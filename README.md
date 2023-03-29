@@ -17,9 +17,9 @@ docker-compose up
 
 ## Microservices
 
-- Account: [http://localhost:6000](http://localhost:6000)
 - Verification: [http://localhost:6001](http://localhost:6001)
 - Notification: [http://localhost:6002](http://localhost:6002)
+- Account: [http://localhost:6003](http://localhost:6003)
 - Icebreaker: [http://localhost:6101](http://localhost:6101)
 - Broadcast: [http://localhost:6102](http://localhost:6102)
 - Group: [http://localhost:6103](http://localhost:6103)
