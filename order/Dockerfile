@@ -3,5 +3,4 @@ WORKDIR /usr/src/app
 COPY common/requirements.txt common/invokes.py common/amqp_setup.py ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY order/order.py ./
-COPY invokes.cpython-39.pyc .
 CMD [ "python", "./order.py" ]
