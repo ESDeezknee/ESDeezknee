@@ -342,9 +342,11 @@ services:
       dockerfile: queueticket/Dockerfile
     depends_on:
       - mysql-database
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6202:6202"
     environment:
@@ -354,6 +356,7 @@ services:
       paymentURL: http://payment:6203/payment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # Mission: The Mission microservice

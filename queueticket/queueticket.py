@@ -7,8 +7,8 @@ from os import environ
 from invokes import invoke_http
 import requests
 import json
-# import pika
-# import amqp_setup
+import pika
+import amqp_setup
 
 from datetime import datetime
 
@@ -140,6 +140,17 @@ def create_queueticket():
         ), 400
 
     try:
+        notification_message = {
+            "type": "queueticket",
+            "account_id": new_queue.account_id,
+            "phone_number": account_result["data"]["phone"],
+            "message": "You have successfully created a queueticket."
+        }
+        message = json.dumps(notification_message)
+        # generateTicket.generate_queue_tickets(data, message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
+
         db.session.add(new_queue)
         db.session.commit()
 

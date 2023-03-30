@@ -49,6 +49,9 @@ def sms_callback(channel, method, properties, body):
       
     if data["type"] == "inform":
         send_notification_handleGroup_sms(data["number_pax"],data["first_name"],data["phone_number"])
+    
+    if data["type"] == "queueticket":
+        send_notification_queueTicket_sms(data["account_id"],data["queue_id"],data["payment_method"],data["phone_number"])
 
 
 def send_notification_email(first_name, email):
@@ -118,6 +121,21 @@ def send_notification_handleGroup_sms(number_pax, first_name,phone_number):
         "mergeTags": {"firstName": first_name, "numberPax": number_pax}
     })
     print("Notification SMS about full group successfully sent!", flush=True)
+
+def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phone_number):
+    notificationapi.init("2asi8se1f8laqltb8fgh9lhmod", 
+                        "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
+    # send sms
+    notificationapi.send({
+        "notificationId": "inform_queue_ticket",
+        "templateId": "default",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"account_id": account_id, "queue_id": queue_id, "paymentMethod": payment_method}
+    })
+    print("Notification SMS about queue ticket successfully sent!", flush=True)
 
 
 if __name__ == '__main__':
