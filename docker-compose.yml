@@ -11,21 +11,21 @@ networks:
   internal:
 
 services:
-  #################################
-  # Frontend
-  #################################
-  frontend:
-    image: esdeezknee/frontend:1.0
-    build:
-      context: .
-      dockerfile: ESDeezknee-Frontend/Dockerfile
-    depends_on:
-      - mysql-database
-    restart: always
-    networks:
-      - internal
-    ports:
-      - "5173:5173"
+  # #################################
+  # # Frontend
+  # #################################
+  # frontend:
+  #   image: esdeezknee/frontend:1.0
+  #   build:
+  #     context: .
+  #     dockerfile: ESDeezknee-Frontend/Dockerfile
+  #   depends_on:
+  #     - mysql-database
+  #   restart: always
+  #   networks:
+  #     - internal
+  #   ports:
+  #     - "5173:5173"
 
   #################################
   # Database: MySQL
