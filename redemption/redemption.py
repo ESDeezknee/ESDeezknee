@@ -22,7 +22,8 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+verification_URL = environ.get(
+    'verificationURL') or "http://localhost:6001/verification/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 
 
@@ -254,7 +255,7 @@ def update_redemption_claimed(redemption_id):
     try:
         redemption.status = "Claimed"
         db.session.commit()
-    
+
     except:
         return jsonify(
             {

@@ -272,7 +272,7 @@ def update_challenge_complete(challenge_id):
         ), 500
 
     if earn_result["code"] in range(300, 500):
-        return earn_result
+        return jsonify(earn_result), 400
 
     try:
         challenge.status = "Completed"
