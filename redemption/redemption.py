@@ -35,6 +35,7 @@ class Redemption(db.Model):
     reward_id = db.Column(db.Integer, nullable=False)
     redemption_code = db.Column(db.String(256), nullable=False)
     status = db.Column(db.String(64), nullable=False, default="Not Claimed")
+    redemption_date = db.Column(db.DateTime)
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     modified = db.Column(db.DateTime, nullable=False,
                          default=datetime.now, onupdate=datetime.now)
@@ -44,7 +45,7 @@ class Redemption(db.Model):
         self.reward_id = reward_id
 
     def json(self):
-        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "redemption_code": self.redemption_code, "status": self.status, "created": self.created, "modified": self.modified}
+        return {"redemption_id": self.redemption_id, "account_id": self.account_id, "reward_id": self.reward_id, "redemption_code": self.redemption_code, "status": self.status, "redemption_date": self.redemption_date, "created": self.created, "modified": self.modified}
 
 
 with app.app_context():
@@ -254,6 +255,7 @@ def update_redemption_claimed(redemption_id):
 
     try:
         redemption.status = "Claimed"
+        redemption.redemption_date = datetime.now()
         db.session.commit()
 
     except:

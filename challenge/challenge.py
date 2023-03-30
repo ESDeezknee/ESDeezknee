@@ -35,6 +35,7 @@ class Challenge(db.Model):
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String(64), nullable=False, default="In Progress")
+    complete_date = db.Column(db.DateTime)
     created = db.Column(db.DateTime, nullable=False, default=datetime.now)
     modified = db.Column(db.DateTime, nullable=False,
                          default=datetime.now, onupdate=datetime.now)
@@ -44,7 +45,7 @@ class Challenge(db.Model):
         self.mission_id = mission_id
 
     def json(self):
-        return {"challenge_id": self.challenge_id, "account_id": self.account_id, "mission_id": self.mission_id, "start_date": self.start_date, "end_date": self.end_date, "status": self.status, "created": self.created, "modified": self.modified}
+        return {"challenge_id": self.challenge_id, "account_id": self.account_id, "mission_id": self.mission_id, "start_date": self.start_date, "end_date": self.end_date, "status": self.status, "complete_date": self.complete_date, "created": self.created, "modified": self.modified}
 
 
 with app.app_context():
@@ -276,6 +277,7 @@ def update_challenge_complete(challenge_id):
 
     try:
         challenge.status = "Completed"
+        challenge.complete_date = datetime.now()
         db.session.commit()
 
     except:
