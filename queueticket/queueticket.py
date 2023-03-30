@@ -9,7 +9,6 @@ import requests
 import json
 import pika
 import amqp_setup
-# import generateTicket
 
 from datetime import datetime
 
@@ -192,16 +191,60 @@ def delete_order(queue_id):
 
 @app.put("/queueticket/<int:queue_id>")
 def update_queue(queue_id):
-    if request.json() is None:
-        raise Exception("No data received.")
-    updated_queue = QueueTicket.query.get_or_404(queue_id=queue_id)
+    if (not QueueTicket.query.filter_by(queue_id=queue_id).first()):
+        return jsonify(
+            {
+                "code": 404,
+                "data": {
+                    "queue_id": queue_id
+                },
+                "message": "Queue not found."
+            }
+        ), 404
     data = request.get_json()
-    updated_queue.is_express = data["is_express"]
-    updated_queue.account_id = data["account_id"]
-    updated_queue.payment_method = data["payment_method"]
+    print(data)
+    updated_queue = QueueTicket.query.filter_by(queue_id=queue_id).first()
+    # print(updated_queue)
+    
 
-    db.session.commit()
-    return "Queue updated.", 200
+    account_result = invoke_http(
+        verification_URL + "account/" + str(updated_queue.account_id), method='GET')
+
+    try:
+        updated_queue.is_express = data["is_express"]
+        updated_queue.account_id = data["account_id"]
+        updated_queue.payment_method = data["payment_method"]
+
+        db.session.commit()
+    except:
+        return jsonify(
+            {
+                "code": 500,
+                "message": "An error occurred creating the queueticket.",
+                "asdf": updated_queue
+            }
+        ), 500
+    
+    notification_message = {
+        "type": "queueticket",
+        "account_id": updated_queue.account_id,
+        "phone_number": account_result["data"]["phone"],
+        "payment_method": updated_queue.payment_method,
+        "queue_id": updated_queue.queue_id,
+        "message": "You have successfully created a queueticket."
+    }
+    message = json.dumps(notification_message)
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                    body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
+    return jsonify(
+        {
+            "code": 200,
+            "data": updated_queue.json()
+        }
+    ), 200
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6202, debug=True)

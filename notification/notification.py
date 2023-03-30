@@ -127,7 +127,7 @@ def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phon
                         "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
     # send sms
     notificationapi.send({
-        "notificationId": "inform_queue_ticket",
+        "notificationId": "queueticket",
         "templateId": "default",
         "user": {
             "id": phone_number,
