@@ -2,15 +2,15 @@ from flask import Flask, redirect, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
-
 from datetime import datetime
 from invokes import invoke_http
 
 import stripe
 
-stripe.api_key = environ.get('STRIPE_API_KEY')
+
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
@@ -18,6 +18,8 @@ app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 db = SQLAlchemy(app)
 
 CORS(app)
+
+stripe.api_key = environ.get('STRIPE_API_KEY')
 
 account_URL = environ.get('accountURL') or "http://localhost:6000/account/"
 
@@ -85,7 +87,7 @@ def create_checkout_session():
     return redirect(checkout_session.url, code=303)
 
 # if payment is successful, it will push the relevant data to the db
-@app.route('/retrieve-payment-data/<str:session_id>', methods=['POST'])
+@app.route('/retrieve-payment-data/<string:session_id>', methods=['POST'])
 def retrieve_payment_data():
 
     global session_id
