@@ -20,7 +20,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
-
+order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
 class Promo(db.Model):
     __tablename__ = 'promos'
@@ -44,6 +44,8 @@ with app.app_context():
   if not existing_promo_1:
       new_promo_1 = Promo(queue_id=1, account_id=1, promo_code="123456")
       new_promo_2 = Promo(queue_id=2, account_id=2, promo_code="123456")
+      new_promo_3 = Promo(queue_id=3, account_id=3, promo_code="123456")
+      new_promo_4 = Promo(queue_id=4, account_id=4, promo_code="123456")
       db.session.add(new_promo_1)
       db.session.add(new_promo_2)
       db.session.commit()
@@ -115,27 +117,27 @@ def create_promo():
             }
         ), 400
     
-    queue_result = invoke_http(
-        verification_URL + "queueticket/" + str(new_promo.queue_id), method='GET')
+    # queue_result = invoke_http(
+    #     verification_URL + "queueticket/" + str(new_promo.queue_id), method='GET')
 
-    if queue_result["code"] in range(500, 600):
-        return jsonify(
-            {
-                "code": 500,
-                "message": "Oops, something went wrong! Queue",
-            }
-        ), 500
+    # if queue_result["code"] in range(500, 600):
+    #     return jsonify(
+    #         {
+    #             "code": 500,
+    #             "message": "Oops, something went wrong! Queue",
+    #         }
+    #     ), 500
 
-    if queue_result["code"] in range(300, 500):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "queue_id": new_promo.queue_id
-                },
-                "message": "queueticket does not exist."
-            }
-        ), 400
+    # if queue_result["code"] in range(300, 500):
+    #     return jsonify(
+    #         {
+    #             "code": 400,
+    #             "data": {
+    #                 "queue_id": new_promo.queue_id
+    #             },
+    #             "message": "queueticket does not exist."
+    #         }
+    #     ), 400
 
 
     try:
@@ -160,9 +162,28 @@ def create_promo():
 
 
 @app.delete("/promo/<int:account_id>")
-def delete_promo(account_id):
+def redeem_promo(account_id):
     promo = Promo.query.filter_by(account_id=account_id).first()
     if promo:
+
+        payment_json = {
+            "account_id": promo.account_id,
+            "queue_id": promo.queue_id,
+            "promo_code": promo.promo_code,
+            "payment_method": "promo"
+        }
+
+        redeem_promo = invoke_http(
+            order_URL + "order/" + str(promo.account_id) + "/paid", method='PATCH', json=payment_json)
+
+        if redeem_promo["code"] in range(500, 600):
+            return jsonify(
+                {
+                    "code": 500,
+                    "message": "Oops, something went wrong! Order",
+                }
+            ), 500 
+    
         db.session.delete(promo)
         db.session.commit()
         return jsonify(
