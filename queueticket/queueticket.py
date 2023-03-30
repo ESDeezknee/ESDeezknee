@@ -9,6 +9,7 @@ import requests
 import json
 import pika
 import amqp_setup
+# import generateTicket
 
 from datetime import datetime
 
@@ -138,12 +139,13 @@ def create_queueticket():
 
     try:
         notification_message = {
-            "type": "inform",
+            "type": "queueticket",
             "account_id": new_queue.account_id,
             "phone_number": account_result.phone_number,
             "message": "You have successfully created a queueticket."
         }
         message = json.dumps(notification_message)
+        # generateTicket.generate_queue_tickets(data, message)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
                                      body=message, properties=pika.BasicProperties(delivery_mode=2))
 
