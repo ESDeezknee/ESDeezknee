@@ -3,11 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
 from datetime import datetime
-from invokes import invoke_http
 
 import stripe
-
-
 
 app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
@@ -21,26 +18,26 @@ CORS(app)
 
 stripe.api_key = environ.get('STRIPE_API_KEY')
 
-account_URL = environ.get('accountURL') or "http://localhost:6000/account/"
+order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
 class Payment(db.Model):
     __tablename__ = 'payment'
 
-    payment_id = db.Column(db.String(128), primary_key=True)
+    session_id = db.Column(db.String(128), primary_key=True)
     account_id = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    def __init__(self, payment_id, account_id, status, price, paymentDate):
-        self.payment_id = payment_id
+    def __init__(self, session_id, account_id, status, price, paymentDate):
+        self.session_id = session_id
         self.account_id = account_id
         self.status = status
         self.price = price
         self.paymentDate = paymentDate
     
     def json(self):
-        return {"payment_id": self.payment_id,  
+        return {"session_id": self.session_id,  
                 "account_id": self.account_id, 
                 "status": self.status, 
                 "price": self.price, 
@@ -50,23 +47,13 @@ class Payment(db.Model):
 with app.app_context():
     db.create_all()
 
-session_id = ""
-
-@app.route('/<int:payment_id>', methods=['GET'])
-async def process_payment(payment_id):
-    global session_id
-    session_id = payment_id
-
-current_user = invoke_http(account_URL, method='GET')
-
 @app.route('/')
 def hello():
     return 'Hello from the payment Microservice!'
 
+# pls send a POST request to this endpoint to trigger it instantly
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
-    global session_id
-
     try:
         checkout_session = stripe.checkout.Session.create(
             line_items = [
@@ -77,31 +64,20 @@ def create_checkout_session():
             ],
             mode = "payment",
             #success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
-            success_url = "http://127.0.0.1:6203/retrieve-payment-data",
-            cancel_url = ""
+            success_url = order_URL,
+            # cancel_url should bring it back to the main page but cancels payment
+            cancel_url = order_URL
         )
         session_id = checkout_session.id
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_status = session.payment_status
     except Exception as e:
         return str(e)
-
+    # account_id is hard-coded for now
+    payment = Payment(session_id=session_id, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
+    db.session.add(payment)
+    db.session.commit()
     return redirect(checkout_session.url, code=303)
-
-# if payment is successful, it will push the relevant data to the db
-@app.route('/retrieve-payment-data/<string:session_id>', methods=['POST'])
-def retrieve_payment_data():
-
-    global session_id
-    global current_user
-
-    session = stripe.checkout.Session.retrieve(session_id)
-    payment_status = session.payment_status
-
-    if payment_status == 'paid':
-        payment = Payment(payment_id=session_id, account_id=current_user, status=payment_status, price=8, paymentDate=datetime.now())
-        db.session.add(payment)
-        db.session.commit()
-
-    return session_id
 
 @app.get("/payment")
 def get_all():
@@ -121,7 +97,6 @@ def get_all():
             "message": "There are no payments."
         }
     ), 404
-
 
 
 if __name__ == '__main__':
