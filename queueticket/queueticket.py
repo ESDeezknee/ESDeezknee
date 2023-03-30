@@ -47,9 +47,9 @@ with app.app_context():
   db.create_all()
   existing_queue_ticket_1 = db.session.query(QueueTicket).filter(QueueTicket.queue_id==1).first()
   if not existing_queue_ticket_1:
-      new_queue_ticket_1 = QueueTicket(queue_id=1, is_express=1, account_id=1, payment_method="Promo Code")
-      new_queue_ticket_2 = QueueTicket(queue_id=2, is_express=1, account_id=2, payment_method="Stripe")
-      new_queue_ticket_3 = QueueTicket(queue_id=3, is_express=1, account_id=3, payment_method="Loyalty")
+      new_queue_ticket_1 = QueueTicket(queue_id=1, is_express=1, account_id=1, payment_method="promo")
+      new_queue_ticket_2 = QueueTicket(queue_id=2, is_express=1, account_id=2, payment_method="stripe")
+      new_queue_ticket_3 = QueueTicket(queue_id=3, is_express=1, account_id=3, payment_method="loyalty")
       db.session.add(new_queue_ticket_1)
       db.session.add(new_queue_ticket_2)
       db.session.add(new_queue_ticket_3)
