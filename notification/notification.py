@@ -127,13 +127,13 @@ def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phon
                         "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
     # send sms
     notificationapi.send({
-        "notificationId": "inform_queue_ticket",
+        "notificationId": "queueticket",
         "templateId": "default",
         "user": {
             "id": phone_number,
             "number": phone_number,   # required for sms notifications
         },
-        "mergeTags": {"account_id": account_id, "queue_id": queue_id, "paymentMethod": payment_method}
+        "mergeTags": {"account_id": account_id,"queue_id": queue_id, "paymentMethod": payment_method}
     })
     print("Notification SMS about queue ticket successfully sent!", flush=True)
 
