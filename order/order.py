@@ -129,8 +129,9 @@ def update_order(account_id):
         }), 404
     
     data = request.get_json()
+    print(data)
     create_ticket = invoke_http(
-        queue_URL + "queueticket/", method='POST', json=data)
+        queue_URL, method='POST', json=data)
     
     if create_ticket["code"] == 200:
         return jsonify({
@@ -139,9 +140,11 @@ def update_order(account_id):
         }), 200
     else:
         return jsonify({
-            "code": 404,
-            "message": "Order not updated"
-        }), 404
+            "code": 405,
+            "message": "Order not updated",
+            "invoking": create_ticket,
+            "asdf": data
+        }), 405
 
 
 

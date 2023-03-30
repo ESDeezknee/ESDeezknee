@@ -174,13 +174,14 @@ def redeem_promo(account_id):
         }
 
         redeem_promo = invoke_http(
-            order_URL + "order/" + str(promo.account_id) + "/paid", method='PATCH', json=payment_json)
+            order_URL + str(promo.account_id) + "/paid", method='PATCH', json=payment_json)
 
         if redeem_promo["code"] in range(500, 600):
             return jsonify(
                 {
                     "code": 500,
                     "message": "Oops, something went wrong! Order",
+                    # "asdf": redeem_promo
                 }
             ), 500 
     
