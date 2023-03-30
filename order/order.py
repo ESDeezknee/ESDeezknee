@@ -19,15 +19,16 @@ app.config['SQLALCHEMY_DATABASE_URI'] = environ.get('dbURL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
-# db = SQLAlchemy(app)
+db = SQLAlchemy(app)
 
-# CORS(app)
+CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
+redemption_URL = environ.get('redemptionURL') or "http://localhost:6304/redemption_URL/"
 
 # is verification needed here?
 @app.get('/order/retrieve_account/<int:account_id>')
@@ -43,30 +44,47 @@ async def confirm_order(account_id):
     # logic for confirmation
     # if person presses "express ticket button",
     # return this True, if not nothing will happen
-    return True
+    express_button = request.form.get('button_pressed', False)
+    if express_button:
+        return True
+    else:
+        await asyncio.sleep(1)
 
 @app.route('/order/get_payment_method/<int:account_id>', methods=['POST'])
 async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
-    payment_method = { "payment_method" : "external" } # temporary  
-    return jsonify(payment_method)
-
-@app.route("/order/<int:account_id>/payment", methods=['GET'])
-async def process_payment(account_id):
-    order_confirmed = await confirm_order(account_id)
-    while not order_confirmed:
-        await asyncio.sleep(1)
-        order_confirmed = await confirm_order(account_id)
-    
-    p_method = await select_payment_method(account_id)
+    account_id = str(account_id)
+    payment_method = request.form.get('payment_method')
+    payment_method = "external" # temporary 
+    data = {
+        "account_id": account_id,
+        "payment_method": payment_method
+    } 
+    p_method = data["payment_method"]
     if (p_method == "external"):
-        return redirect(f'{payment_URL}/{account_id}')
+        return redirect(payment_URL), jsonify(p_method)
     elif (p_method == "promo"):
-        return redirect(f'{promo_URL}/{account_id}')
+        return redirect(promo_URL)
     else:
-        return redirect(f'http://localhost:6304/{account_id}')
+        return redirect(redemption_URL)
+
+# @app.route("/order/payment/<string:type>/<int:account_id>", methods=['GET'])
+# async def process_payment(type, account_id):
+#     order_confirmed = await confirm_order(account_id)
+#     while not order_confirmed:
+#         await asyncio.sleep(1)
+#         order_confirmed = await confirm_order(account_id)
+    
+#     p_method = await select_payment_method(account_id)
+#     if (p_method == "external"):
+#         return redirect(f'{payment_URL}/{account_id}')
+#     elif (p_method == "promo"):
+#         return redirect(f'{promo_URL}/{account_id}')
+#     else:
+#         return redirect(f'{redemption_URL}/{account_id}')
+
 
 
 @app.post("/order")
