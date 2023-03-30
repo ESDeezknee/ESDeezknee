@@ -193,7 +193,7 @@ def create_redemption():
         ), 500
 
     if redeem_result["code"] in range(300, 500):
-        return redeem_result
+        return jsonify(redeem_result), 400
 
     redemption.redemption_code = generate_redemption_code()
 
