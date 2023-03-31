@@ -23,20 +23,20 @@ verification_URL = environ.get('verificationURL') or "http://localhost:6001/veri
 class Broadcast(db.Model):
     __tablename__ = 'broadcasts'
 
-    group_id = db.Column(db.Integer, primary_key = True)
+    broadcasted_id = db.Column(db.Integer, primary_key = True)
     # account_id = db.Column(db.Integer, nullable=False)
     lf_pax = db.Column(db.Integer, nullable=False)
     date_of_visit = db.Column(db.Date, nullable=False)
     datetime_of_broadcast = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     
-    def __init__(self, group_id, lf_pax,date_of_visit,):
-        self.group_id = group_id
+    def __init__(self, broadcasted_id, lf_pax,date_of_visit,):
+        self.broadcasted_id = broadcasted_id
         # self.account_id = account_id
         self.lf_pax = lf_pax
         self.date_of_visit = date_of_visit
 
     def json(self):
-        return {"group_id": self.group_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
+        return {"broadcasted_id": self.broadcasted_id,"lf_pax": self.lf_pax,"date_of_visit":self.date_of_visit,"datetime_of_broadcast":self.datetime_of_broadcast}
 
 with app.app_context():
     db.create_all()
@@ -61,9 +61,9 @@ def get_all():
     ), 404
 
 
-@app.route("/broadcast/<group_id>")
-def find_by_group_id(group_id):
-    broadcast = Broadcast.query.filter_by(group_id = group_id).first()
+@app.route("/broadcast/<broadcasted_id>")
+def find_by_group_id(broadcasted_id):
+    broadcast = Broadcast.query.filter_by(broadcasted_id = broadcasted_id).first()
     if broadcast:
         return jsonify(
             {
@@ -80,8 +80,8 @@ def find_by_group_id(group_id):
     ),404
 
 
-@app.route("/broadcast/<group_id>", methods=['POST'])
-def create_broadcast(group_id):
+@app.route("/broadcast/<broadcasted_id>", methods=['POST'])
+def create_broadcast(broadcasted_id):
     data = request.get_json()
     broadcasts = Broadcast(**data)
 
@@ -90,7 +90,7 @@ def create_broadcast(group_id):
     # lf_pax = INT
     # Date format: YYYY-MM-DD
     # Datetime is auto populated from SQL Server
-    group_result = invoke_http(verification_URL + "grouping/" + str(group_id), method='GET')
+    group_result = invoke_http(verification_URL + "grouping/" + str(broadcasted_id), method='GET')
     print(group_result)
     # Check Account Result is within the code range else return error msg
     if group_result["code"] in range(500, 600):
@@ -106,7 +106,7 @@ def create_broadcast(group_id):
             {
                 "code": 400,
                 "data": {
-                    "group_id": broadcasts.group_id,
+                    "group_id": broadcasts.broadcasted_id,
                     "message": "Group does not exist."
                 }
             }
@@ -137,20 +137,20 @@ def create_broadcast(group_id):
     ),201
 
 
-@app.route("/broadcast/<group_id>", methods=['DELETE'])
-def delete_broadcast(group_id):
-    if (not Broadcast.query.filter_by(group_id=group_id).first()):
+@app.route("/broadcast/<broadcasted_id>", methods=['DELETE'])
+def delete_broadcast(broadcasted_id):
+    if (not Broadcast.query.filter_by(broadcasted_id=broadcasted_id).first()):
         return jsonify(
             {
                 "code": 404,
                 "data": {
-                    "grouping_id": group_id,
-                    "message": "Broadcast for group " + group_id + " not found."
+                    "grouping_id": broadcasted_id,
+                    "message": "Broadcast for group " + broadcasted_id + " not found."
                 }
             }
         ), 404
 
-    broadcast = Broadcast.query.filter_by(group_id=group_id).first()
+    broadcast = Broadcast.query.filter_by(broadcasted_id=broadcasted_id).first()
 
     try:
         db.session.delete(broadcast)
@@ -160,7 +160,7 @@ def delete_broadcast(group_id):
             {
                 "code": 500,
                 "data": {
-                    "grouping_id": group_id,
+                    "grouping_id": broadcasted_id,
                     "message": "An error occurred deleting the broadcast."
                 }
             }
@@ -169,26 +169,26 @@ def delete_broadcast(group_id):
     return jsonify(
         {
             "code": 200,
-            "message": "Broadcast for group " + group_id + " successfully deleted."
+            "message": "Broadcast for group " + broadcasted_id + " successfully deleted."
         }
     ), 200
 
 
-@app.route("/broadcast/<group_id>", methods=['PATCH'])
-def update_broadcast(group_id):
-    if (not Broadcast.query.filter_by(group_id=group_id).first()):
+@app.route("/broadcast/<broadcasted_id>", methods=['PATCH'])
+def update_broadcast(broadcasted_id):
+    if (not Broadcast.query.filter_by(broadcasted_id=broadcasted_id).first()):
         return jsonify(
             {
                 "code": 404,
                 "data": {
-                    "group_id": int(group_id),
+                    "group_id": int(broadcasted_id),
                     "message": "Broadcast not found."
                 },
                 
             }
         ), 404
 
-    broadcast = Broadcast.query.filter_by(group_id=group_id).first()
+    broadcast = Broadcast.query.filter_by(broadcasted_id=broadcasted_id).first()
     data = request.get_json()
 
     try:
@@ -202,7 +202,7 @@ def update_broadcast(group_id):
             {
                 "code": 500,
                 "data": {
-                    "group_id": group_id,
+                    "group_id": broadcasted_id,
                     "message": "An error occurred updating the broadcast."
                 },
                 

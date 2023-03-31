@@ -291,7 +291,7 @@ def processCreateGroup(group):
 
 ## need to figure out how to link to frontend to get group_id 
 def processCreateBroadcast(broadcast_info):
-    url = broadcast_URL + "/" + broadcast_info["broadcasted_id"]
+    url = broadcast_URL + "/" + str(broadcast_info["broadcasted_id"])
     createBroadcast_result = invoke_http(url, method='POST', json=broadcast_info)
 
     code = createBroadcast_result["code"]
