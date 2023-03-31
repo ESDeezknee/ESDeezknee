@@ -64,28 +64,11 @@ async def select_payment_method(account_id):
     } 
     p_method = data["payment_method"]
     if (p_method == "external"):
-        return redirect(payment_URL), jsonify(p_method)
+        return redirect(payment_URL)
     elif (p_method == "promo"):
         return redirect(promo_URL)
     else:
         return redirect(redemption_URL)
-
-# @app.route("/order/payment/<string:type>/<int:account_id>", methods=['GET'])
-# async def process_payment(type, account_id):
-#     order_confirmed = await confirm_order(account_id)
-#     while not order_confirmed:
-#         await asyncio.sleep(1)
-#         order_confirmed = await confirm_order(account_id)
-    
-#     p_method = await select_payment_method(account_id)
-#     if (p_method == "external"):
-#         return redirect(f'{payment_URL}/{account_id}')
-#     elif (p_method == "promo"):
-#         return redirect(f'{promo_URL}/{account_id}')
-#     else:
-#         return redirect(f'{redemption_URL}/{account_id}')
-
-
 
 @app.post("/order")
 def post_order():
