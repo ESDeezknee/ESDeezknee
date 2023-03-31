@@ -195,6 +195,7 @@ def redeem_promo(account_id):
         notification_message = {
             "type": "promo",
             "account_id": promo.account_id,
+            "first_name": account_result["data"]["first_name"],
             "phone_number": account_result["data"]["phone"],
             "promo_code": promo.promo_code,
             "message": "You have successfully redeemed a promo."

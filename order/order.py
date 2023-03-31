@@ -24,6 +24,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+account_URL = environ.get('accountURL') or "http://localhost:6003/account/"
 payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
@@ -105,6 +106,12 @@ def post_order():
 
 @app.patch("/order/<int:account_id>/paid")
 def update_order(account_id):
+    # this function is being invoked by post queue ticket
+    # needs call/message/code from simple microservice to indicate its paid x
+    # call amqp to update that queue ticket is paid 
+    # gives queue id from queue ticket 
+    # updates is_express to true x
+    # invoke post in a separate function 
     if (not request.is_json):
         return jsonify({
             "code": 404,
@@ -113,20 +120,20 @@ def update_order(account_id):
     
     data = request.get_json()
     print(data)
-    create_ticket = invoke_http(
-        queue_URL, method='POST', json=data)
+
+    update_account = invoke_http(
+        account_URL + str(account_id), method='PATCH', json=data)
     
-    if create_ticket["code"] == 200:
+    if update_account["code"] == 200:
         return jsonify({
             "code": 200,
-            "message": "Order updated successfully"
+            "message": "Account updated successfully (is express)"
         }), 200
     else:
         return jsonify({
             "code": 405,
             "message": "Order not updated",
-            "invoking": create_ticket,
-            "asdf": data
+            "invoking": update_account["message"],
         }), 405
 
 

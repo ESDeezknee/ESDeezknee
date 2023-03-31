@@ -102,6 +102,7 @@ def create_queueticket():
         raise Exception("No data received.")
     
     data = request.get_json()
+    print(data)
     new_queue1 = QueueTicket(
         queue_id=data["queue_id"],
         is_express=data["is_express"],
@@ -163,7 +164,7 @@ def create_queueticket():
                 {
                     "code": 500,
                     "message": "Oops, something went wrong! paid ticket",
-                    # "asdf": redeem_promo
+                    "asdf": paid_ticket
                 }
             ), 500 
 
@@ -182,7 +183,7 @@ def create_queueticket():
             {
                 "code": 500,
                 "message": "An error occurred creating the queueticket.",
-                "asdf": new_queue
+                "asdf": new_queue.json()
             }
         ), 500
 
@@ -206,7 +207,7 @@ def create_queueticket():
     return jsonify(
         {
             "code": 201,
-            "data": new_queue
+            "data": new_queue.json()
         }
     ), 201
 
