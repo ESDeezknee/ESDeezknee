@@ -53,6 +53,10 @@ def sms_callback(channel, method, properties, body):
     if data["type"] == "queueticket":
         send_notification_queueTicket_sms(data["account_id"],data["queue_id"],data["payment_method"],data["phone_number"])
 
+    if data["type"] == "promo":
+        send_notification_promo_sms(data["account_id"],data["promo_code"],data["phone_number"])
+
+
 
 def send_notification_email(first_name, email):
     # init
@@ -136,6 +140,22 @@ def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phon
         "mergeTags": {"account_id": account_id, "queue_id": queue_id, "paymentMethod": payment_method}
     })
     print("Notification SMS about queue ticket successfully sent!", flush=True)
+
+def send_notification_promo_sms(account_id, promo_code, phone_number):
+    notificationapi.init('2asi8se1f8laqltb8fgh9lhmod', 
+                        '1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh')
+    # send sms
+    notificationapi.send({
+        "notificationId": "promo",
+        "templateId": "default",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"account_id": account_id, "promo_code": promo_code}
+    })
+    print("Notification SMS about promo successfully sent!", flush=True)
+
 
 
 if __name__ == '__main__':
