@@ -103,7 +103,7 @@ def post_order():
 
 # def place_order(orderRequest):
 
-@app.route("/order/<int:account_id>/paid", methods=['POST'])
+@app.route("/order/<int:account_id>/paying", methods=['POST'])
 def ini_create_ticket(account_id):
     # this function initialises the create ticket post
     # invoked by one of 3 payment microservice to indicate that it has been paid
@@ -113,8 +113,9 @@ def ini_create_ticket(account_id):
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
     
-    data = request.get_json()
-    # print(data)
+    data1 = request.get_json()
+    data = data1["data"]
+    print(data1)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
@@ -143,11 +144,13 @@ def update_order(account_id):
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
     
-    data = request.get_json()
+    data1 = request.get_json()
+    data = data1["data"]
     print(data)
 
     update_account = invoke_http(
         account_URL + str(account_id), method='PATCH', json=data)
+    print(update_account)
     
     if update_account["code"] == 200:
 

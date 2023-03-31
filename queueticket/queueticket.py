@@ -100,7 +100,8 @@ def create_queueticket():
     if request.json is None:
         raise Exception("No data received.")
     
-    data = request.get_json()
+    data1 = request.get_json()
+    data = data1["data"]
     print(data)
     new_queue1 = QueueTicket(
         queue_id=data["queue_id"],
@@ -117,7 +118,6 @@ def create_queueticket():
         "account_id": new_queue_l["account_id"],
         "payment_method": new_queue_l["payment_method"]
     }
-    # new_queue = QueueTicket(new_queue_l)
 
     existing_queue = QueueTicket.query.filter_by(
         account_id=new_queue["account_id"]).first()
@@ -156,8 +156,9 @@ def create_queueticket():
         ), 400
 
     paid_ticket = invoke_http(
-        order_URL + str(new_queue["account_id"]) + "/paid", method='PATCH', json=new_queue)
-    
+        order_URL + str(new_queue["account_id"]) + "/paid", method="PATCH", json=new_queue)
+    print(paid_ticket)
+
     if paid_ticket["code"] in range(500, 600):
             return jsonify(
                 {
@@ -182,7 +183,7 @@ def create_queueticket():
             {
                 "code": 500,
                 "message": "An error occurred creating the queueticket.",
-                "asdf": new_queue.json()
+                "asdf": new_queue
             }
         ), 500
 
@@ -206,7 +207,7 @@ def create_queueticket():
     return jsonify(
         {
             "code": 201,
-            "data": new_queue.json()
+            "data": new_queue
         }
     ), 201
 
