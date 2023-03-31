@@ -57,18 +57,18 @@ async def select_payment_method(account_id):
     # payment_method = data['payment_method']
     account_id = str(account_id)
     payment_method = request.form.get('payment_method')
-    payment_method = "external" # temporary 
+    # payment_method = "external" # temporary 
     data = {
         "account_id": account_id,
         "payment_method": payment_method
     } 
     p_method = data["payment_method"]
     if (p_method == "external"):
-        return redirect(payment_URL)
+        return jsonify({"redirect_url": payment_URL})
     elif (p_method == "promo"):
-        return redirect(promo_URL)
+        return jsonify({"redirect_url": promo_URL})
     else:
-        return redirect(redemption_URL)
+        return jsonify({"redirect_url": redemption_URL})
 
 @app.post("/order")
 def post_order():
