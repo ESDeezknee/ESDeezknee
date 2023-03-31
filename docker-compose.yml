@@ -326,9 +326,11 @@ services:
       dockerfile: promo/Dockerfile
     depends_on:
       - mysql-database
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6204:6204"
     environment:
@@ -336,6 +338,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       orderURL: http://order:6201/order/
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # queueticket: The Queue microservice
