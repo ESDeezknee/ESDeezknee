@@ -175,10 +175,10 @@ def redeem_promo(account_id):
             "payment_method": "promo"
         }
 
-        redeem_promo = invoke_http(
-            order_URL + str(promo.account_id) + "/paid", method='PATCH', json=payment_json)
+        create_ticket = invoke_http(
+            order_URL + str(promo.account_id) + "/paid", method='POST', json=payment_json)
 
-        if redeem_promo["code"] in range(500, 600):
+        if create_ticket["code"] in range(500, 600):
             return jsonify(
                 {
                     "code": 500,

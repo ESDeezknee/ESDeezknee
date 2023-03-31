@@ -102,16 +102,41 @@ def post_order():
     }), 400
 
 # def place_order(orderRequest):
+
+@app.route("/order/<int:account_id>/paid", methods=['POST'])
+def ini_create_ticket(account_id):
+    # this function initialises the create ticket post
+    # invoked by one of 3 payment microservice to indicate that it has been paid
+    if (not request.is_json):
+        return jsonify({
+            "code": 404,
+            "message": "Invalid JSON input: " + str(request.get_data())
+        }), 404
     
+    data = request.get_json()
+    # print(data)
+
+    create_ticket = invoke_http(
+        queue_URL, method='POST', json=data)
+    print(create_ticket)
+    
+    if create_ticket["code"] == 201:
+        return jsonify({
+            "code": 201,
+            "message": "Queueticket being created", 
+            "data": create_ticket["data"]
+            }), 201
+    else:
+        return jsonify({
+            "code": 405,
+            "message": "Queueticket not being created",
+            "error": create_ticket,
+        }), 405
 
 @app.patch("/order/<int:account_id>/paid")
 def update_order(account_id):
     # this function is being invoked by post queue ticket
-    # needs call/message/code from simple microservice to indicate its paid x
-    # call amqp to update that queue ticket is paid 
-    # gives queue id from queue ticket 
-    # updates is_express to true x
-    # invoke post in a separate function 
+    # indicates that the ticket has been created
     if (not request.is_json):
         return jsonify({
             "code": 404,
