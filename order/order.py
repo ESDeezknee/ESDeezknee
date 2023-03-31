@@ -7,8 +7,8 @@ import asyncio
 
 import requests
 from invokes import invoke_http
-# import amqp_setup
 import pika
+import amqp_setup
 import json
 
 from datetime import datetime
@@ -125,6 +125,25 @@ def update_order(account_id):
         account_URL + str(account_id), method='PATCH', json=data)
     
     if update_account["code"] == 200:
+
+        account_result = invoke_http(
+            verification_URL + "account/" + str(data["account_id"]), method='GET')
+
+        notification_message = {
+            "type": "queueticket",
+            "account_id": data["account_id"],
+            "first_name": account_result["data"]["first_name"],
+            "phone_number": account_result["data"]["phone"],
+            "payment_method": data["payment_method"],
+            "queue_id": data["queue_id"],
+            "message": "You have successfully created a queueticket."
+        }
+        message = json.dumps(notification_message)
+        # generateTicket.generate_queue_tickets(data, message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                        body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
         return jsonify({
             "code": 200,
             "message": "Account updated successfully (is express)"

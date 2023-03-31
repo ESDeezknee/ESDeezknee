@@ -237,9 +237,12 @@ services:
     build:
       context: .
       dockerfile: order/Dockerfile
+    depends_on:
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6201:6201"
     environment:
@@ -251,6 +254,7 @@ services:
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # Promo: The PromoCode microservice

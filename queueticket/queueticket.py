@@ -8,8 +8,7 @@ from invokes import invoke_http
 import requests
 import json
 from json import JSONEncoder
-import pika
-import amqp_setup
+
 
 from datetime import datetime
 
@@ -189,18 +188,18 @@ def create_queueticket():
 
     
 
-    notification_message = {
-        "type": "queueticket",
-        "account_id": new_queue["account_id"],
-        "phone_number": account_result["data"]["phone"],
-        "payment_method": new_queue["payment_method"],
-        "queue_id": new_queue["queue_id"],
-        "message": "You have successfully created a queueticket."
-        }
-    message = json.dumps(notification_message)
-    # generateTicket.generate_queue_tickets(data, message)
-    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                    body=message, properties=pika.BasicProperties(delivery_mode=2))
+    # notification_message = {
+    #     "type": "queueticket",
+    #     "account_id": new_queue["account_id"],
+    #     "phone_number": account_result["data"]["phone"],
+    #     "payment_method": new_queue["payment_method"],
+    #     "queue_id": new_queue["queue_id"],
+    #     "message": "You have successfully created a queueticket."
+    #     }
+    # message = json.dumps(notification_message)
+    # # generateTicket.generate_queue_tickets(data, message)
+    # amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+    #                                 body=message, properties=pika.BasicProperties(delivery_mode=2))
 
 
 

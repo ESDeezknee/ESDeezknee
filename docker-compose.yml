@@ -302,19 +302,23 @@ services:
       dockerfile: order/Dockerfile
     depends_on:
       - mysql-database
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6201:6201"
     environment:
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/order
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
+      accountURL: http://account:6003/account/
       paymentURL: http://payment:6203/payment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
+      RABBITMQ_HOST: rabbitmq
 
   #################################
   # Promo: The PromoCode microservice
