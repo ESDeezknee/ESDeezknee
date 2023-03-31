@@ -120,6 +120,33 @@ def post_order():
 # def place_order(orderRequest):
     
 
+@app.patch("/order/<int:account_id>/paid")
+def update_order(account_id):
+    if (not request.is_json):
+        return jsonify({
+            "code": 404,
+            "message": "Invalid JSON input: " + str(request.get_data())
+        }), 404
+    
+    data = request.get_json()
+    print(data)
+    create_ticket = invoke_http(
+        queue_URL, method='POST', json=data)
+    
+    if create_ticket["code"] == 200:
+        return jsonify({
+            "code": 200,
+            "message": "Order updated successfully"
+        }), 200
+    else:
+        return jsonify({
+            "code": 405,
+            "message": "Order not updated",
+            "invoking": create_ticket,
+            "asdf": data
+        }), 405
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6201, debug=True)

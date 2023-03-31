@@ -7,6 +7,7 @@ from os import environ
 from invokes import invoke_http
 import requests
 import json
+from json import JSONEncoder
 import pika
 import amqp_setup
 
@@ -18,9 +19,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {'pool_recycle': 299}
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
-payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
-loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
-promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
+order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
 
 db = SQLAlchemy(app)
@@ -49,15 +48,17 @@ with app.app_context():
   db.create_all()
   existing_queue_ticket_1 = db.session.query(QueueTicket).filter(QueueTicket.queue_id==1).first()
   if not existing_queue_ticket_1:
-      new_queue_ticket_1 = QueueTicket(queue_id=1, is_express=1, account_id=1, payment_method="Promo Code")
-      new_queue_ticket_2 = QueueTicket(queue_id=2, is_express=1, account_id=2, payment_method="Stripe")
-      new_queue_ticket_3 = QueueTicket(queue_id=3, is_express=1, account_id=3, payment_method="Loyalty")
+      new_queue_ticket_1 = QueueTicket(queue_id=1, is_express=1, account_id=1, payment_method="promo")
+      new_queue_ticket_2 = QueueTicket(queue_id=2, is_express=1, account_id=2, payment_method="stripe")
+      new_queue_ticket_3 = QueueTicket(queue_id=3, is_express=1, account_id=3, payment_method="loyalty")
       db.session.add(new_queue_ticket_1)
       db.session.add(new_queue_ticket_2)
       db.session.add(new_queue_ticket_3)
       db.session.commit()
 
-
+class MyEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__ 
 
 @app.get("/queueticket")
 def get_all():
@@ -101,10 +102,25 @@ def create_queueticket():
         raise Exception("No data received.")
     
     data = request.get_json()
-    new_queue = QueueTicket(**data)
+    new_queue1 = QueueTicket(
+        queue_id=data["queue_id"],
+        is_express=data["is_express"],
+        account_id=data["account_id"],
+        payment_method=data["payment_method"]
+    )
+    MyEncoder().encode(new_queue1)
+    new_queue_json = json.dumps(cls=MyEncoder, obj=new_queue1)
+    new_queue_l = json.loads(new_queue_json)
+    new_queue = {
+        "queue_id": new_queue_l["queue_id"],
+        "is_express": new_queue_l["is_express"],
+        "account_id": new_queue_l["account_id"],
+        "payment_method": new_queue_l["payment_method"]
+    }
+    # new_queue = QueueTicket(new_queue_l)
 
     existing_queue = QueueTicket.query.filter_by(
-        account_id=new_queue.account_id).first()
+        account_id=new_queue["account_id"]).first()
 
     if (existing_queue):
         return jsonify(
@@ -118,7 +134,7 @@ def create_queueticket():
         ), 400
 
     account_result = invoke_http(
-        verification_URL + "account/" + str(new_queue.account_id), method='GET')
+        verification_URL + "account/" + str(new_queue["account_id"]), method='GET')
 
     if account_result["code"] in range(500, 600):
         return jsonify(
@@ -133,25 +149,32 @@ def create_queueticket():
             {
                 "code": 400,
                 "data": {
-                    "account_id": new_queue.account_id
+                    "account_id": new_queue["account_id"]
                 },
                 "message": "Account does not exist."
             }
         ), 400
 
-    try:
-        notification_message = {
-            "type": "queueticket",
-            "account_id": new_queue.account_id,
-            "phone_number": account_result["data"]["phone"],
-            "message": "You have successfully created a queueticket."
-        }
-        message = json.dumps(notification_message)
-        # generateTicket.generate_queue_tickets(data, message)
-        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
+    paid_ticket = invoke_http(
+        order_URL + str(new_queue["account_id"]) + "/paid", method='PATCH', json=new_queue)
+    
+    if paid_ticket["code"] in range(500, 600):
+            return jsonify(
+                {
+                    "code": 500,
+                    "message": "Oops, something went wrong! paid ticket",
+                    # "asdf": redeem_promo
+                }
+            ), 500 
 
-        db.session.add(new_queue)
+    try:
+        
+        db.session.add(QueueTicket(
+            queue_id=new_queue["queue_id"],
+            is_express=new_queue["is_express"],
+            account_id=new_queue["account_id"],
+            payment_method=new_queue["payment_method"]
+        ))
         db.session.commit()
 
     except:
@@ -163,11 +186,27 @@ def create_queueticket():
             }
         ), 500
 
+    
+
+    notification_message = {
+        "type": "queueticket",
+        "account_id": new_queue["account_id"],
+        "phone_number": account_result["data"]["phone"],
+        "payment_method": new_queue["payment_method"],
+        "queue_id": new_queue["queue_id"],
+        "message": "You have successfully created a queueticket."
+        }
+    message = json.dumps(notification_message)
+    # generateTicket.generate_queue_tickets(data, message)
+    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                    body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
 
     return jsonify(
         {
             "code": 201,
-            "data": new_queue.json()
+            "data": new_queue
         }
     ), 201
 
@@ -234,7 +273,7 @@ def update_queue(queue_id):
         "phone_number": account_result["data"]["phone"],
         "payment_method": updated_queue.payment_method,
         "queue_id": updated_queue.queue_id,
-        "message": "You have successfully created a queueticket."
+        "message": "You have successfully updated a queueticket."
     }
     message = json.dumps(notification_message)
     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
