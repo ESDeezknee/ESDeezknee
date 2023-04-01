@@ -113,9 +113,9 @@ def ini_create_ticket(account_id):
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
     
-    data1 = request.get_json()
-    data = data1["data"]
-    print(data1)
+    data = request.get_json()
+    # data = data1["data"]
+    print(data)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
@@ -144,8 +144,8 @@ def update_order(account_id):
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
     
-    data1 = request.get_json()
-    data = data1["data"]
+    data = request.get_json()
+    # data = data1["data"]
     print(data)
 
     update_account = invoke_http(
