@@ -95,17 +95,17 @@ def get_by_id(queue_id):
         }
     ), 404
 
-@app.route("/queueticket", methods=['POST'])
+@app.route("/queueticket/", methods=['POST'])
 def create_queueticket():
     if request.json is None:
         raise Exception("No data received.")
     
-    data1 = request.get_json()
-    data = data1["data"]
+    data = request.get_json()
+    # data = data1["data"]
     print(data)
     new_queue1 = QueueTicket(
         queue_id=data["queue_id"],
-        is_express=data["is_express"],
+        is_express=1,
         account_id=data["account_id"],
         payment_method=data["payment_method"]
     )
@@ -187,26 +187,11 @@ def create_queueticket():
             }
         ), 500
 
-    
-
-    # notification_message = {
-    #     "type": "queueticket",
-    #     "account_id": new_queue["account_id"],
-    #     "phone_number": account_result["data"]["phone"],
-    #     "payment_method": new_queue["payment_method"],
-    #     "queue_id": new_queue["queue_id"],
-    #     "message": "You have successfully created a queueticket."
-    #     }
-    # message = json.dumps(notification_message)
-    # # generateTicket.generate_queue_tickets(data, message)
-    # amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-    #                                 body=message, properties=pika.BasicProperties(delivery_mode=2))
-
-
 
     return jsonify(
         {
             "code": 201,
+            "message": "Queueticket created",
             "data": new_queue
         }
     ), 201
