@@ -7,8 +7,8 @@ import asyncio
 
 import requests
 from invokes import invoke_http
-# import amqp_setup
 import pika
+import amqp_setup
 import json
 
 from datetime import datetime
@@ -24,6 +24,7 @@ db = SQLAlchemy(app)
 CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+account_URL = environ.get('accountURL') or "http://localhost:6003/account/"
 payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
@@ -57,35 +58,18 @@ async def select_payment_method(account_id):
     # payment_method = data['payment_method']
     account_id = str(account_id)
     payment_method = request.form.get('payment_method')
-    payment_method = "external" # temporary 
+    # payment_method = "external" # temporary 
     data = {
         "account_id": account_id,
         "payment_method": payment_method
     } 
     p_method = data["payment_method"]
     if (p_method == "external"):
-        return redirect(payment_URL), jsonify(p_method)
+        return jsonify({"redirect_url": payment_URL})
     elif (p_method == "promo"):
-        return redirect(promo_URL)
+        return jsonify({"redirect_url": promo_URL})
     else:
-        return redirect(redemption_URL)
-
-# @app.route("/order/payment/<string:type>/<int:account_id>", methods=['GET'])
-# async def process_payment(type, account_id):
-#     order_confirmed = await confirm_order(account_id)
-#     while not order_confirmed:
-#         await asyncio.sleep(1)
-#         order_confirmed = await confirm_order(account_id)
-    
-#     p_method = await select_payment_method(account_id)
-#     if (p_method == "external"):
-#         return redirect(f'{payment_URL}/{account_id}')
-#     elif (p_method == "promo"):
-#         return redirect(f'{promo_URL}/{account_id}')
-#     else:
-#         return redirect(f'{redemption_URL}/{account_id}')
-
-
+        return jsonify({"redirect_url": redemption_URL})
 
 @app.post("/order")
 def post_order():
@@ -118,32 +102,85 @@ def post_order():
     }), 400
 
 # def place_order(orderRequest):
-    
 
-@app.patch("/order/<int:account_id>/paid")
-def update_order(account_id):
+@app.route("/order/<int:account_id>/paying", methods=['POST'])
+def ini_create_ticket(account_id):
+    # this function initialises the create ticket post
+    # invoked by one of 3 payment microservice to indicate that it has been paid
     if (not request.is_json):
         return jsonify({
             "code": 404,
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
     
-    data = request.get_json()
-    print(data)
+    data1 = request.get_json()
+    data = data1["data"]
+    print(data1)
+
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
+    print(create_ticket)
     
-    if create_ticket["code"] == 200:
+    if create_ticket["code"] == 201:
+        return jsonify({
+            "code": 201,
+            "message": "Queueticket being created", 
+            "data": create_ticket["data"]
+            }), 201
+    else:
+        return jsonify({
+            "code": 405,
+            "message": "Queueticket not being created",
+            "error": create_ticket,
+        }), 405
+
+@app.patch("/order/<int:account_id>/paid")
+def update_order(account_id):
+    # this function is being invoked by post queue ticket
+    # indicates that the ticket has been created
+    if (not request.is_json):
+        return jsonify({
+            "code": 404,
+            "message": "Invalid JSON input: " + str(request.get_data())
+        }), 404
+    
+    data1 = request.get_json()
+    data = data1["data"]
+    print(data)
+
+    update_account = invoke_http(
+        account_URL + str(account_id), method='PATCH', json=data)
+    print(update_account)
+    
+    if update_account["code"] == 200:
+
+        account_result = invoke_http(
+            verification_URL + "account/" + str(data["account_id"]), method='GET')
+
+        notification_message = {
+            "type": "queueticket",
+            "account_id": data["account_id"],
+            "first_name": account_result["data"]["first_name"],
+            "phone_number": account_result["data"]["phone"],
+            "payment_method": data["payment_method"],
+            "queue_id": data["queue_id"],
+            "message": "You have successfully created a queueticket."
+        }
+        message = json.dumps(notification_message)
+        # generateTicket.generate_queue_tickets(data, message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                        body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
         return jsonify({
             "code": 200,
-            "message": "Order updated successfully"
+            "message": "Account updated successfully (is express)"
         }), 200
     else:
         return jsonify({
             "code": 405,
             "message": "Order not updated",
-            "invoking": create_ticket,
-            "asdf": data
+            "invoking": update_account["message"],
         }), 405
 
 

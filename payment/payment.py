@@ -1,8 +1,9 @@
-from flask import Flask, redirect, request, jsonify
+from flask import Flask, redirect, request, jsonify, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
 from datetime import datetime
+import asyncio
 
 import stripe
 
@@ -56,6 +57,7 @@ def hello():
 def create_checkout_session():
     try:
         checkout_session = stripe.checkout.Session.create(
+            
             line_items = [
                 {
                     'price': 'price_1MjeeeExUYBuMhthqO8FblZr',
@@ -64,7 +66,7 @@ def create_checkout_session():
             ],
             mode = "payment",
             #success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
-            success_url = order_URL,
+            success_url = url_for('check_payment_status', session_id='{CHECKOUT_SESSION_ID}', _external=True),
             # cancel_url should bring it back to the main page but cancels payment
             cancel_url = order_URL
         )
@@ -78,6 +80,32 @@ def create_checkout_session():
     db.session.add(payment)
     db.session.commit()
     return redirect(checkout_session.url, code=303)
+
+@app.route('/check-payment-status/<session_id>', methods=['GET'])
+async def check_payment_status(session_id):
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+        payment_status = session.payment_status
+    except stripe.error.InvalidRequestError:
+        return f"Invalid session ID: {session_id}"
+    except stripe.error.APIConnectionError:
+        return "Could not connect to Stripe's API"
+
+    if payment_status == 'paid':
+        # Payment has been successfully made
+        payment = Payment.query.filter_by(session_id=session_id).first()
+        if payment:
+            payment.status = 'paid'
+            db.commit.session()
+        return redirect(url_for(order_URL)) # add the route to generate ticket
+    elif payment_status == 'unpaid':
+        # Payment has not yet been made
+        await asyncio.sleep(30)
+        return await check_payment_status(session_id)
+    else:
+        # Payment has failed or has been refunded
+        return "Payment failed or refunded"
+
 
 @app.get("/payment")
 def get_all():

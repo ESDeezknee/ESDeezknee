@@ -7,6 +7,8 @@ from invokes import invoke_http
 
 import json
 import random
+import pika
+import amqp_setup
 
 from datetime import datetime
 
@@ -173,20 +175,36 @@ def redeem_promo(account_id):
             "payment_method": "promo"
         }
 
-        redeem_promo = invoke_http(
-            order_URL + str(promo.account_id) + "/paid", method='PATCH', json=payment_json)
+        create_ticket = invoke_http(
+            order_URL + str(promo.account_id) + "/paying", method='POST', json=payment_json)
 
-        if redeem_promo["code"] in range(500, 600):
+        if create_ticket["code"] in range(500, 600):
             return jsonify(
                 {
                     "code": 500,
                     "message": "Oops, something went wrong! Order",
-                    # "asdf": redeem_promo
                 }
             ), 500 
     
         db.session.delete(promo)
         db.session.commit()
+
+        account_result = invoke_http(
+            verification_URL + "account/" + str(promo.account_id), method='GET')
+
+        notification_message = {
+            "type": "promo",
+            "account_id": promo.account_id,
+            "first_name": account_result["data"]["first_name"],
+            "phone_number": account_result["data"]["phone"],
+            "promo_code": promo.promo_code,
+            "message": "You have successfully redeemed a promo."
+        }
+        message = json.dumps(notification_message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                        body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
         return jsonify(
             {
                 "code": 200,

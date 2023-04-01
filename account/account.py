@@ -51,8 +51,8 @@ with app.app_context():
     existing_account_1 = db.session.query(Account).filter(Account.account_id==1).first()
     if not existing_account_1:
       new_account_1 = Account(first_name="Benji", last_name="Ng", date_of_birth="2000-01-01", age=23, gender="M", email="kangting.ng.2021@scis.smu.edu.sg", phone="+6597861048", is_express=0, is_active=1)
-      new_account_2 = Account(first_name="Wei Lun", last_name="Teo", date_of_birth="2002-01-01", age=21, gender="F", email="weilun.teo.2021@scis.smu.edu.sg", phone="+6585339293", is_express=1, is_active=1)
-      new_account_3 = Account(first_name="Zachary", last_name="Lian", date_of_birth="2000-01-01", age=23, gender="M", email="zacharylian.2021@scis.smu.edu.sg", phone="+6592977881", is_express=1, is_active=1)
+      new_account_2 = Account(first_name="Wei Lun", last_name="Teo", date_of_birth="2002-01-01", age=21, gender="F", email="weilun.teo.2021@scis.smu.edu.sg", phone="+6585339293", is_express=0, is_active=1)
+      new_account_3 = Account(first_name="Zachary", last_name="Lian", date_of_birth="2000-01-01", age=23, gender="M", email="zacharylian.2021@scis.smu.edu.sg", phone="+6592977881", is_express=0, is_active=1)
       new_account_4 = Account(first_name="Joel", last_name="Tan", date_of_birth="2000-01-01", age=23, gender="M", email="joel.tan.2021@scis.smu.edu.sg", phone="+6590605085", is_express=0, is_active=1)
       new_account_5 = Account(first_name="Keith", last_name="Law", date_of_birth="2000-01-01", age=23, gender="M", email="keith.law.2021@scis.smu.edu.sg", phone="+6594761445", is_express=0, is_active=1)
       new_account_6 = Account(first_name="Vanessa", last_name="Lee", date_of_birth="2002-01-01", age=21, gender="F", email="vanessa.lee.2021@scis.smu.edu.sg", phone="+6597634941", is_express=0, is_active=1)
@@ -118,6 +118,28 @@ def find_by_email(email):
         {
             "code": 404,
             "message": "Account not found."
+        }
+    ), 404
+
+@app.route("/account/<int:account_id>", methods=['PATCH'])
+def update_is_express(account_id):
+    account = Account.query.filter_by(account_id=account_id).first()
+    if account:
+        data = request.get_json()
+        account.is_express = data['is_express']
+        db.session.commit()
+        return jsonify(
+            {
+                "code": 200,
+                "message": "Account is_express updated.", 
+                "data": data
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Account not found.", 
+            "data": data
         }
     ), 404
 
