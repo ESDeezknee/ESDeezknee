@@ -56,20 +56,48 @@ async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
-    account_id = str(account_id)
+    # account_id = str(account_id)
     payment_method = request.form.get('payment_method')
     # payment_method = "external" # temporary 
+    queue_id = 1
+    check_qid = invoke_http(
+        queue_URL + str(queue_id), method='GET')
+    if check_qid["code"] == 200:
+        queue_id += 1
+
     data = {
         "account_id": account_id,
+        "queue_id": queue_id,
         "payment_method": payment_method
     } 
+
     p_method = data["payment_method"]
     if (p_method == "external"):
         return jsonify({"redirect_url": payment_URL})
     elif (p_method == "promo"):
         return jsonify({"redirect_url": promo_URL})
+    elif (p_method == "loyalty"):
+        points = {
+            "points": 500
+        }
+        update_loyalty = invoke_http(
+            loyalty_URL + str(account_id) + "/redeem", method='PATCH', json=points)
+        print(update_loyalty)
+        if update_loyalty["code"] == 200:
+            ini_create_ticket(account_id, data)
+            return jsonify({
+                "code": 200,
+                "message": "Loyalty points have been redeemed", 
+                "data": update_loyalty["data"]
+                }), 200
+        else:
+            return jsonify({
+                "code": 405,
+                "message": "Error in redeeming loyalty points",
+                "error": update_loyalty,
+            }), 405
     else:
-        return jsonify({"redirect_url": redemption_URL})
+        return "Cannot find payment method"
 
 @app.post("/order")
 def post_order():
@@ -104,18 +132,19 @@ def post_order():
 # def place_order(orderRequest):
 
 @app.route("/order/<int:account_id>/paying", methods=['POST'])
-def ini_create_ticket(account_id):
+def ini_create_ticket(account_id, data1):
     # this function initialises the create ticket post
     # invoked by one of 3 payment microservice to indicate that it has been paid
     if (not request.is_json):
-        return jsonify({
-            "code": 404,
-            "message": "Invalid JSON input: " + str(request.get_data())
-        }), 404
-    
-    data = request.get_json()
-    # data = data1["data"]
-    print(data)
+        data = data1
+        # return jsonify({
+        #     "code": 404,
+        #     "message": "Invalid JSON input: " + str(request.get_data())
+        # }), 404
+
+    else:    
+        data = request.get_json()
+        print(data)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
@@ -145,7 +174,6 @@ def update_order(account_id):
         }), 404
     
     data = request.get_json()
-    # data = data1["data"]
     print(data)
 
     update_account = invoke_http(
@@ -182,6 +210,47 @@ def update_order(account_id):
             "message": "Order not updated",
             "invoking": update_account["message"],
         }), 405
+
+# @app.route("/order/<int:account_id>/loyalty", methods=['POST'])
+# def redeem_loyalty(account_id):
+#     # this function invoked loyalty to use points to redeem ticket
+#     if (not request.is_json):
+#         return jsonify({
+#             "code": 404,
+#             "message": "Invalid JSON input: " + str(request.get_data())
+#         }), 404
+    
+#     data = request.get_json()
+#     print(data)
+#     points = {
+#         "points": 500
+#     }
+
+#     update_loyalty = invoke_http(
+#         loyalty_URL + str(account_id) + "/redeem", method='PATCH', json=points)
+#     print(update_loyalty)
+
+#     loyalty_json = {
+#             "account_id": data["account_id"],
+#             "queue_id": data["queue_id"],
+#             "promo_code": data["promo_code"],
+#             "payment_method": "loyalty"
+#         }
+    
+#     # call paying with loyalty_json
+
+#     if update_loyalty["code"] == 200:
+#         return jsonify({
+#             "code": 200,
+#             "message": "Successfully redeemed loyalty points", 
+#             "data": update_loyalty["data"]
+#             }), 200
+#     else:
+#         return jsonify({
+#             "code": 405,
+#             "message": "Error in redeeming loyalty points",
+#             "error": update_loyalty,
+#         }), 405
 
 
 
