@@ -18,7 +18,7 @@ class IcebreakersController extends Controller
                 -> where('id','=',$random_number)      
                 ->get();
      
-        return $all;
+        return $all[0];
         
 
     }

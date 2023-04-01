@@ -55,6 +55,9 @@ def sms_callback(channel, method, properties, body):
 
     if data["type"] == "promo":
         send_notification_promo_sms(data["account_id"],data["promo_code"],data["first_name"],data["phone_number"])
+    
+    if data["type"] == "icebreakers":
+        send_notification_icebreakers_sms(data["icebreakers"],data["first_name"],data["phone_number"])
 
 
 
@@ -156,6 +159,23 @@ def send_notification_promo_sms(account_id, promo_code, first_name, phone_number
     })
     print("Notification SMS about promo successfully sent!", flush=True)
 
+
+def send_notification_icebreakers_sms(icebreakers, first_name,phone_number):
+    # init
+    notificationapi.init("4520cecngqlnq5guo9dbe26dte",
+                         "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    # send sms
+    notificationapi.send({
+        "notificationId": "sms",
+        "templateId": "icebreakers",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"firstName": first_name, "icebreakers": icebreakers}
+    })
+
+    print("Icebreakers Notification sent!", flush=True)
 
 
 if __name__ == '__main__':

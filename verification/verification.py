@@ -16,6 +16,8 @@ reward_URL = environ.get('rewardURL') or "http://localhost:6303/reward/"
 grouping_URL = environ.get('groupingURL') or "http://localhost:6103/grouping/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
+icebreakers_url = environ.get('icebreakersURL') or "http://localhost:6101/api/icebreakers"
+
 
 
 
@@ -43,6 +45,12 @@ def verify_reward(reward_id):
 def verify_queue(queue_id):
     return invoke_http(
         queue_URL + str(queue_id), method='GET')
+
+
+@app.route("/verification/api/icebreakers")
+def get_icebreakers():
+    return invoke_http(
+        icebreakers_url, method='GET')
 
 
 if __name__ == '__main__':

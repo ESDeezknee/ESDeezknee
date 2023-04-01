@@ -47,7 +47,7 @@ def create_group():
 
     
 ## incl if statement for when users click on "broadcast group" after group creation
-@app.route("/handleGroup/broadcast", methods=["POST"])
+@app.route("/handleGroup/broadcast/<int:grouping_id>", methods=["POST"])
 def broadcast(): 
     if request.is_json:
         try:
@@ -113,7 +113,7 @@ def join_group():
         no_of_pax_joining = group_details["data"]["no_of_pax"]
 
         ## get lf_pax of group 1 from broadcast
-        url_for_LFpax = broadcast_URL + "/" + broadcasted_id
+        url_for_LFpax = broadcast_URL + "/" + str(broadcasted_id)
         broadcast_details = invoke_http(url_for_LFpax, method='GET')
         
         code = broadcast_details["code"]
@@ -179,11 +179,18 @@ def join_group():
                         else: 
                             delete_broadcast_result = processDeleteBroadcast(broadcasted_id)
                             for account in update_group_result["data"]["list_account"]:
-                                    account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
+                                    account_details = invoke_http(verification_URL + "account/" + str(account), method='GET')
                                     notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
                                     message = json.dumps(notification_message)
                                     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
                                                 body=message, properties=pika.BasicProperties(delivery_mode=2))
+                                    
+                                    icebreaker_details = invoke_http(verification_URL + "api/icebreakers", method="GET")
+                                    notification_message_2 = {"type":"icebreakers","icebreakers":icebreaker_details,"first_name":account_details["data"]["first_name"],"phone_number":account_details["data"]["phone"]}
+
+                                    icebreaker_message = json.dumps(notification_message_2)
+                                    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                                body=icebreaker_message, properties=pika.BasicProperties(delivery_mode=2))
                             code = delete_broadcast_result["code"]
                             if code not in range (200,300):
                                 return jsonify({
@@ -306,7 +313,7 @@ def processCreateBroadcast(broadcast_info):
         return createBroadcast_result        
     
 def getGroupingDetails(grouping_id):
-    url = group_URL + "/" + grouping_id
+    url = group_URL + "/" + str(grouping_id)
     groupingDetails_result = invoke_http(url, method="GET", json=grouping_id)
     code = groupingDetails_result["code"]
     if code not in range(200,300):
@@ -335,7 +342,7 @@ def processUpdateBroadcast(info):
         return updateBroadcast_result
 
 def processUpdateGrouping(info):
-    url = group_URL + "/" + info["grouping_id"]
+    url = group_URL + "/" + str(info["grouping_id"])
     updateGrouping_result = invoke_http(url, method='PATCH', json=info)
 
     code = updateGrouping_result["code"]
@@ -350,7 +357,7 @@ def processUpdateGrouping(info):
         return updateGrouping_result
     
 def processDeleteGroup(grouping_id):
-    url = group_URL + "/" + grouping_id
+    url = group_URL + "/" + str(grouping_id)
     deleteGrouping_result = invoke_http(url, method="DELETE", json=grouping_id)
     code = deleteGrouping_result["code"]
     if code not in range(200,300):
@@ -364,7 +371,7 @@ def processDeleteGroup(grouping_id):
         return deleteGrouping_result
     
 def processDeleteBroadcast(grouping_id):
-    url = broadcast_URL + "/" + grouping_id
+    url = broadcast_URL + "/" + str(grouping_id)
     deleteBroadcast_result = invoke_http(url, method="DELETE", json=grouping_id)
     code = deleteBroadcast_result["code"]
     if code not in range(200,300):

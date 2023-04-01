@@ -207,6 +207,8 @@ services:
       rewardURL: http://reward:6303/reward/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
+      icebreakers: http://icebreakers:6101/api/icebreakers
+
 
   #################################
   # Notification: The Notification microservice
@@ -516,6 +518,7 @@ services:
       - DB_DATABASE=icebreakers
       - DB_USERNAME=root
       - DB_PASSWORD=root
+      - verificationURL: http://verification:6001/verification/
     command: bash -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=6101"
 
     
