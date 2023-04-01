@@ -16,6 +16,8 @@ CORS(app)
 verification_URL = environ.get('verificationURL')
 group_URL = "http://grouping:6103/grouping"
 broadcast_URL =  "http://broadcast:6102/broadcast"
+icebreakers_URL =  environ.get('icebreakersURL') 
+
 
 @app.route("/handleGroup/create", methods=["POST"])
 def create_group():
@@ -169,7 +171,8 @@ def join_group():
 
                         else: 
                             joining_acct_id = joining_group_details["data"]["list_account"]
-                            account_list.append(joining_acct_id)
+                            for acc in joining_acct_id:
+                                account_list.append(acc)
 
                             merged_group_details = {
                                 "grouping_id": broadcasted_id,
@@ -196,7 +199,7 @@ def join_group():
                                         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
                                                     body=message, properties=pika.BasicProperties(delivery_mode=2))
                                         
-                                        icebreaker_details = invoke_http(verification_URL + "api/icebreakers", method="GET")
+                                        icebreaker_details = invoke_http(icebreakers_URL, method="GET")
                                         notification_message_2 = {"type":"icebreakers","icebreakers":icebreaker_details,"first_name":account_details["data"]["first_name"],"phone_number":account_details["data"]["phone"]}
 
                                         icebreaker_message = json.dumps(notification_message_2)

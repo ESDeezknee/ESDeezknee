@@ -57,7 +57,7 @@ def sms_callback(channel, method, properties, body):
         send_notification_promo_sms(data["account_id"],data["promo_code"],data["first_name"],data["phone_number"])
     
     if data["type"] == "icebreakers":
-        send_notification_icebreakers_sms(data["icebreakers"],data["first_name"],data["phone_number"])
+        send_notification_icebreakers_sms(data["icebreakers"]["id"],data["icebreakers"]["statements"],data["first_name"],data["phone_number"])
 
 
 
@@ -160,19 +160,19 @@ def send_notification_promo_sms(account_id, promo_code, first_name, phone_number
     print("Notification SMS about promo successfully sent!", flush=True)
 
 
-def send_notification_icebreakers_sms(icebreakers, first_name,phone_number):
+def send_notification_icebreakers_sms(id,icebreaker_statement, first_name,phone_number):
     # init
-    notificationapi.init("4520cecngqlnq5guo9dbe26dte",
-                         "1d1pfufn15hbv31ibs36458t92319pis5lllihcho22b94jai0na")
+    notificationapi.init("f130gmogsmq75oiffj86pj22o",
+                         "1m9bajhvi84ssqo49hd97srlg6huer14f2ii7mp1l986tjc74rgv")
     # send sms
     notificationapi.send({
-        "notificationId": "sms",
-        "templateId": "icebreakers",
+        "notificationId": "icebreakers",
+        "templateId": "default",
         "user": {
             "id": phone_number,
             "number": phone_number,   # required for sms notifications
         },
-        "mergeTags": {"firstName": first_name, "icebreakers": icebreakers}
+        "mergeTags": {"firstName": first_name, "id": id, "statements":icebreaker_statement}
     })
 
     print("Icebreakers Notification sent!", flush=True)
