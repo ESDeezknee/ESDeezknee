@@ -158,7 +158,7 @@ def join_group():
                     else: 
                         account_list = grouping_details_result["data"]["list_account"]
                         ## need to get acct id of joining group from frontend
-                        account_list.append(6)
+                        account_list.append(4)
 
                         merged_group_details = {
                             "grouping_id": broadcasted_id,
@@ -211,11 +211,12 @@ def join_group():
                                     })
                                 else:
                                 ## get group number from frontend
-                                    grouping_id = str(broadcasted_id)
+                                    
                                     return jsonify(
                                         {
                                             "code": 200,
-                                            "message": "Join group success! You are now part of Group " + grouping_id
+                                            "grouping_id": broadcasted_id,
+                                            "message": "Join group success! You are now part of Group " + str(broadcasted_id)
                                         }
                                     ), 200
             
@@ -327,7 +328,7 @@ def getGroupingDetails(grouping_id):
         return groupingDetails_result
 
 def processUpdateBroadcast(info):
-    url = broadcast_URL + "/" + info["grouping_id"]
+    url = broadcast_URL + "/" + str(info["grouping_id"])
     updateBroadcast_result = invoke_http(url, method='PATCH', json=info)
 
     code = updateBroadcast_result["code"]

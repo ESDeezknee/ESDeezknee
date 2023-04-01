@@ -3,8 +3,7 @@ COPY . /usr/src/app
 # Install dependencies
 RUN apt-get update && \
     apt-get install -y \
-        git \
-        libpq-dev
+        git 
 
 
 # Install required extensions
@@ -18,7 +17,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /usr/src/app/icebreakers
 
 RUN composer install --no-interaction --no-plugins --no-scripts
-RUN chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache
+# RUN chown -R www-data:www-data storage bootstrap/cache && chmod -R 775 storage bootstrap/cache
 # Set environment variables
 ENV DB_CONNECTION=mysql
 ENV DB_HOST=host.docker.internal
