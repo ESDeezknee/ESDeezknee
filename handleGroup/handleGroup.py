@@ -327,7 +327,7 @@ def getGroupingDetails(grouping_id):
         return groupingDetails_result
 
 def processUpdateBroadcast(info):
-    url = broadcast_URL + "/" + info["grouping_id"]
+    url = broadcast_URL + "/" + str(info["grouping_id"])
     updateBroadcast_result = invoke_http(url, method='PATCH', json=info)
 
     code = updateBroadcast_result["code"]
