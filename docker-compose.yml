@@ -516,6 +516,6 @@ services:
       - DB_DATABASE=icebreakers
       - DB_USERNAME=root
       - DB_PASSWORD=root
-
+    command: bash -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=6101"
 
     

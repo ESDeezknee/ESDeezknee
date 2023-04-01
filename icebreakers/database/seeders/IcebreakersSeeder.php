@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\database\Console\Seeds\WithoutModelEvents;
-use Illuminate\database\seeder;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class IcebreakersSeeder extends Seeder
 {
@@ -16,31 +17,31 @@ class IcebreakersSeeder extends Seeder
         $data = [
             [
                 'id' => 1,
-                'statement' => 'Go up to someone and compliment them.',
+                'statements' => 'Go up to someone and compliment them.',
             ],
             [
                 'id' => 2,
-                'statement' => 'Tell the group a fun fact, everyone has to go',
+                'statements' => 'Tell the group a fun fact, everyone has to go',
             ],
             [
                 'id' => 3,
-                'statement' => 'Tell everyone what brings you joy and happiness',
+                'statements' => 'Tell everyone what brings you joy and happiness',
             ],
             [
                 'id' => 4,
-                'statement' => 'Do the chicken dance',
+                'statements' => 'Do the chicken dance',
             ],
             [
                 'id' => 5,
-                'statement' => 'Tell everyone a joke',
+                'statements' => 'Tell everyone a joke',
             ],
             [
                 'id' => 6,
-                'statement' => 'As the first step, you will need to hydrate and then tell everyone to hydrate. If you are able, recite the SAF 8 core values.',
+                'statements' => 'As the first step, you will need to hydrate and then tell everyone to hydrate. If you are able, recite the SAF 8 core values.',
             ]
             // Add more data here as needed
         ];
-
-        DB::table('statements')->insert($data);
+        DB::table('icebreakers')->insert($data);
+        
     }
 }

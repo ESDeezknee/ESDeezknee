@@ -98,7 +98,7 @@ def join_group():
     ## figure out how to get grouping_id from frontend
     data = request.get_json()
     grouping_id = data["grouping_id"]
-    broadcasted_group = data["broadcasted_group"]
+    broadcasted_id = data["broadcasted_id"]
     url_for_noofpax = group_URL + "/" + str(grouping_id)
     group_details = invoke_http(url_for_noofpax, method='GET')
     code = group_details["code"]
@@ -113,7 +113,7 @@ def join_group():
         no_of_pax_joining = group_details["data"]["no_of_pax"]
 
         ## get lf_pax of group 1 from broadcast
-        url_for_LFpax = broadcast_URL + "/" + broadcasted_group
+        url_for_LFpax = broadcast_URL + "/" + broadcasted_id
         broadcast_details = invoke_http(url_for_LFpax, method='GET')
         
         code = broadcast_details["code"]
@@ -146,7 +146,7 @@ def join_group():
             elif new_LF_pax == 0:
                     new_no_of_pax = LF_pax + no_of_pax_joining
                     ## get account_id of broadcasted group
-                    grouping_details_result = getGroupingDetails(broadcasted_group)
+                    grouping_details_result = getGroupingDetails(broadcasted_id)
                     code = grouping_details_result["code"]
                     if code not in range(200,300):
                         return jsonify({
@@ -161,7 +161,7 @@ def join_group():
                         account_list.append(6)
 
                         merged_group_details = {
-                            "grouping_id": broadcasted_group,
+                            "grouping_id": broadcasted_id,
                             "list_account": account_list,
                             "description": "Complete group!",
                             "no_of_pax": new_no_of_pax,
@@ -177,7 +177,7 @@ def join_group():
                         })
 
                         else: 
-                            delete_broadcast_result = processDeleteBroadcast(broadcasted_group)
+                            delete_broadcast_result = processDeleteBroadcast(broadcasted_id)
                             for account in update_group_result["data"]["list_account"]:
                                     account_details = invoke_http(verification_URL + "/account/" + str(account), method='GET')
                                     notification_message = {"type":"inform","number_pax":update_group_result["data"]["no_of_pax"],"first_name":account_details["data"]["first_name"], "phone_number":account_details["data"]["phone"]}
@@ -204,7 +204,7 @@ def join_group():
                                     })
                                 else:
                                 ## get group number from frontend
-                                    grouping_id = str(broadcasted_group)
+                                    grouping_id = str(broadcasted_id)
                                     return jsonify(
                                         {
                                             "code": 200,
@@ -216,7 +216,7 @@ def join_group():
             elif new_LF_pax > 0:
                 new_no_of_pax = LF_pax + no_of_pax_joining
                 ## get account_id of broadcasted group, get grouping_id frm frontend
-                grouping_details_result = getGroupingDetails(broadcasted_group)
+                grouping_details_result = getGroupingDetails(broadcasted_id)
                 code = grouping_details_result["code"]
                 if code not in range(200,300):
                     return jsonify({
@@ -230,7 +230,7 @@ def join_group():
                     ## need to get acct id of joining group from frontend
                     account_list.append(6)
                     new_grouping_info = {
-                        "grouping_id": broadcasted_group,
+                        "grouping_id": broadcasted_id,
                         "list_account": account_list,
                         "no_of_pax": new_no_of_pax,
                         "description": "looking for more members",
@@ -246,7 +246,7 @@ def join_group():
                         }), 500
                     
                     new_broadcast_info = {
-                        "grouping_id": broadcasted_group,
+                        "grouping_id": broadcasted_id,
                         "lf_pax": new_LF_pax,
                     }
                     updateBroadcast_result = processUpdateBroadcast(new_broadcast_info)
@@ -271,7 +271,7 @@ def join_group():
                             return jsonify(
                                 {
                                     "code": 200,
-                                    "message": f"Join group success! You are now part of group {broadcasted_group}. We are in the midst of finding " + new_LF_pax + " more people to complete your group."
+                                    "message": f"Join group success! You are now part of group {broadcasted_id}. We are in the midst of finding " + new_LF_pax + " more people to complete your group."
                                 }
                             ), 200
                     
