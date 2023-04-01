@@ -47,7 +47,7 @@ def create_group():
 
     
 ## incl if statement for when users click on "broadcast group" after group creation
-@app.route("/handleGroup/broadcast/<int:grouping_id>", methods=["POST"])
+@app.route("/handleGroup/broadcast/<int:broadcasted_id>", methods=["POST"])
 def broadcast(): 
     if request.is_json:
         try:
