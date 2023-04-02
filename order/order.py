@@ -25,7 +25,7 @@ CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 account_URL = environ.get('accountURL') or "http://localhost:6003/account/"
-payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
+ePayment_URL = environ.get('ePaymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
@@ -57,7 +57,6 @@ async def select_payment_method(account_id):
     # data = await request.get_json()
     # payment_method = data['payment_method']
     payment_method = request.form.get('payment_method')
-    # payment_method = "external" # temporary 
     check_qid = invoke_http(
         queue_URL, method='GET')
     print(check_qid)
@@ -69,19 +68,28 @@ async def select_payment_method(account_id):
     else:
         queue_id = 1
 
-
+    
     data = {
         "account_id": account_id,
-        "queue_id": queue_id,
+        "queue_id": 1234,
         "payment_method": payment_method
     } 
 
-    p_method = data["payment_method"]
-    if (p_method == "external"):
-        return jsonify({"redirect_url": payment_URL})
-    elif (p_method == "promo"):
-        return jsonify({"redirect_url": promo_URL})
-    elif (p_method == "loyalty"):
+    if (payment_method == "external"):
+        response = invoke_http(ePayment_URL + '/create-checkout-session', 'POST', data=data)
+        if response.status_code == 200:
+            response_data = response.json()
+            return jsonify({'status': 'success', 'data': response_data})
+        else:
+            return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
+    elif (payment_method == "promo"):
+        response = invoke_http(promo_URL + '/promo/' + data.account_id, 'DELETE', data=data)
+        if response.status_code == 200:
+            response_data = response.json()
+            return jsonify({'status': 'success', 'data': response_data})
+        else:
+            return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
+    elif (payment_method == "loyalty"):
         points = {
             "points": 500
         }
