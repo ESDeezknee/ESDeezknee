@@ -229,7 +229,7 @@ def join_group():
                                         return jsonify(
                                             {
                                                 "code": 200,
-                                                "message": "Join group success! You are now part of Group " + grouping_id
+                                                "message": "Congratulations! You are now part of Group " + grouping_id
                                             }
                                         ), 200
                 
