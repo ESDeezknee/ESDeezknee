@@ -317,7 +317,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       accountURL: http://account:6003/account/
-      paymentURL: http://payment:6203/payment/
+      ePaymentURL: http://ePayment:6203/ePayment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
@@ -483,10 +483,10 @@ services:
   # Stripe: The External Payment Microservice
   #################################
   payment:
-    image: esdeezknee/payment:1.0
+    image: esdeezknee/epayment:1.0
     build:
       context: .
-      dockerfile: payment/Dockerfile
+      dockerfile: ePayment/Dockerfile
     depends_on:
       - mysql-database
     restart: always
@@ -495,12 +495,12 @@ services:
     ports:
       - "6203:6203"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/payment
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/epayment
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
 
   #################################
-  # Icebreakers: The External Payment Microservice
+  # Icebreakers: The Icebreakers Microservice
   #################################
   # icebreakers:
   #   image: esdeezknee/icebreakers:1.0
