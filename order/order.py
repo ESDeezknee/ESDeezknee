@@ -25,7 +25,7 @@ CORS(app)
 
 verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
 account_URL = environ.get('accountURL') or "http://localhost:6003/account/"
-ePayment_URL = environ.get('ePaymentURL') or "http://localhost:6203/payment/"
+ePayment_URL = environ.get('ePaymentURL') or "http://localhost:6203/epayment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
@@ -51,12 +51,13 @@ async def confirm_order(account_id):
     else:
         await asyncio.sleep(1)
 
-@app.route('/order/get_payment_method/<int:account_id>', methods=['POST'])
+@app.route('/order/get_payment_method/<int:account_id>', methods=['POST', 'DELETE'])
 async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
     payment_method1 = request.get_json()
+    print(payment_method1)
     payment_method = payment_method1['payment_method']
     check_qid = invoke_http(
         queue_URL, method='GET')
@@ -74,22 +75,23 @@ async def select_payment_method(account_id):
         "account_id": account_id,
         "queue_id": queue_id,
         "payment_method": payment_method
-    } 
+    }
+
 
     if (payment_method == "external"):
-        response = invoke_http(ePayment_URL + '/create-checkout-session', 'POST', data=data.account_id)
+        response = requests.post(ePayment_URL + '/create-checkout-session', data={"account_id": data["account_id"]})
         if response.status_code == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
     elif (payment_method == "promo"):
-        response = invoke_http(promo_URL + '/promo/' + data.account_id, 'DELETE', data=data.account_id)
+        response = requests.delete(promo_URL + '/promo/' + str(account_id), data={"account_id": data["account_id"]})
         if response.status_code == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
         else:
-            return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
+            return jsonify({'status': 'error', 'message': response.status_code})
     elif (payment_method == "loyalty"):
         points = {
             "points": 500
