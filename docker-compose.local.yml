@@ -137,9 +137,12 @@ services:
     build:
       context: .
       dockerfile: verification/Dockerfile
+    depends_on:
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6001:6001"
     environment:
@@ -150,6 +153,8 @@ services:
       rewardURL: http://reward:6303/reward/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
+      RABBITMQ_HOST: rabbitmq
+
 
   #################################
   # Notification: The Notification microservice
@@ -250,7 +255,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       accountURL: http://account:6003/account/
-      paymentURL: http://payment:6203/payment/
+      ePaymentURL: http://ePayment:6203/epayment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
@@ -406,17 +411,17 @@ services:
   #################################
   # Stripe: The External Payment Microservice
   #################################
-  payment:
-    image: esdeezknee/payment:1.0
+  epayment:
+    image: esdeezknee/epayment:1.0
     build:
       context: .
-      dockerfile: payment/Dockerfile
+      dockerfile: epayment/Dockerfile
     restart: always
     networks:
       - internal
     ports:
       - "6203:6203"
     environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/payment
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:8889/epayment
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/

@@ -56,7 +56,8 @@ async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
-    payment_method = request.form.get('payment_method')
+    payment_method1 = request.get_json()
+    payment_method = payment_method1['payment_method']
     check_qid = invoke_http(
         queue_URL, method='GET')
     print(check_qid)
@@ -71,19 +72,19 @@ async def select_payment_method(account_id):
     
     data = {
         "account_id": account_id,
-        "queue_id": 1234,
+        "queue_id": queue_id,
         "payment_method": payment_method
     } 
 
     if (payment_method == "external"):
-        response = invoke_http(ePayment_URL + '/create-checkout-session', 'POST', data=data)
+        response = invoke_http(ePayment_URL + '/create-checkout-session', 'POST', data=data.account_id)
         if response.status_code == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
     elif (payment_method == "promo"):
-        response = invoke_http(promo_URL + '/promo/' + data.account_id, 'DELETE', data=data)
+        response = invoke_http(promo_URL + '/promo/' + data.account_id, 'DELETE', data=data.account_id)
         if response.status_code == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
