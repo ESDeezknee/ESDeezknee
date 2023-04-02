@@ -211,48 +211,6 @@ def update_order(account_id):
             "invoking": update_account["message"],
         }), 405
 
-# @app.route("/order/<int:account_id>/loyalty", methods=['POST'])
-# def redeem_loyalty(account_id):
-#     # this function invoked loyalty to use points to redeem ticket
-#     if (not request.is_json):
-#         return jsonify({
-#             "code": 404,
-#             "message": "Invalid JSON input: " + str(request.get_data())
-#         }), 404
-    
-#     data = request.get_json()
-#     print(data)
-#     points = {
-#         "points": 500
-#     }
-
-#     update_loyalty = invoke_http(
-#         loyalty_URL + str(account_id) + "/redeem", method='PATCH', json=points)
-#     print(update_loyalty)
-
-#     loyalty_json = {
-#             "account_id": data["account_id"],
-#             "queue_id": data["queue_id"],
-#             "promo_code": data["promo_code"],
-#             "payment_method": "loyalty"
-#         }
-    
-#     # call paying with loyalty_json
-
-#     if update_loyalty["code"] == 200:
-#         return jsonify({
-#             "code": 200,
-#             "message": "Successfully redeemed loyalty points", 
-#             "data": update_loyalty["data"]
-#             }), 200
-#     else:
-#         return jsonify({
-#             "code": 405,
-#             "message": "Error in redeeming loyalty points",
-#             "error": update_loyalty,
-#         }), 405
-
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6201, debug=True)
