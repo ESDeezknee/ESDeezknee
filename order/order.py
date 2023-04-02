@@ -56,16 +56,16 @@ async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
-    # account_id = str(account_id)
     payment_method = request.form.get('payment_method')
     # payment_method = "external" # temporary 
-    queue_id = 1
-    # check_qid = invoke_http(
-    #     queue_URL + str(queue_id), method='GET')
-    # if check_qid["code"] != 200:
-    #     queue_id += 1
-    #     check_qid = invoke_http(
-    #         queue_URL + str(queue_id), method='GET')
+    check_qid = invoke_http(
+        queue_URL, method='GET')
+    print(check_qid)
+    if check_qid["code"] == 200:
+        if len(check_qid["data"]["queues"]) == 0:
+            queue_id = 1
+        else:
+            queue_id = len(check_qid["data"]["queues"]) + 1
 
 
     data = {
@@ -149,7 +149,7 @@ def ini_create_ticket(account_id):
 
     # else:    
     data = request.get_json()
-    print(data)
+    # print(data)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
