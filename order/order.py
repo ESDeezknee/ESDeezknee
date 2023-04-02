@@ -29,7 +29,7 @@ payment_URL = environ.get('paymentURL') or "http://localhost:6203/payment/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
-redemption_URL = environ.get('redemptionURL') or "http://localhost:6304/redemption_URL/"
+order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
 # is verification needed here?
 @app.get('/order/retrieve_account/<int:account_id>')
@@ -60,10 +60,13 @@ async def select_payment_method(account_id):
     payment_method = request.form.get('payment_method')
     # payment_method = "external" # temporary 
     queue_id = 1
-    check_qid = invoke_http(
-        queue_URL + str(queue_id), method='GET')
-    if check_qid["code"] == 200:
-        queue_id += 1
+    # check_qid = invoke_http(
+    #     queue_URL + str(queue_id), method='GET')
+    # if check_qid["code"] != 200:
+    #     queue_id += 1
+    #     check_qid = invoke_http(
+    #         queue_URL + str(queue_id), method='GET')
+
 
     data = {
         "account_id": account_id,
@@ -84,12 +87,14 @@ async def select_payment_method(account_id):
             loyalty_URL + str(account_id) + "/redeem", method='PATCH', json=points)
         print(update_loyalty)
         if update_loyalty["code"] == 200:
-            ini_create_ticket(account_id, data)
-            return jsonify({
-                "code": 200,
-                "message": "Loyalty points have been redeemed", 
-                "data": update_loyalty["data"]
-                }), 200
+            ini_create_ticket = invoke_http(
+                order_URL + str(account_id) + "/paying", method='POST', json=data)
+            if ini_create_ticket["code"] == 201:
+                return jsonify({
+                    "code": 200,
+                    "message": "Loyalty points have been redeemed", 
+                    "data": update_loyalty["data"]
+                    }), 200
         else:
             return jsonify({
                 "code": 405,
@@ -132,19 +137,19 @@ def post_order():
 # def place_order(orderRequest):
 
 @app.route("/order/<int:account_id>/paying", methods=['POST'])
-def ini_create_ticket(account_id, data1):
+def ini_create_ticket(account_id):
     # this function initialises the create ticket post
     # invoked by one of 3 payment microservice to indicate that it has been paid
-    if (not request.is_json):
-        data = data1
+    # if (not request.is_json):
+    #     data = data1
         # return jsonify({
         #     "code": 404,
         #     "message": "Invalid JSON input: " + str(request.get_data())
         # }), 404
 
-    else:    
-        data = request.get_json()
-        print(data)
+    # else:    
+    data = request.get_json()
+    print(data)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
