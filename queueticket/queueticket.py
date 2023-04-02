@@ -29,27 +29,27 @@ class QueueTicket(db.Model):
     __tablename__ = 'queuetickets'
 
     queue_id = db.Column(db.Integer, primary_key=True, nullable=False)
-    is_express = db.Column(db.Boolean, default=False, nullable=False)
+    is_priority = db.Column(db.Boolean, default=False, nullable=False)
     account_id = db.Column(db.Integer, nullable = False)
     payment_method = db.Column(db.String(256), nullable=False)
 
 
-    def __init__(self, queue_id, is_express, account_id, payment_method):
+    def __init__(self, queue_id, is_priority, account_id, payment_method):
         self.queue_id = queue_id
-        self.is_express = is_express
+        self.is_priority = is_priority
         self.account_id = account_id
         self.payment_method = payment_method
 
     def json(self):
-        return {"queue_id": self.queue_id, "is_express": self.is_express, "account_id":self.account_id, "payment_method": self.payment_method}
+        return {"queue_id": self.queue_id, "is_priority": self.is_priority, "account_id":self.account_id, "payment_method": self.payment_method}
 
 with app.app_context():
   db.create_all()
   existing_queue_ticket_1 = db.session.query(QueueTicket).filter(QueueTicket.queue_id==1).first()
   if not existing_queue_ticket_1:
-      new_queue_ticket_1 = QueueTicket(queue_id=1, is_express=1, account_id=1, payment_method="promo")
-      new_queue_ticket_2 = QueueTicket(queue_id=2, is_express=1, account_id=2, payment_method="stripe")
-      new_queue_ticket_3 = QueueTicket(queue_id=3, is_express=1, account_id=3, payment_method="loyalty")
+      new_queue_ticket_1 = QueueTicket(queue_id=1, is_priority=1, account_id=1, payment_method="promo")
+      new_queue_ticket_2 = QueueTicket(queue_id=2, is_priority=1, account_id=2, payment_method="stripe")
+      new_queue_ticket_3 = QueueTicket(queue_id=3, is_priority=1, account_id=3, payment_method="loyalty")
       db.session.add(new_queue_ticket_1)
       db.session.add(new_queue_ticket_2)
       db.session.add(new_queue_ticket_3)
@@ -105,7 +105,7 @@ def create_queueticket():
     print(data)
     new_queue1 = QueueTicket(
         queue_id=data["queue_id"],
-        is_express=1,
+        is_priority=1,
         account_id=data["account_id"],
         payment_method=data["payment_method"]
     )
@@ -114,7 +114,7 @@ def create_queueticket():
     new_queue_l = json.loads(new_queue_json)
     new_queue = {
         "queue_id": new_queue_l["queue_id"],
-        "is_express": new_queue_l["is_express"],
+        "is_priority": new_queue_l["is_priority"],
         "account_id": new_queue_l["account_id"],
         "payment_method": new_queue_l["payment_method"]
     }
@@ -172,7 +172,7 @@ def create_queueticket():
         
         db.session.add(QueueTicket(
             queue_id=new_queue["queue_id"],
-            is_express=new_queue["is_express"],
+            is_priority=new_queue["is_priority"],
             account_id=new_queue["account_id"],
             payment_method=new_queue["payment_method"]
         ))
@@ -239,7 +239,7 @@ def update_queue(queue_id):
         verification_URL + "account/" + str(updated_queue.account_id), method='GET')
 
     try:
-        updated_queue.is_express = data["is_express"]
+        updated_queue.is_priority = data["is_priority"]
         updated_queue.account_id = data["account_id"]
         updated_queue.payment_method = data["payment_method"]
 
