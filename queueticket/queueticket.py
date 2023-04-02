@@ -46,14 +46,14 @@ class QueueTicket(db.Model):
 with app.app_context():
   db.create_all()
   existing_queue_ticket_1 = db.session.query(QueueTicket).filter(QueueTicket.queue_id==1).first()
-  if not existing_queue_ticket_1:
-      new_queue_ticket_1 = QueueTicket(queue_id=1, is_priority=1, account_id=1, payment_method="promo")
-      new_queue_ticket_2 = QueueTicket(queue_id=2, is_priority=1, account_id=2, payment_method="stripe")
-      new_queue_ticket_3 = QueueTicket(queue_id=3, is_priority=1, account_id=3, payment_method="loyalty")
-      db.session.add(new_queue_ticket_1)
-      db.session.add(new_queue_ticket_2)
-      db.session.add(new_queue_ticket_3)
-      db.session.commit()
+#   if not existing_queue_ticket_1:
+    #   new_queue_ticket_1 = QueueTicket(queue_id=1, is_priority=1, account_id=1, payment_method="promo")
+    #   new_queue_ticket_2 = QueueTicket(queue_id=2, is_priority=1, account_id=2, payment_method="stripe")
+    #   new_queue_ticket_3 = QueueTicket(queue_id=3, is_priority=1, account_id=3, payment_method="loyalty")
+    #   db.session.add(new_queue_ticket_1)
+    #   db.session.add(new_queue_ticket_2)
+    #   db.session.add(new_queue_ticket_3)
+    #   db.session.commit()
 
 class MyEncoder(JSONEncoder):
         def default(self, o):
@@ -103,35 +103,63 @@ def create_queueticket():
     data = request.get_json()
     # data = data1["data"]
     print(data)
-    new_queue1 = QueueTicket(
-        queue_id=data["queue_id"],
-        is_priority=1,
-        account_id=data["account_id"],
-        payment_method=data["payment_method"]
-    )
-    MyEncoder().encode(new_queue1)
-    new_queue_json = json.dumps(cls=MyEncoder, obj=new_queue1)
-    new_queue_l = json.loads(new_queue_json)
-    new_queue = {
-        "queue_id": new_queue_l["queue_id"],
-        "is_priority": new_queue_l["is_priority"],
-        "account_id": new_queue_l["account_id"],
-        "payment_method": new_queue_l["payment_method"]
-    }
 
-    existing_queue = QueueTicket.query.filter_by(
-        account_id=new_queue["account_id"]).first()
+    verify_queue = invoke_http(
+        verification_URL + "queueticket/" + str(data["queue_id"]), method='GET')
 
-    if (existing_queue):
-        return jsonify(
-            {
-                "code": 400,
-                "data": {
-                    "account_id": existing_queue.account_id
-                },
-                "message": "queueticket already exists."
-            }
-        ), 400
+    if verify_queue["code"] != 200:
+        new_queue = {
+            "queue_id": 1,
+            "is_priority": 1,
+            "account_id": data["account_id"],
+            "payment_method": data["payment_method"]
+        }
+    else:
+        data["queue_id"] += 1
+        new_queue = {
+            "queue_id": data["queue_id"],
+            "is_priority": 1,
+            "account_id": data["account_id"],
+            "payment_method": data["payment_method"]
+        }
+
+    # new_queue = QueueTicket(
+    #     queue_id=data["queue_id"],
+    #     is_priority=1,
+    #     account_id=data["account_id"],
+    #     payment_method=data["payment_method"]
+    # )
+    # MyEncoder().encode(new_queue1)
+    # new_queue_json = json.dumps(cls=MyEncoder, obj=new_queue1)
+    # new_queue_l = json.loads(new_queue_json)
+    # new_queue = {
+    #     "queue_id": new_queue_l["queue_id"],
+    #     "is_priority": new_queue_l["is_priority"],
+    #     "account_id": new_queue_l["account_id"],
+    #     "payment_method": new_queue_l["payment_method"]
+    # }
+
+    # existing_queue = QueueTicket.query.filter_by(
+    #     queue_id=new_queue["queue_id"]).first()
+
+    # if (existing_queue):
+    #     new_queue["queue_id"] += 1
+        # return jsonify(
+        #     {
+        #         "code": 420,
+        #         "data": new_queue,
+        #         "message": "queueticket already exists. will be incremented"
+        #     }
+        # ), 420
+        # return jsonify(
+        #     {
+        #         "code": 400,
+        #         "data": {
+        #             "account_id": existing_queue.account_id
+        #         },
+        #         "message": "queueticket already exists."
+        #     }
+        # ), 400
 
     account_result = invoke_http(
         verification_URL + "account/" + str(new_queue["account_id"]), method='GET')
