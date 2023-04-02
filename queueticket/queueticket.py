@@ -7,7 +7,6 @@ from os import environ
 from invokes import invoke_http
 import requests
 import json
-from json import JSONEncoder
 
 
 from datetime import datetime
@@ -55,11 +54,8 @@ with app.app_context():
     #   db.session.add(new_queue_ticket_3)
     #   db.session.commit()
 
-class MyEncoder(JSONEncoder):
-        def default(self, o):
-            return o.__dict__ 
 
-@app.get("/queueticket")
+@app.get("/queueticket/")
 def get_all():
     queueList = QueueTicket.query.all()
     if len(queueList):
@@ -101,7 +97,6 @@ def create_queueticket():
         raise Exception("No data received.")
     
     data = request.get_json()
-    # data = data1["data"]
     print(data)
 
     verify_queue = invoke_http(
@@ -109,7 +104,7 @@ def create_queueticket():
 
     if verify_queue["code"] != 200:
         new_queue = {
-            "queue_id": 1,
+            "queue_id": data["queue_id"],
             "is_priority": 1,
             "account_id": data["account_id"],
             "payment_method": data["payment_method"]
@@ -122,44 +117,6 @@ def create_queueticket():
             "account_id": data["account_id"],
             "payment_method": data["payment_method"]
         }
-
-    # new_queue = QueueTicket(
-    #     queue_id=data["queue_id"],
-    #     is_priority=1,
-    #     account_id=data["account_id"],
-    #     payment_method=data["payment_method"]
-    # )
-    # MyEncoder().encode(new_queue1)
-    # new_queue_json = json.dumps(cls=MyEncoder, obj=new_queue1)
-    # new_queue_l = json.loads(new_queue_json)
-    # new_queue = {
-    #     "queue_id": new_queue_l["queue_id"],
-    #     "is_priority": new_queue_l["is_priority"],
-    #     "account_id": new_queue_l["account_id"],
-    #     "payment_method": new_queue_l["payment_method"]
-    # }
-
-    # existing_queue = QueueTicket.query.filter_by(
-    #     queue_id=new_queue["queue_id"]).first()
-
-    # if (existing_queue):
-    #     new_queue["queue_id"] += 1
-        # return jsonify(
-        #     {
-        #         "code": 420,
-        #         "data": new_queue,
-        #         "message": "queueticket already exists. will be incremented"
-        #     }
-        # ), 420
-        # return jsonify(
-        #     {
-        #         "code": 400,
-        #         "data": {
-        #             "account_id": existing_queue.account_id
-        #         },
-        #         "message": "queueticket already exists."
-        #     }
-        # ), 400
 
     account_result = invoke_http(
         verification_URL + "account/" + str(new_queue["account_id"]), method='GET')
