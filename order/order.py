@@ -66,6 +66,8 @@ async def select_payment_method(account_id):
             queue_id = 1
         else:
             queue_id = len(check_qid["data"]["queues"]) + 1
+    else:
+        queue_id = 1
 
 
     data = {
@@ -215,6 +217,39 @@ def update_order(account_id):
             "message": "Order not updated",
             "invoking": update_account["message"],
         }), 405
+
+@app.route("/order/<int:queue_id>/used", methods=['PATCH'])
+def ticket_used(queue_id):
+    if (not request.is_json):
+        return jsonify({
+            "code": 404,
+            "message": "Invalid JSON input: " + str(request.get_data())
+        }), 404
+    
+    data = request.get_json()
+
+    ticket_used = invoke_http(
+        queue_URL + str(queue_id), method='PATCH', json=data)
+
+    if ticket_used["code"] == 200:
+        update_is_prio = {
+            "is_priority": 0
+        }
+        account_res = invoke_http(
+            account_URL + str(account_URL), method='PATCH', json=update_is_prio)
+        
+        if account_res["code"] == 200:
+            return jsonify({
+                "code": 200,
+                "message": "Ticket used successfully"
+            }), 200
+        
+    else:
+        return jsonify({
+            "code": 405,
+            "message": ticket_used["message"]
+        }), 405
+    
 
 
 if __name__ == '__main__':

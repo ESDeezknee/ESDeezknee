@@ -31,16 +31,18 @@ class QueueTicket(db.Model):
     is_priority = db.Column(db.Boolean, default=False, nullable=False)
     account_id = db.Column(db.Integer, nullable = False)
     payment_method = db.Column(db.String(256), nullable=False)
+    is_used = db.Column(db.Boolean, default=False, nullable=False)
 
 
-    def __init__(self, queue_id, is_priority, account_id, payment_method):
+    def __init__(self, queue_id, is_priority, account_id, payment_method, is_used):
         self.queue_id = queue_id
         self.is_priority = is_priority
         self.account_id = account_id
         self.payment_method = payment_method
+        self.is_used = is_used
 
     def json(self):
-        return {"queue_id": self.queue_id, "is_priority": self.is_priority, "account_id":self.account_id, "payment_method": self.payment_method}
+        return {"queue_id": self.queue_id, "is_priority": self.is_priority, "account_id":self.account_id, "payment_method": self.payment_method, "is_used": self.is_used}
 
 with app.app_context():
   db.create_all()
@@ -107,7 +109,8 @@ def create_queueticket():
             "queue_id": data["queue_id"],
             "is_priority": 1,
             "account_id": data["account_id"],
-            "payment_method": data["payment_method"]
+            "payment_method": data["payment_method"],
+            "is_used": 0
         }
     else:
         data["queue_id"] += 1
@@ -115,7 +118,8 @@ def create_queueticket():
             "queue_id": data["queue_id"],
             "is_priority": 1,
             "account_id": data["account_id"],
-            "payment_method": data["payment_method"]
+            "payment_method": data["payment_method"],
+            "is_used": 0
         }
 
     account_result = invoke_http(
@@ -159,7 +163,8 @@ def create_queueticket():
             queue_id=new_queue["queue_id"],
             is_priority=new_queue["is_priority"],
             account_id=new_queue["account_id"],
-            payment_method=new_queue["payment_method"]
+            payment_method=new_queue["payment_method"],
+            is_used=new_queue["is_used"]
         ))
         db.session.commit()
 
@@ -202,8 +207,8 @@ def delete_order(queue_id):
         }
     ), 404
 
-@app.put("/queueticket/<int:queue_id>")
-def update_queue(queue_id):
+@app.patch("/queueticket/<int:queue_id>")
+def queue_used(queue_id):
     if (not QueueTicket.query.filter_by(queue_id=queue_id).first()):
         return jsonify(
             {
@@ -224,16 +229,14 @@ def update_queue(queue_id):
         verification_URL + "account/" + str(updated_queue.account_id), method='GET')
 
     try:
-        updated_queue.is_priority = data["is_priority"]
-        updated_queue.account_id = data["account_id"]
-        updated_queue.payment_method = data["payment_method"]
+        updated_queue.is_used = data["is_used"]
 
         db.session.commit()
     except:
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the queueticket.",
+                "message": "An error occurred updating the queueticket.",
                 "asdf": updated_queue
             }
         ), 500
@@ -244,7 +247,7 @@ def update_queue(queue_id):
         "phone_number": account_result["data"]["phone"],
         "payment_method": updated_queue.payment_method,
         "queue_id": updated_queue.queue_id,
-        "message": "You have successfully updated a queueticket."
+        "message": "You have redeemed your queue ticket."
     }
     message = json.dumps(notification_message)
     amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
@@ -254,7 +257,8 @@ def update_queue(queue_id):
     return jsonify(
         {
             "code": 200,
-            "data": updated_queue.json()
+            "data": updated_queue.json(),
+            "message": "Queue ticket has been updated (used)."
         }
     ), 200
 
