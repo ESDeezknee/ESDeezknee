@@ -51,37 +51,25 @@ async def confirm_order(account_id):
     else:
         await asyncio.sleep(1)
 
-@app.route('/order/select_payment_method/<int:account_id>', methods=['POST'])
+@app.route('/order/get_payment_method/<int:account_id>', methods=['POST'])
 async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
     account_id = str(account_id)
     payment_method = request.form.get('payment_method')
+    # payment_method = "external" # temporary 
     data = {
         "account_id": account_id,
         "payment_method": payment_method
     } 
-    if payment_method == "external":
-        redirect_url = payment_URL
-        microservice_url = payment_URL + '/create-checkout-session'
-        response = request.post(microservice_url, data=data)
-    elif payment_method == "promo":
-        redirect_url = promo_URL
-        microservice_url = promo_URL + '/promo/' + data['account_id']
-        response = request.delete(microservice_url, data=data)
+    p_method = data["payment_method"]
+    if (p_method == "external"):
+        return jsonify({"redirect_url": payment_URL})
+    elif (p_method == "promo"):
+        return jsonify({"redirect_url": promo_URL})
     else:
-        redirect_url = redemption_URL
-        microservice_url = redemption_URL + '/redemption'
-        response = request.post(microservice_url, data=data)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Redirect the user to the correct URL
-        return jsonify({"redirect_url": redirect_url})
-    else:
-        # Return an error message to the user
-        return jsonify({"error": "An error occurred while processing your request."})
+        return jsonify({"redirect_url": redemption_URL})
 
 @app.post("/order")
 def post_order():
