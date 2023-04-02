@@ -25,13 +25,15 @@ class Payment(db.Model):
     __tablename__ = 'payment'
 
     session_id = db.Column(db.String(128), primary_key=True)
+    checkout_url = db.Column(db.String(512), nullable=False)
     account_id = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Float, nullable=False)
     paymentDate = db.Column(db.DateTime, nullable=False, default=datetime.now)
 
-    def __init__(self, session_id, account_id, status, price, paymentDate):
+    def __init__(self, session_id, checkout_url, account_id, status, price, paymentDate):
         self.session_id = session_id
+        self.checkout_url = checkout_url
         self.account_id = account_id
         self.status = status
         self.price = price
@@ -56,6 +58,9 @@ def hello():
 @app.route('/create-checkout-session', methods=['POST'])
 def create_checkout_session():
     try:
+        session_id = ''
+        checkout = ''
+        payment_status = ''
         checkout_session = stripe.checkout.Session.create(
             
             line_items = [
@@ -66,17 +71,18 @@ def create_checkout_session():
             ],
             mode = "payment",
             #success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
-            success_url = url_for('check_payment_status', session_id='{CHECKOUT_SESSION_ID}', _external=True),
+            success_url = url_for('check_payment_status', session_id=session_id, _external=True),
             # cancel_url should bring it back to the main page but cancels payment
             cancel_url = order_URL
         )
         session_id = checkout_session.id
         session = stripe.checkout.Session.retrieve(session_id)
+        checkout = session["url"]
         payment_status = session.payment_status
     except Exception as e:
         return str(e)
     # account_id is hard-coded for now
-    payment = Payment(session_id=session_id, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
+    payment = Payment(session_id=session_id, checkout_url = checkout, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
     return redirect(checkout_session.url, code=303)
