@@ -65,6 +65,22 @@ channel.queue_bind(exchange=exchangename, queue=queue_name, routing_key='*.email
     # any routing_key with two words and ending with '.error' will be matched
 
 
+
+# - use a 'direct' exchange to enable interaction
+exchangename1="challenge_direct"
+exchangetype1="direct"
+channel.exchange_declare(exchange=exchangename1, exchange_type=exchangetype1, durable=True)
+    # 'durable' makes the exchange survive broker restarts
+
+
+############   Complete queue    #############
+#delcare Complete queue
+queue_name = 'challenge_complete'
+channel.queue_declare(queue=queue_name, durable=True)
+channel.queue_bind(exchange=exchangename1, queue=queue_name, routing_key='challenge.challenge_complete')
+
+
+
 """
 This function in this module sets up a connection and a channel to a local AMQP broker,
 and declares a 'topic' exchange to be used by the microservices in the solution.

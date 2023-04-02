@@ -194,13 +194,16 @@ services:
       dockerfile: verification/Dockerfile
     depends_on:
       - mysql-database
+      - rabbitmq
     restart: always
     networks:
       - internal
+      - rabbitmq
     ports:
       - "6001:6001"
     environment:
       PYTHONUNBUFFERED: 1
+      RABBITMQ_HOST: rabbitmq
       accountURL: http://account:6003/account/
       groupingURL: http://grouping:6103/grouping/
       missionURL: http://mission:6300/mission/
@@ -208,7 +211,7 @@ services:
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
       icebreakers: http://icebreakers:6101/api/icebreakers
-
+      challengeURL: http://challenge:6302/challenge/
 
   #################################
   # Notification: The Notification microservice
@@ -520,5 +523,3 @@ services:
   #     - DB_USERNAME=root
   #     - DB_PASSWORD=root
   #   command: bash -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=6101"
-
-    

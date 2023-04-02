@@ -22,7 +22,8 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+verification_URL = environ.get(
+    'verificationURL') or "http://localhost:6001/verification/"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
 
 
@@ -71,6 +72,7 @@ def get_all():
         }
     ), 404
 
+
 @app.route("/challenge/account/<account_id>")
 def get_all_challenges_by_account_id(account_id):
     challengelist = Challenge.query.filter_by(account_id=account_id).all()
@@ -90,6 +92,25 @@ def get_all_challenges_by_account_id(account_id):
         }
     ), 404
 
+
+@app.route("/challenge/account/<account_id>/mission/<mission_id>")
+def get_challenge_by_account_id_mission_id(account_id, mission_id):
+    challenge = Challenge.query.filter_by(
+        account_id=account_id, mission_id=mission_id).first()
+
+    if challenge:
+        return jsonify(
+            {
+                "code": 200,
+                "data":  challenge.json(),
+            }
+        ), 200
+    return jsonify(
+        {
+            "code": 404,
+            "message": "Challenge not found."
+        }
+    ), 404
 
 
 @app.route("/challenge/<challenge_id>")

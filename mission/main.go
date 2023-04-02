@@ -74,48 +74,74 @@ func main() {
     // Seed the database with initial data
     var mission1 Mission
 		var mission2 Mission
-    var mission3 Mission
+    // var mission3 Mission
+		// var mission4 Mission
+    // var mission5 Mission
+
 
     err = db.First(&mission1, 1).Error
     if err != nil && err != gorm.ErrRecordNotFound {
         panic("failed to query mission 1")
     }
     if mission1.MissionID == 0 {
-        mission1 = Mission{
-            Name:         "Are you afraid of the mummy?",
-            Description:  "Ride Revenge of the Mummy 5 times to gain 500 points!",
-            Difficulty:   "Medium",
-            Duration:     5.0,
-            AwardPoints:  500,
-            IsActive:     true,
-            Created:      time.Now(),
-            Modified:     time.Now(),
-        }
-				mission2 = Mission{
-						Name:         "Get wet at Jurassic Park Rapids Adventure!",
-						Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
+					mission1 = Mission{
+						Name:         "Join others on an adventure!",
+						Description:  "Join a group and have fun together to gain 100 points!",
 						Difficulty:   "Easy",
-						Duration:     5.0,
-						AwardPoints:  1000,
-						IsActive:     true,
-						Created:      time.Now(),
-						Modified:     time.Now(),
-				}
-				mission3 = Mission{
-						Name:         "Go on an adventure with Puss in Boots!",
-						Description:  "Ride Puss in Boots Journey 3 times to gain 100 points!",
-						Difficulty:   "Easy",
-						Duration:     2.0,
+						Duration:     1.0,
 						AwardPoints:  100,
 						IsActive:     true,
 						Created:      time.Now(),
 						Modified:     time.Now(),
 				}
+					mission2 = Mission{
+						Name:         "Skip the Queue!",
+						Description:  "Purchase an express queue to gain 100 points!",
+						Difficulty:   "Easy",
+						Duration:     1.0,
+						AwardPoints:  100,
+						IsActive:     true,
+						Created:      time.Now(),
+						Modified:     time.Now(),
+				}
+        // mission3 = Mission{
+        //     Name:         "Are you afraid of the mummy?",
+        //     Description:  "Ride Revenge of the Mummy 5 times to gain 500 points!",
+        //     Difficulty:   "Medium",
+        //     Duration:     5.0,
+        //     AwardPoints:  500,
+        //     IsActive:     true,
+        //     Created:      time.Now(),
+        //     Modified:     time.Now(),
+        // }
+				// mission4 = Mission{
+				// 		Name:         "Get wet at Jurassic Park Rapids Adventure!",
+				// 		Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
+				// 		Difficulty:   "Easy",
+				// 		Duration:     5.0,
+				// 		AwardPoints:  1000,
+				// 		IsActive:     true,
+				// 		Created:      time.Now(),
+				// 		Modified:     time.Now(),
+				// }
+				// mission5 = Mission{
+				// 		Name:         "Go on an adventure with Puss in Boots!",
+				// 		Description:  "Ride Puss in Boots Journey 3 times to gain 100 points!",
+				// 		Difficulty:   "Easy",
+				// 		Duration:     2.0,
+				// 		AwardPoints:  100,
+				// 		IsActive:     true,
+				// 		Created:      time.Now(),
+				// 		Modified:     time.Now(),
+				// }
         err = db.Create(&mission1).Error
 				err = db.Create(&mission2).Error
-        err = db.Create(&mission3).Error
+        // err = db.Create(&mission3).Error
+				// err = db.Create(&mission4).Error
+        // err = db.Create(&mission5).Error
+
         if err != nil {
-            panic("failed to seed mission 1")
+            panic("failed to seed data")
         }
     }
 

@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os, sys
+import os
+import sys
 from os import environ
 
 import requests
@@ -15,8 +16,8 @@ CORS(app)
 
 verification_URL = environ.get('verificationURL')
 group_URL = "http://grouping:6103/grouping"
-broadcast_URL =  "http://broadcast:6102/broadcast"
-icebreakers_URL =  environ.get('icebreakersURL') 
+broadcast_URL = "http://broadcast:6102/broadcast"
+icebreakers_URL = environ.get('icebreakersURL')
 
 
 @app.route("/handleGroup/create", methods=["POST"])
@@ -28,7 +29,19 @@ def create_group():
 
             result = processCreateGroup(group)
             # return jsonify(result), result["code"]
-            return result 
+
+            # For User Scenario 3, Update Challenge Status
+            challenge_message = {
+                "mission_id": 1,
+                "code": result["code"]
+            }
+
+            challenge_message.update(result["data"])
+            message = json.dumps(challenge_message)
+
+            amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename1, routing_key="challenge.challenge_complete", body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+            return result
 
 
         except Exception as e:
