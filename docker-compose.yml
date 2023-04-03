@@ -168,23 +168,6 @@ services:
       - kongadata:/app/kongadata
 
   #################################
-  # Account: The Account microservice
-  #################################
-  account:
-    image: esdeezknee/account:1.0
-    build:
-      context: .
-      dockerfile: account/Dockerfile
-    restart: always
-    networks:
-      - internal
-    ports:
-      - "6003:6003"
-    environment:
-      PYTHONUNBUFFERED: 1
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
-
-  #################################
   # Verification: The Verification microservice
   #################################
   verification:
@@ -199,6 +182,7 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6001:6001"
     environment:
@@ -228,11 +212,52 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6002:6002"
     environment:
       PYTHONUNBUFFERED: 1
       RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Account: The Account microservice
+  #################################
+  account:
+    image: esdeezknee/account:1.0
+    build:
+      context: .
+      dockerfile: account/Dockerfile
+    restart: always
+    networks:
+      - internal
+      - kong-net
+    ports:
+      - "6003:6003"
+    environment:
+      PYTHONUNBUFFERED: 1
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/account
+
+  #################################
+  # Broadcast: The Broadcast microservice
+  #################################
+  broadcast:
+    image: esdeezknee/broadcast:1.0
+    build:
+      context: .
+      dockerfile: broadcast/Dockerfile
+    depends_on:
+      - mysql-database
+    restart: always
+    networks:
+      - internal
+      - kong-net
+    ports:
+      - "6102:6102"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/broadcast
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      loyaltyURL: http://loyalty:6301/loyalty/
 
   #################################
   # Create Grouping: The Create Grouping microservice
@@ -247,6 +272,7 @@ services:
     restart: always
     networks:
       - internal
+      - kong-net
     ports:
       - "6103:6103"
     environment:
@@ -268,6 +294,7 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6104:6104"
     environment:
@@ -276,27 +303,6 @@ services:
       verificationURL: http://verification:6001/verification/
       icebreakersURL: http://icebreakers:6101/api/icebreakers/
       RABBITMQ_HOST: rabbitmq
-
-  #################################
-  # Broadcast: The Broadcast microservice
-  #################################
-  broadcast:
-    image: esdeezknee/broadcast:1.0
-    build:
-      context: .
-      dockerfile: broadcast/Dockerfile
-    depends_on:
-      - mysql-database
-    restart: always
-    networks:
-      - internal
-    ports:
-      - "6102:6102"
-    environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/broadcast
-      PYTHONUNBUFFERED: 1
-      verificationURL: http://verification:6001/verification/
-      loyaltyURL: http://loyalty:6301/loyalty/
 
   #################################
   # Order: The Order Complex microservice
@@ -313,6 +319,7 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6201:6201"
     environment:
@@ -324,30 +331,6 @@ services:
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
-      orderURL: http://order:6201/order/
-      RABBITMQ_HOST: rabbitmq
-
-  #################################
-  # Promo: The PromoCode microservice
-  #################################
-  promo:
-    image: esdeezknee/promo:1.0
-    build:
-      context: .
-      dockerfile: promo/Dockerfile
-    depends_on:
-      - mysql-database
-      - rabbitmq
-    restart: always
-    networks:
-      - internal
-      - rabbitmq
-    ports:
-      - "6204:6204"
-    environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/promo
-      PYTHONUNBUFFERED: 1
-      verificationURL: http://verification:6001/verification/
       orderURL: http://order:6201/order/
       RABBITMQ_HOST: rabbitmq
 
@@ -366,10 +349,36 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6202:6202"
     environment:
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/queueticket
+      PYTHONUNBUFFERED: 1
+      verificationURL: http://verification:6001/verification/
+      orderURL: http://order:6201/order/
+      RABBITMQ_HOST: rabbitmq
+
+  #################################
+  # Promo: The PromoCode microservice
+  #################################
+  promo:
+    image: esdeezknee/promo:1.0
+    build:
+      context: .
+      dockerfile: promo/Dockerfile
+    depends_on:
+      - mysql-database
+      - rabbitmq
+    restart: always
+    networks:
+      - internal
+      - rabbitmq
+      - kong-net
+    ports:
+      - "6204:6204"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/promo
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       orderURL: http://order:6201/order/
@@ -388,6 +397,7 @@ services:
     restart: always
     networks:
       - internal
+      - kong-net
     ports:
       - "6300:6300"
     environment:
@@ -406,6 +416,7 @@ services:
     restart: always
     networks:
       - internal
+      - kong-net
     ports:
       - "6301:6301"
     environment:
@@ -428,6 +439,7 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6302:6302"
     environment:
@@ -450,6 +462,7 @@ services:
     restart: always
     networks:
       - internal
+      - kong-net
     ports:
       - "6303:6303"
     environment:
@@ -474,6 +487,7 @@ services:
     networks:
       - internal
       - rabbitmq
+      - kong-net
     ports:
       - "6304:6304"
     environment:
@@ -502,7 +516,6 @@ services:
       dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/epayment
       PYTHONUNBUFFERED: 1
       orderURL: http://order:6201/order/
-      
 
   #################################
   # Icebreakers: The Icebreakers Microservice
