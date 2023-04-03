@@ -320,7 +320,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       accountURL: http://account:6003/account/
-      ePaymentURL: http://epayment:6203/epayment/
+      ePaymentURL: http://epayment:6203/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
@@ -485,7 +485,7 @@ services:
   #################################
   # Stripe: The External Payment Microservice
   #################################
-  payment:
+  epayment:
     image: esdeezknee/epayment:1.0
     build:
       context: .

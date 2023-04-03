@@ -79,15 +79,16 @@ async def select_payment_method(account_id):
 
 
     if (payment_method == "external"):
-        response = requests.post(ePayment_URL + '/create-checkout-session', data={"account_id": data["account_id"]})
-        if response.status_code == 200:
+        response = invoke_http(ePayment_URL + 'create-checkout-session',method="POST" ,json={"account_id":data["account_id"]})
+        return response
+        if response["code"] == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session'})
     elif (payment_method == "promo"):
-        response = requests.delete(promo_URL + '/promo/' + str(account_id), data={"account_id": data["account_id"]})
-        if response.status_code == 200:
+        response = invoke_http(promo_URL + '/promo/' + str(account_id),method="DELETE", json={"account_id": data["account_id"]})
+        if response["code"] == 200:
             response_data = response.json()
             return jsonify({'status': 'success', 'data': response_data})
         else:
