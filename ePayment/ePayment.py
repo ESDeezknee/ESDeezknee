@@ -113,11 +113,21 @@ async def check_payment_status(session_id):
         create_ticket = invoke_http(
             order_URL + str(payment.account_id) + "/paying", method='POST', json=payment_json
         )
-        if create_ticket["code"] in range(500, 600):
+        if create_ticket["code"] == 200:
+            return jsonify(
+                {
+                    "code": 200,
+                    "message": "Ticket created!",
+                    "data" : payment_json,
+                    "data1" : create_ticket
+                }
+            )
+        else:
             return jsonify(
                 {
                     "code": 500,
-                    "message": "Oops, something went wrong! Order"
+                    "message": "Error creating ticket",
+                    "error": create_ticket
                 }
             ), 500
     elif payment_status == 'unpaid':
