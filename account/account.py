@@ -123,9 +123,9 @@ def find_by_email(email):
 
 @app.route("/account/<int:account_id>", methods=['PATCH'])
 def update_is_priority(account_id):
+    data = request.get_json()
     account = Account.query.filter_by(account_id=account_id).first()
     if account:
-        data = request.get_json()
         account.is_priority = data['is_priority']
         db.session.commit()
         return jsonify(
