@@ -107,13 +107,15 @@ async def select_payment_method(account_id):
                 return jsonify({
                     "code": 200,
                     "message": "Loyalty points have been redeemed", 
-                    "data": update_loyalty["data"]
+                    "data": update_loyalty["data"],
+                    "available_points": update_loyalty["data"]["available_points"]
                     }), 200
         else:
             return jsonify({
                 "code": 405,
-                "message": "Error in redeeming loyalty points",
+                "message": update_loyalty["message"],
                 "error": update_loyalty,
+                "available_points": update_loyalty["data"]["available_points"]
             }), 405
     else:
         return "Cannot find payment method"
