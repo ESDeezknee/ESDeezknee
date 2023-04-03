@@ -320,7 +320,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       accountURL: http://account:6003/account/
-      ePaymentURL: http://epayment:6203/
+      epaymentURL: http://epayment:6203/epayment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
@@ -489,7 +489,7 @@ services:
     image: esdeezknee/epayment:1.0
     build:
       context: .
-      dockerfile: ePayment/Dockerfile
+      dockerfile: epayment/Dockerfile
     depends_on:
       - mysql-database
     restart: always

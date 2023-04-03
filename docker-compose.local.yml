@@ -255,7 +255,7 @@ services:
       PYTHONUNBUFFERED: 1
       verificationURL: http://verification:6001/verification/
       accountURL: http://account:6003/account/
-      ePaymentURL: http://ePayment:6203/epayment/
+      epayment: http://epayment:6203/epayment/
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/

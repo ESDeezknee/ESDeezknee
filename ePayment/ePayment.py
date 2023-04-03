@@ -22,7 +22,7 @@ stripe.api_key = environ.get('STRIPE_API_KEY')
 
 order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
-class ePayment(db.Model):
+class epayment(db.Model):
     __tablename__ = 'epayment'
 
     session_id = db.Column(db.String(128), primary_key=True)
@@ -53,10 +53,10 @@ with app.app_context():
 
 @app.route('/')
 def hello():
-    return 'Hello from the ePayment Microservice!'
+    return 'Hello from the epayment Microservice!'
 
 # pls send a POST request to this endpoint to trigger it instantly
-@app.route('/create-checkout-session', methods=['POST'])
+@app.route('/epayment/create_checkout_session', methods=['POST'])
 def create_checkout_session():
     try:
         session_id = ''
@@ -74,7 +74,7 @@ def create_checkout_session():
             #success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
 
             # cancel_url should bring it back to the main page but cancels payment
-            success_url = url_for('check_payment_status', _external=True),
+            success_url = 'http://localhost:6203/epayment/check_payment_status/{CHECKOUT_SESSION_ID}',
             cancel_url = order_URL
         )
         session_id = checkout_session.id
@@ -84,16 +84,14 @@ def create_checkout_session():
     except Exception as e:
         return str(e)
     # account_id is hard-coded for now
-    payment = ePayment(session_id=session_id, checkout_url = checkout, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
+    payment = epayment(session_id=session_id, checkout_url = checkout, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
-    return redirect(checkout_session.url, code=303)
+    return jsonify({"checkout_url" : session.success_url }), 303
 
-@app.route('/check-payment-status', methods=['GET'])
-async def check_payment_status(session_id=None):
+@app.route('/epayment/check_payment_status/<session_id>', methods=['GET'])
+async def check_payment_status(session_id):
     try:
-        payment = ePayment.query.filter_by(status='unpaid').first()
-        session_id = payment.session_id
         session = stripe.checkout.Session.retrieve(session_id)
         payment_status = session.payment_status
     except stripe.error.InvalidRequestError:
@@ -103,7 +101,7 @@ async def check_payment_status(session_id=None):
 
     if payment_status == 'paid':
         # Payment has been successfully made
-        payment = ePayment.query.filter_by(session_id=session_id).first()
+        payment = epayment.query.filter_by(session_id=session_id).first()
         if payment:
             payment.status = 'paid'
             db.session.commit()
@@ -131,9 +129,9 @@ async def check_payment_status(session_id=None):
         return "Payment failed or refunded"
 
 
-@app.get("/ePayment")
+@app.get("/epayment")
 def get_all():
-    paymentList = ePayment.query.all()
+    paymentList = epayment.query.all()
     if len(paymentList):
         return jsonify(
             {

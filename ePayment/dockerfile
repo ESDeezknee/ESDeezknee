@@ -4,5 +4,5 @@ COPY common/requirements.txt common/invokes.py ./
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install stripe
 ENV STRIPE_API_KEY="sk_test_51Mje25ExUYBuMhthy0bqpXVWnlkZCIaXAXYGZnywGjHeaXHJt10zluQUIdouAkoTDwPGhl5qgFJjStOUJODO1uyH00nseC9g53"
-COPY ePayment/ePayment.py ./
-CMD [ "python", "./ePayment.py" ]
+COPY epayment/epayment.py ./
+CMD [ "python", "./epayment.py" ]
