@@ -324,6 +324,7 @@ services:
       loyaltyURL: http://loyalty:6301/loyalty/
       promoURL: http://promo:6204/promo/
       queueURL: http://queueticket:6202/queueticket/
+      orderURL: http://order:6201/order/
       RABBITMQ_HOST: rabbitmq
 
   #################################

@@ -51,13 +51,12 @@ async def confirm_order(account_id):
     else:
         await asyncio.sleep(1)
 
-@app.route('/order/get_payment_method/<int:account_id>', methods=['POST', 'DELETE'])
+@app.route('/order/get_payment_method/<int:account_id>', methods=['POST'])
 async def select_payment_method(account_id):
     # buttons to allow user to input what payment method they want to use
     # data = await request.get_json()
     # payment_method = data['payment_method']
     payment_method1 = request.get_json()
-    print(payment_method1)
     payment_method = payment_method1['payment_method']
     check_qid = invoke_http(
         queue_URL, method='GET')
@@ -85,11 +84,26 @@ async def select_payment_method(account_id):
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session', 'data': response})
     elif (payment_method == "promo"):
-        response = invoke_http(promo_URL + str(account_id), method="DELETE", json={"account_id": data["account_id"]})
-        if response == 200:
-            return jsonify({'status': 'success', 'data': response})
+        promo_json = {
+            "is_used": 1,
+            "promo_code": payment_method1["promo_code"]
+        }
+        update_promo = invoke_http(promo_URL + str(account_id), method="PATCH", json=promo_json)
+        print(update_promo)
+        if update_promo["code"] == 200:
+            ini_create_ticket = invoke_http(
+                order_URL + str(account_id) + "/paying", method='POST', json=data)
+            if ini_create_ticket["code"] == 201:
+                return jsonify({
+                    "code": 200,
+                    "message": "Promo code has been redeemed", 
+                    "data": update_promo["data"]
+                    }), 200
         else:
-            return jsonify({'status': 'error', 'message': 'Failed to create checkout session', 'data': response})
+            return jsonify({
+                "code": 405,
+                "message": update_promo["data"]["message"]
+            }), 405
     elif (payment_method == "loyalty"):
         points = {
             "points": 500
