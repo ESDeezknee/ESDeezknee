@@ -87,7 +87,7 @@ def create_checkout_session():
     payment = epayment(session_id=session_id, checkout_url = checkout, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
-    return jsonify({"checkout_url" : session.success_url }), 303
+    return jsonify({"checkout_url" : checkout }), 303
 
 @app.route('/epayment/check_payment_status/<session_id>', methods=['GET'])
 async def check_payment_status(session_id):
