@@ -131,38 +131,6 @@ async def select_payment_method(account_id):
     else:
         return "Cannot find payment method"
 
-@app.post("/order")
-def post_order():
-    # Simple check of input format and data of the request are JSON
-    if request.is_json:
-        try:
-            orderRequest = request.get_json()
-            print("\nReceived an order in JSON:", orderRequest)
-
-            # do the actual work
-            result = place_order(orderRequest)
-            print('\nresult: ', result)
-            return jsonify(result), result["code"]
-
-        except Exception as e:
-            # Unexpected error in code
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-            ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
-            print(ex_str)
-
-            return jsonify({
-                "code": 500,
-                "message": "order.py internal error: " + ex_str
-            }), 500
-
-    return jsonify({
-        "code": 400,
-        "message": "Invalid JSON input: " + str(request.get_data())
-    }), 400
-
-# def place_order(orderRequest):
-
 @app.route("/order/<int:account_id>/paying", methods=['POST'])
 def ini_create_ticket(account_id):
     # this function initialises the create ticket post

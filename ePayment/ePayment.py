@@ -58,6 +58,7 @@ def hello():
 # pls send a POST request to this endpoint to trigger it instantly
 @app.route('/epayment/create_checkout_session', methods=['POST'])
 def create_checkout_session():
+    data = request.get_json()
     try:
         session_id = ''
         checkout = ''
@@ -75,7 +76,7 @@ def create_checkout_session():
 
             # cancel_url should bring it back to the main page but cancels payment
             success_url = 'http://localhost:6203/epayment/check_payment_status/{CHECKOUT_SESSION_ID}',
-            cancel_url = order_URL
+            cancel_url = 'http://localhost:5174/payment-mode'
         )
         session_id = checkout_session.id
         session = stripe.checkout.Session.retrieve(session_id)
@@ -83,8 +84,7 @@ def create_checkout_session():
         payment_status = session.payment_status
     except Exception as e:
         return str(e)
-    # account_id is hard-coded for now
-    payment = epayment(session_id=session_id, checkout_url = checkout, account_id=1, status=payment_status, price=8, paymentDate=datetime.now())
+    payment = epayment(session_id=session_id, checkout_url = checkout, account_id = data["account_id"], status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
     return jsonify({"checkout_url" : checkout }), 303
@@ -113,13 +113,13 @@ async def check_payment_status(session_id):
         create_ticket = invoke_http(
             order_URL + str(payment.account_id) + "/paying", method='POST', json=payment_json
         )
-    if create_ticket["code"] in range(500, 600):
-        return jsonify(
-            {
-                "code": 500,
-                "message": "Oops, something went wrong! Order"
-            }
-        ), 500
+        if create_ticket["code"] in range(500, 600):
+            return jsonify(
+                {
+                    "code": 500,
+                    "message": "Oops, something went wrong! Order"
+                }
+            ), 500
     elif payment_status == 'unpaid':
         # Payment has not yet been made
         await asyncio.sleep(30)
