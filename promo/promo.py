@@ -187,24 +187,24 @@ def used_promo(account_id):
     #   "promo_code": "123456"
     # }
     updated_promo = Promo.query.filter_by(account_id=account_id).first()
-
+    print(updated_promo)
     if updated_promo.is_used == 0:
-        payment_json = {
-            "account_id": updated_promo.account_id,
-            "queue_id": updated_promo.queue_id,
-            "promo_code": updated_promo.promo_code,
-            "payment_method": "promo"
-        }
-        create_ticket = invoke_http(
-            order_URL + str(updated_promo.account_id) + "/paying", method='POST', json=payment_json)
+        # payment_json = {
+        #     "account_id": updated_promo.account_id,
+        #     "queue_id": updated_promo.queue_id,
+        #     "promo_code": updated_promo.promo_code,
+        #     "payment_method": "promo"
+        # }
+        # create_ticket = invoke_http(
+        #     queue_URL + str(updated_promo.account_id) + "/paying", method='POST', json=payment_json)
 
-        if create_ticket["code"] in range(500, 600):
-            return jsonify(
-                {
-                    "code": 500,
-                    "message": "Oops, something went wrong! promo_invalid",
-                }
-            ), 500
+        # if create_ticket["code"] in range(500, 600):
+        #     return jsonify(
+        #         {
+        #             "code": 500,
+        #             "message": "Oops, something went wrong! promo_invalid",
+        #         }
+        #     ), 500
         
         try:
             updated_promo.is_used = data["is_used"]
@@ -218,17 +218,6 @@ def used_promo(account_id):
                 }
             ), 500
 
-        create_ticket = invoke_http(
-            order_URL + str(updated_promo.account_id) + "/paying", method='POST', json=payment_json)
-
-        if create_ticket["code"] in range(500, 600):
-            return jsonify(
-                {
-                    "code": 500,
-                    "message": "Oops, something went wrong! Order",
-                }
-            ), 500 
-        
         account_result = invoke_http(
             verification_URL + "account/" + str(updated_promo.account_id), method='GET')
 
