@@ -155,10 +155,8 @@ def update_grouping(grouping_id):
     data = request.get_json()
 
     try:
-        grouping.list_account = data["list_account"]
+
         grouping.no_of_pax = data['no_of_pax']
-        grouping.description = data['description']
-        grouping.status = data['status']
         db.session.commit()
 
     except:
