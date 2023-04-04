@@ -87,7 +87,9 @@ def create_checkout_session():
     payment = epayment(session_id=session_id, checkout_url = checkout, account_id = data["account_id"], status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
-    return jsonify({"checkout_url" : checkout }), 303
+    return jsonify({
+        "checkout_url" : checkout 
+        }), 303
 
 @app.route('/epayment/check_payment_status/<session_id>', methods=['GET'])
 async def check_payment_status(session_id):
@@ -103,33 +105,43 @@ async def check_payment_status(session_id):
         # Payment has been successfully made
         payment = epayment.query.filter_by(session_id=session_id).first()
         if payment:
-            payment.status = 'paid'
-            db.session.commit()
-            payment_json = {
-                "account_id": payment.account_id,
-                "session_id": payment.session_id,
-                "payment_method": "external"
-            }
-        create_ticket = invoke_http(
-            order_URL + str(payment.account_id) + "/paying", method='POST', json=payment_json
-        )
-        if create_ticket["code"] == 200:
-            return jsonify(
-                {
-                    "code": 200,
-                    "message": "Ticket created!",
-                    "data" : payment_json,
-                    "data1" : create_ticket
-                }
-            )
-        else:
-            return jsonify(
-                {
-                    "code": 500,
-                    "message": "Error creating ticket",
-                    "error": create_ticket
-                }
-            ), 500
+            try:
+                payment.status = 'paid'
+                db.session.commit()
+                return "Payment successful!"
+            except:
+                return jsonify(
+                    {
+                        "code": 500,
+                        "message": "An error occurred while updating the payment.",
+                        "asdf": payment
+                    }
+                ), 500
+        #     payment_json = {
+        #         "account_id": payment.account_id,
+        #         "session_id": payment.session_id,
+        #         "payment_method": "external"
+        #     }
+        # create_ticket = invoke_http(
+        #     order_URL + str(payment.account_id) + "/paying", method='POST', json=payment_json
+        # )
+        # if create_ticket["code"] == 200:
+        #     return jsonify(
+        #         {
+        #             "code": 200,
+        #             "message": "Ticket created!",
+        #             "data" : payment_json,
+        #             "data1" : create_ticket
+        #         }
+        #     )
+        # else:
+        #     return jsonify(
+        #         {
+        #             "code": 500,
+        #             "message": "Error creating ticket",
+        #             "error": create_ticket
+        #         }
+        #     ), 500
     elif payment_status == 'unpaid':
         # Payment has not yet been made
         await asyncio.sleep(30)

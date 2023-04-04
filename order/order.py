@@ -80,7 +80,24 @@ async def select_payment_method(account_id):
     if (payment_method == "external"):
         response = invoke_http(epayment_URL + 'create_checkout_session', method="POST" ,json={"account_id":data["account_id"]})
         if response:
-            return jsonify({'status': 'success', 'data': response})
+            response["queue_id"] = data["queue_id"]
+
+            ini_create_ticket = invoke_http(
+                order_URL + str(account_id) + "/paying", method='POST', json=data)
+            if ini_create_ticket["code"] == 201:
+                return jsonify({
+                    "code": 200,
+                    "message": "epayment is successful", 
+                    "data": response,
+                    "queue_id": data["queue_id"]
+                    }), 200
+            else:
+                return jsonify({
+                    "code": 405,
+                    "data": response,
+                    "message": "Failed to create ticket"
+                }), 405
+                
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session', 'data': response})
     elif (payment_method == "promo"):
@@ -97,7 +114,8 @@ async def select_payment_method(account_id):
                 return jsonify({
                     "code": 200,
                     "message": "Promo code has been redeemed", 
-                    "data": update_promo["data"]
+                    "data": update_promo["data"],
+                    "queue_id": data["queue_id"]
                     }), 200
         else:
             return jsonify({
@@ -120,6 +138,7 @@ async def select_payment_method(account_id):
                     "code": 200,
                     "message": "Loyalty points have been redeemed", 
                     "data": update_loyalty["data"],
+                    "queue_id": data["queue_id"],
                     "available_points": update_loyalty["data"]["available_points"]
                     }), 200
         else:
