@@ -88,11 +88,13 @@ def create_checkout_session():
     db.session.add(payment)
     db.session.commit()
     return jsonify({
-        "checkout_url" : checkout 
+        "checkout_url" : checkout,
+        "queue_id" : data.queue_id
         }), 303
 
 @app.route('/epayment/check_payment_status/<session_id>', methods=['GET'])
 async def check_payment_status(session_id):
+    data = request.get_json()
     try:
         session = stripe.checkout.Session.retrieve(session_id)
         payment_status = session.payment_status
@@ -108,7 +110,7 @@ async def check_payment_status(session_id):
             try:
                 payment.status = 'paid'
                 db.session.commit()
-                return redirect("http://localhost:5174/queue-ticket")
+                return redirect("http://localhost:5174/queue-ticket" + "?queue_id=" + data.queue_id)
             except:
                 return jsonify(
                     {
