@@ -188,23 +188,7 @@ def used_promo(account_id):
     # }
     updated_promo = Promo.query.filter_by(account_id=account_id).first()
     print(updated_promo)
-    if updated_promo.is_used == 0:
-        # payment_json = {
-        #     "account_id": updated_promo.account_id,
-        #     "queue_id": updated_promo.queue_id,
-        #     "promo_code": updated_promo.promo_code,
-        #     "payment_method": "promo"
-        # }
-        # create_ticket = invoke_http(
-        #     queue_URL + str(updated_promo.account_id) + "/paying", method='POST', json=payment_json)
-
-        # if create_ticket["code"] in range(500, 600):
-        #     return jsonify(
-        #         {
-        #             "code": 500,
-        #             "message": "Oops, something went wrong! promo_invalid",
-        #         }
-        #     ), 500
+    if updated_promo.is_used == 0 and updated_promo.promo_code == data["promo_code"]:
         
         try:
             updated_promo.is_used = data["is_used"]
@@ -249,7 +233,7 @@ def used_promo(account_id):
                     "account_id": account_id,
                     "asdf": updated_promo.json()
                 },
-                "message": "Promo has already been used."
+                "message": "Promo has already been used or code does not match."
             }
         ), 400
 
