@@ -25,7 +25,7 @@ class IcebreakersSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'statements' => 'Would you rather fight 100 duck-sized horses or one horse-sized duck?',
+                'statements' => 'Chicken Rice, Nasi Lemak or Hokkien Mee. Choose one and tell us where is your go to place!',
             ],
             [
                 'id' => 4,
@@ -33,7 +33,7 @@ class IcebreakersSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'statements' => 'If you had to listen to one song on repeat for 24 hours, which one would you choose?',
+                'statements' => 'When using a squat toilet, do you face the door or face the flush?',
             ],
             [
                 'id' => 6,
