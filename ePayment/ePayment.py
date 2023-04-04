@@ -108,13 +108,18 @@ async def check_payment_status(session_id):
             try:
                 payment.status = 'paid'
                 db.session.commit()
-                return "Payment successful!"
+                return jsonify(
+                    {
+                        "code": 200,
+                        "message": "Payment successful!"
+                    }
+                )
             except:
                 return jsonify(
                     {
                         "code": 500,
                         "message": "An error occurred while updating the payment.",
-                        "asdf": payment
+                        "data": payment
                     }
                 ), 500
         #     payment_json = {
@@ -145,7 +150,7 @@ async def check_payment_status(session_id):
     elif payment_status == 'unpaid':
         # Payment has not yet been made
         await asyncio.sleep(30)
-        return await check_payment_status()
+        return await check_payment_status(session_id)
     else:
         # Payment has failed or has been refunded
         return "Payment failed or refunded"
