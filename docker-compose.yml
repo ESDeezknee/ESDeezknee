@@ -3,7 +3,6 @@ version: "3.8"
 volumes:
   pgdata:
   kongadata:
-  # mysql_data:
 
 networks:
   kong-net:
@@ -12,6 +11,32 @@ networks:
   internal:
 
 services:
+  #################################
+  # Volumes Restore
+  #################################
+  restore:
+    image: alpine
+    command: >
+      sh -c "tar -xzf /backup/konga-data.tar.gz --strip 1 -C /volume
+             tar -xzf /backup/pg-data.tar.gz --strip 1 -C /volume"
+    volumes:
+      - kongadata:/volume
+      - pgdata:/volume
+      - ./backups:/backup
+
+  #################################
+  # Volumes Backup
+  #################################
+  # backup:
+  #   image: alpine
+  #   command: >
+  #     sh -c "tar -czf /backup/konga-data.tar.gz -C /volume ./
+  #            tar -czf /backup/pg-data.tar.gz -C /volume ./"
+  #   volumes:
+  #     - kongadata:/volume
+  #     - pgdata:/volume
+  #     - ./backups:/backup
+
   #################################
   # Frontend
   #################################
@@ -40,13 +65,11 @@ services:
     command: --init-file /data/application/init.sql
     volumes:
       - ./init.sql:/data/application/init.sql
-      # - mysql_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: root
       MYSQL_USER: is213
       MYSQL_PASSWORD: password
-      # MYSQL_TCP_PORT: 3306
     ports:
       - 3306:3306
 
@@ -64,7 +87,6 @@ services:
       - 5013:80
     environment:
       - PMA_ARBITRARY=1
-      # - PMA_HOST=mysql-database
 
   #################################
   # RabbitMQ: AMQP
