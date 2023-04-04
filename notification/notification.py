@@ -53,6 +53,9 @@ def sms_callback(channel, method, properties, body):
     if data["type"] == "queueticket":
         send_notification_queueTicket_sms(data["account_id"],data["queue_id"],data["payment_method"],data["phone_number"],data["first_name"])
 
+    if data["type"] == "use_queue":
+        send_notification_use_queue_sms(data["account_id"],data["queue_id"],data["payment_method"],data["phone_number"],data["first_name"])
+
     if data["type"] == "promo":
         send_notification_promo_sms(data["account_id"],data["promo_code"],data["first_name"],data["phone_number"])
     
@@ -176,6 +179,22 @@ def send_notification_icebreakers_sms(id,icebreaker_statement, first_name,phone_
     })
 
     print("Icebreakers Notification sent!", flush=True)
+
+
+def send_notification_use_queue_sms(account_id, queue_id, payment_method, phone_number, first_name):
+    notificationapi.init("2asi8se1f8laqltb8fgh9lhmod", 
+                        "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
+    # send sms
+    notificationapi.send({
+        "notificationId": "use_queue",
+        "templateId": "default",
+        "user": {
+            "id": phone_number,
+            "number": phone_number,   # required for sms notifications
+        },
+        "mergeTags": {"account_id": account_id, "queue_id": queue_id, "payment_method": payment_method, "first_name": first_name}
+    })
+    print("Notification SMS about queue ticket successfully sent!", flush=True)
 
 
 if __name__ == '__main__':

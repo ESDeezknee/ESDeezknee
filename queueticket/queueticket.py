@@ -209,29 +209,34 @@ def delete_order(queue_id):
 
 @app.patch("/queueticket/<int:queue_id>")
 def queue_used(queue_id):
-    if (not QueueTicket.query.filter_by(queue_id=queue_id).first()):
-        return jsonify(
-            {
-                "code": 404,
-                "data": {
-                    "queue_id": queue_id
-                },
-                "message": "Queue not found."
-            }
-        ), 404
+    # if (not QueueTicket.query.filter_by(queue_id=queue_id).first()):
+    #     return jsonify(
+    #         {
+    #             "code": 404,
+    #             "data": {
+    #                 "queue_id": queue_id
+    #             },
+    #             "message": "Queue not found."
+    #         }
+    #     ), 404
     data = request.get_json()
     print(data)
     updated_queue = QueueTicket.query.filter_by(queue_id=queue_id).first()
     # print(updated_queue)
     
-
-    account_result = invoke_http(
-        verification_URL + "account/" + str(updated_queue.account_id), method='GET')
-
     try:
         updated_queue.is_used = data["is_used"]
 
         db.session.commit()
+
+        return jsonify(
+            {
+                "code": 200,
+                "data": updated_queue.json(),
+                "message": "Queue ticket has been updated (used)."
+            }
+        ), 200
+
     except:
         return jsonify(
             {
@@ -241,26 +246,7 @@ def queue_used(queue_id):
             }
         ), 500
     
-    notification_message = {
-        "type": "queueticket",
-        "account_id": updated_queue.account_id,
-        "phone_number": account_result["data"]["phone"],
-        "payment_method": updated_queue.payment_method,
-        "queue_id": updated_queue.queue_id,
-        "message": "You have redeemed your queue ticket."
-    }
-    message = json.dumps(notification_message)
-    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                    body=message, properties=pika.BasicProperties(delivery_mode=2))
-
-
-    return jsonify(
-        {
-            "code": 200,
-            "data": updated_queue.json(),
-            "message": "Queue ticket has been updated (used)."
-        }
-    ), 200
+    
 
 
 if __name__ == '__main__':

@@ -31,31 +31,9 @@ promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
 order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
-# is verification needed here?
-@app.get('/order/retrieve_account/<int:account_id>')
-def verify_account(account_id):
-    url = verification_URL + "account/" + str(account_id)
-    account_status = invoke_http(url, method='GET')
-    if account_status["code"] == 200:
-        return account_status
-    else:
-        abort(404)
-
-async def confirm_order(account_id):
-    # logic for confirmation
-    # if person presses "express ticket button",
-    # return this True, if not nothing will happen
-    express_button = request.form.get('button_pressed', False)
-    if express_button:
-        return True
-    else:
-        await asyncio.sleep(1)
 
 @app.route('/order/get_payment_method/<int:account_id>', methods=['POST'])
 async def select_payment_method(account_id):
-    # buttons to allow user to input what payment method they want to use
-    # data = await request.get_json()
-    # payment_method = data['payment_method']
     payment_method1 = request.get_json()
     payment_method = payment_method1['payment_method']
     check_qid = invoke_http(
@@ -86,8 +64,7 @@ async def select_payment_method(account_id):
                 order_URL + str(account_id) + "/paying", method='POST', json=data)
             if ini_create_ticket["code"] == 201:
                 return jsonify({
-                    "code": 200,
-                    "message": "epayment is successful", 
+                    "code": 200, 
                     "data": response,
                     "queue_id": data["queue_id"]
                     }), 200
@@ -227,8 +204,7 @@ def update_order(account_id):
     else:
         return jsonify({
             "code": 405,
-            "message": "Order not updated",
-            "invoking": update_account["message"],
+            "message": "Order not updated"
         }), 405
 
 @app.route("/order/<int:queue_id>/used", methods=['PATCH'])
@@ -241,10 +217,10 @@ def ticket_used(queue_id):
     
     data = request.get_json()
 
-    ticket_used = invoke_http(
-        queue_URL + str(queue_id), method='PATCH', json=data)
+    ticket_update = invoke_http(
+        queue_URL + str(data["queue_id"]), method='PATCH', json=data)
 
-    if ticket_used["code"] == 200:
+    if ticket_update["code"] == 200:
         update_is_prio = {
             "is_priority": 0
         }
@@ -257,10 +233,32 @@ def ticket_used(queue_id):
                 "message": "Ticket used successfully"
             }), 200
         
+        account_result = invoke_http(
+            verification_URL + "account/" + str(ticket_update["data"]["account_id"]), method='GET')
+
+        notification_message = {
+            "type": "use_queue",
+            "account_id": ticket_update["data"]["account_id"],
+            "first_name": account_result["data"]["first_name"],
+            "phone_number": account_result["data"]["phone"],
+            "payment_method": ticket_update["data"]["payment_method"],
+            "queue_id": ticket_update["data"]["queue_id"],
+            "message": "You have redeemed your queue ticket."
+        }
+        message = json.dumps(notification_message)
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
+                                        body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+        return jsonify({
+            "code": 200,
+            "message": "Ticket used successfully",
+            "data": ticket_update["data"]
+        }), 200
+        
     else:
         return jsonify({
             "code": 405,
-            "message": ticket_used["message"]
+            "message": ticket_update["message"]
         }), 405
     
 
