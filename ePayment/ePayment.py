@@ -22,6 +22,7 @@ stripe.api_key = environ.get('STRIPE_API_KEY')
 
 order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
+
 class epayment(db.Model):
     __tablename__ = 'epayment'
 
@@ -39,23 +40,27 @@ class epayment(db.Model):
         self.status = status
         self.price = price
         self.paymentDate = paymentDate
-    
+
     def json(self):
-        return {"session_id": self.session_id,  
-                "account_id": self.account_id, 
-                "status": self.status, 
-                "price": self.price, 
+        return {"session_id": self.session_id,
+                "account_id": self.account_id,
+                "status": self.status,
+                "price": self.price,
                 "paymentDate": self.paymentDate
-            }
+                }
+
 
 with app.app_context():
     db.create_all()
+
 
 @app.route('/')
 def hello():
     return 'Hello from the epayment Microservice!'
 
 # pls send a POST request to this endpoint to trigger it instantly
+
+
 @app.route('/epayment/create_checkout_session', methods=['POST'])
 def create_checkout_session():
     data = request.get_json()
@@ -64,19 +69,19 @@ def create_checkout_session():
         checkout = ''
         payment_status = ''
         checkout_session = stripe.checkout.Session.create(
-            
-            line_items = [
+
+            line_items=[
                 {
                     'price': 'price_1MjeeeExUYBuMhthqO8FblZr',
                     'quantity': 1
                 }
             ],
-            mode = "payment",
-            #success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
+            mode="payment",
+            # success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
 
             # cancel_url should bring it back to the main page but cancels payment
-            success_url = 'http://localhost:6203/epayment/check_payment_status/{CHECKOUT_SESSION_ID}',
-            cancel_url = 'http://localhost:5174/payment-mode'
+            success_url='http://localhost:6203/epayment/check_payment_status/{CHECKOUT_SESSION_ID}',
+            cancel_url='http://localhost:5174/payment-mode'
         )
         session_id = checkout_session.id
         session = stripe.checkout.Session.retrieve(session_id)
@@ -84,17 +89,17 @@ def create_checkout_session():
         payment_status = session.payment_status
     except Exception as e:
         return str(e)
-    payment = epayment(session_id=session_id, checkout_url = checkout, account_id = data["account_id"], status=payment_status, price=8, paymentDate=datetime.now())
+    payment = epayment(session_id=session_id, checkout_url=checkout,
+                       account_id=data["account_id"], status=payment_status, price=8, paymentDate=datetime.now())
     db.session.add(payment)
     db.session.commit()
     return jsonify({
-        "checkout_url" : checkout,
-        "queue_id" : data.queue_id
-        }), 303
+        "checkout_url": checkout
+    }), 303
+
 
 @app.route('/epayment/check_payment_status/<session_id>', methods=['GET'])
 async def check_payment_status(session_id):
-    data = request.get_json()
     try:
         session = stripe.checkout.Session.retrieve(session_id)
         payment_status = session.payment_status
@@ -110,7 +115,7 @@ async def check_payment_status(session_id):
             try:
                 payment.status = 'paid'
                 db.session.commit()
-                return redirect("http://localhost:5174/queue-ticket" + "?queue_id=" + data.queue_id)
+                return redirect("http://localhost:5174/queue-ticket")
             except:
                 return jsonify(
                     {
