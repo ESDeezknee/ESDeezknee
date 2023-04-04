@@ -17,15 +17,15 @@ class IcebreakersSeeder extends Seeder
         $data = [
             [
                 'id' => 1,
-                'statements' => 'Go up to someone and compliment them.',
+                'statements' => 'If animals could talk, which species do you think would be the rudest?',
             ],
             [
                 'id' => 2,
-                'statements' => 'Tell the group a fun fact, everyone has to go',
+                'statements' => 'If you could only eat one color of food for the rest of your life, what color would it be?',
             ],
             [
                 'id' => 3,
-                'statements' => 'Tell everyone what brings you joy and happiness',
+                'statements' => 'Would you rather fight 100 duck-sized horses or one horse-sized duck?',
             ],
             [
                 'id' => 4,
@@ -33,11 +33,11 @@ class IcebreakersSeeder extends Seeder
             ],
             [
                 'id' => 5,
-                'statements' => 'Tell everyone a joke',
+                'statements' => 'If you had to listen to one song on repeat for 24 hours, which one would you choose?',
             ],
             [
                 'id' => 6,
-                'statements' => 'As the first step, you will need to hydrate and then tell everyone to hydrate. If you are able, recite the SAF 8 core values.',
+                'statements' => 'If you were a professional wrestler, what would your entrance music be and what would your signature move be called?',
             ]
             // Add more data here as needed
         ];
