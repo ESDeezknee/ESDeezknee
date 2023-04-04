@@ -102,7 +102,8 @@ async def select_payment_method(account_id):
         else:
             return jsonify({
                 "code": 405,
-                "message": update_promo["data"]["message"]
+                "data": update_promo,
+                "message": update_promo["message"]
             }), 405
     elif (payment_method == "loyalty"):
         points = {
