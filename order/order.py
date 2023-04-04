@@ -199,12 +199,14 @@ def update_order(account_id):
 
         return jsonify({
             "code": 200,
-            "message": "Account updated successfully (is express)"
+            "message": "Account updated successfully (is express)",
+            "queue_id": data["queue_id"]
         }), 200
     else:
         return jsonify({
             "code": 405,
-            "message": "Order not updated"
+            "message": "Order not updated",
+            "error": update_account
         }), 405
 
 @app.route("/order/<int:queue_id>/used", methods=['PATCH'])
