@@ -38,7 +38,6 @@ async def select_payment_method(account_id):
     payment_method = payment_method1['payment_method']
     check_qid = invoke_http(
         queue_URL, method='GET')
-    print(check_qid)
     if check_qid["code"] == 200:
         if len(check_qid["data"]["queues"]) == 0:
             queue_id = 1
@@ -83,7 +82,6 @@ async def select_payment_method(account_id):
             "promo_code": payment_method1["promo_code"]
         }
         update_promo = invoke_http(promo_URL + str(account_id), method="PATCH", json=promo_json)
-        print(update_promo)
         if update_promo["code"] == 200:
             ini_create_ticket = invoke_http(
                 order_URL + str(account_id) + "/paying", method='POST', json=data)
@@ -105,7 +103,6 @@ async def select_payment_method(account_id):
         }
         update_loyalty = invoke_http(
             loyalty_URL + str(account_id) + "/redeem", method='PATCH', json=points)
-        print(update_loyalty)
         if update_loyalty["code"] == 200:
             ini_create_ticket = invoke_http(
                 order_URL + str(account_id) + "/paying", method='POST', json=data)
@@ -130,20 +127,16 @@ async def select_payment_method(account_id):
 def ini_create_ticket(account_id):
     # this function initialises the create ticket post
     # invoked by one of 3 payment microservice to indicate that it has been paid
-    # if (not request.is_json):
-    #     data = data1
-        # return jsonify({
-        #     "code": 404,
-        #     "message": "Invalid JSON input: " + str(request.get_data())
-        # }), 404
-
-    # else:    
+    if (not request.is_json):
+        return jsonify({
+            "code": 404,
+            "message": "Invalid JSON input: " + str(request.get_data())
+        }), 404
+    
     data = request.get_json()
-    # print(data)
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
-    print(create_ticket)
     
     if create_ticket["code"] == 201:
         return jsonify({
@@ -169,11 +162,9 @@ def update_order(account_id):
         }), 404
     
     data = request.get_json()
-    print(data)
 
     update_account = invoke_http(
         account_URL + str(account_id), method='PATCH', json=data)
-    print(update_account)
     
     if update_account["code"] == 200:
 
@@ -190,7 +181,6 @@ def update_order(account_id):
             "message": "You have successfully created a queueticket."
         }
         message = json.dumps(notification_message)
-        # generateTicket.generate_queue_tickets(data, message)
         amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
                                         body=message, properties=pika.BasicProperties(delivery_mode=2))
 

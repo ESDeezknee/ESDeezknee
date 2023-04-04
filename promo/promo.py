@@ -187,7 +187,7 @@ def used_promo(account_id):
     #   "promo_code": "123456"
     # }
     updated_promo = Promo.query.filter_by(account_id=account_id).first()
-    print(updated_promo)
+
     if updated_promo.is_used == 0 and updated_promo.promo_code == data["promo_code"]:
         
         try:
@@ -229,10 +229,6 @@ def used_promo(account_id):
         return jsonify(
             {
                 "code": 400,
-                "data": {
-                    "account_id": account_id,
-                    "asdf": updated_promo.json()
-                },
                 "message": "Promo has already been used or code does not match."
             }
         ), 400

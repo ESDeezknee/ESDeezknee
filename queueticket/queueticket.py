@@ -47,14 +47,14 @@ class QueueTicket(db.Model):
 with app.app_context():
   db.create_all()
   existing_queue_ticket_1 = db.session.query(QueueTicket).filter(QueueTicket.queue_id==1).first()
-#   if not existing_queue_ticket_1:
-    #   new_queue_ticket_1 = QueueTicket(queue_id=1, is_priority=1, account_id=1, payment_method="promo")
-    #   new_queue_ticket_2 = QueueTicket(queue_id=2, is_priority=1, account_id=2, payment_method="stripe")
-    #   new_queue_ticket_3 = QueueTicket(queue_id=3, is_priority=1, account_id=3, payment_method="loyalty")
-    #   db.session.add(new_queue_ticket_1)
-    #   db.session.add(new_queue_ticket_2)
-    #   db.session.add(new_queue_ticket_3)
-    #   db.session.commit()
+  if not existing_queue_ticket_1:
+      new_queue_ticket_1 = QueueTicket(queue_id=1, is_priority=1, account_id=1, payment_method="promo", is_used=0)
+      new_queue_ticket_2 = QueueTicket(queue_id=2, is_priority=1, account_id=2, payment_method="external", is_used=0)
+      new_queue_ticket_3 = QueueTicket(queue_id=3, is_priority=1, account_id=3, payment_method="loyalty", is_used=0)
+      db.session.add(new_queue_ticket_1)
+      db.session.add(new_queue_ticket_2)
+      db.session.add(new_queue_ticket_3)
+      db.session.commit()
 
 
 @app.get("/queueticket/")
@@ -99,7 +99,6 @@ def create_queueticket():
         raise Exception("No data received.")
     
     data = request.get_json()
-    print(data)
 
     verify_queue = invoke_http(
         verification_URL + "queueticket/" + str(data["queue_id"]), method='GET')
@@ -209,20 +208,10 @@ def delete_order(queue_id):
 
 @app.patch("/queueticket/<int:queue_id>")
 def queue_used(queue_id):
-    # if (not QueueTicket.query.filter_by(queue_id=queue_id).first()):
-    #     return jsonify(
-    #         {
-    #             "code": 404,
-    #             "data": {
-    #                 "queue_id": queue_id
-    #             },
-    #             "message": "Queue not found."
-    #         }
-    #     ), 404
+
     data = request.get_json()
-    print(data)
+    
     updated_queue = QueueTicket.query.filter_by(queue_id=queue_id).first()
-    # print(updated_queue)
     
     try:
         updated_queue.is_used = data["is_used"]
@@ -241,8 +230,7 @@ def queue_used(queue_id):
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred updating the queueticket.",
-                "asdf": updated_queue
+                "message": "An error occurred updating the queueticket."
             }
         ), 500
     
