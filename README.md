@@ -71,6 +71,7 @@ docker-compose up
 
 
 <hr>
+
 ### Customer Finding People to Enter a Ride
 
 ![User Scenario 2 Interaction Diagram-Scenario 2A](https://user-images.githubusercontent.com/93701568/230126466-2f36ce8b-c263-49da-992e-1590630c8085.jpg)
