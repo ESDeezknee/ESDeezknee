@@ -166,8 +166,9 @@ def join_group():
                     if code not in range(200,300):
                         return jsonify({
                             "code": 500,
-                            "data": {"joinGroup_result": grouping_details_result},
-                            "message": "Failed to join group as collection of broadcasted group details failed."
+                            "data": {"joinGroup_result": grouping_details_result,
+                                     "message": "Failed to join group as collection of broadcasted group details failed."}
+                            
                     })
 
                     else: 
@@ -178,8 +179,9 @@ def join_group():
                         if code not in range(200,300):
                             return jsonify({
                                 "code": 500,
-                                "data": {"joinGroup_result": joining_group_details},
-                                "message": "Failed to join group as collection of joining group details failed."
+                                "data": {"joinGroup_result": joining_group_details,
+                                         "message": "Failed to join group as collection of joining group details failed."
+                                            }
                             })
 
                         else: 
@@ -199,8 +201,9 @@ def join_group():
                             if code not in range(200,300):
                                 return jsonify({
                                     "code": 500,
-                                    "data": {"joinGroup_result": update_group_result},
-                                    "message": "Failed to join group as group update failed."
+                                    "data": {"joinGroup_result": update_group_result,
+                                             "message": "Failed to join group as group update failed."
+                                    }
                             })
 
                             else: 
@@ -222,8 +225,9 @@ def join_group():
                                 if code not in range (200,300):
                                     return jsonify({
                                         "code": 500,
-                                        "data": {"joinGroup_result": delete_broadcast_result},
-                                        "message": "Failed to join group as group deletion failed."
+                                        "data": {"joinGroup_result": delete_broadcast_result,
+                                                 "message": "Failed to join group as group deletion failed."
+                                                 }
                                     })
                                 
                                 else: 
@@ -233,8 +237,9 @@ def join_group():
                                     if code not in range (200,300):
                                         return jsonify({
                                             "code": 500,
-                                            "data": {"joinGroup_result": delete_joining_group_result},
-                                            "message": "Failed to join group as group deletion failed."
+                                            "data": {"joinGroup_result": delete_joining_group_result,
+                                                     "message": "Failed to join group as group deletion failed."
+                                            }
                                         })
                                     else:
                                     ## get group number from frontend
@@ -255,8 +260,9 @@ def join_group():
                 if code not in range(200,300):
                     return jsonify({
                         "code": 500,
-                        "data": {"joinGroup_result": grouping_details_result},
-                        "message": "Failed to join group as collection of broadcasted group details failed."
+                        "data": {"joinGroup_result": grouping_details_result,
+                                 "message": "Failed to join group as collection of broadcasted group details failed."
+                        }
                 })
 
                 else: 
@@ -267,8 +273,9 @@ def join_group():
                     if code not in range(200,300):
                         return jsonify({
                             "code": 500,
-                            "data": {"joinGroup_result": joining_group_details},
-                            "message": "Failed to join group as collection of joining group details failed."
+                            "data": {"joinGroup_result": joining_group_details,
+                                     "message": "Failed to join group as collection of joining group details failed."
+                            }
                         })
 
                     else: 
@@ -299,8 +306,9 @@ def join_group():
                         if code not in range(200,300):
                                 return jsonify({
                                     "code": 500,
-                                    "data": {"updateBroadcast_result": updateBroadcast_result},
-                                    "message": "Failed to join group as broadcast update failed."
+                                    "data": {"updateBroadcast_result": updateBroadcast_result,
+                                             "message": "Failed to join group as broadcast update failed."
+                                            }
                             }), 500
                         else: 
                             delete_joining_group_result = processDeleteGroup(grouping_id)
@@ -308,8 +316,9 @@ def join_group():
                             if code not in range (200,300):
                                 return jsonify({
                                     "code": 500,
-                                    "data": {"joinGroup_result": delete_joining_group_result},
-                                    "message": "Failed to join group as group deletion failed."
+                                    "data": {"joinGroup_result": delete_joining_group_result,
+                                             "message": "Failed to join group as group deletion failed."
+                                    }
                                 })
                             else: 
                                 new_LF_pax = str(new_LF_pax)
