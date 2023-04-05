@@ -62,9 +62,10 @@ docker-compose up
 
 
 ### Customer Participates in Challenges
-![User Scenario 1 Diagram-Scenario 1A](https://user-images.githubusercontent.com/73370403/230115312-995da93b-eac0-44aa-80be-b1d33ee7a079.jpg)
-![User Scenario 1 Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230115330-4e84f5dc-bb11-4cfe-838e-e4b310dd0af0.jpg)
-![User Scenario 1 Diagram-Scenario 1C](https://user-images.githubusercontent.com/73370403/230115345-aad6528e-567e-42a6-84dc-7b538997e0f3.jpg)
+![User Scenario 1 Diagram-Scenario 1A](https://user-images.githubusercontent.com/73370403/230116697-0d583481-0af9-4aa3-bfc6-d248116ee6f3.jpg)
+![User Scenario 1 Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230116706-870f0b6a-2061-4b5a-b773-568a1a4f7070.jpg)
+![User Scenario 1 Diagram-Scenario 1C](https://user-images.githubusercontent.com/73370403/230116724-c2421306-25df-45b4-9445-ce5c21a09783.jpg)
+
 
 
 <hr>
