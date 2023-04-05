@@ -81,8 +81,8 @@ This Scenario shows the Visitor creating a group and then joins an already Broad
 <hr>
 
 ### Customer Wishes to Jump Queue
-![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230115430-dcc3791c-7c3f-4b1b-af4e-4a1abad66c7e.jpg)
-![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230115446-1624b2d1-e225-4889-8daf-0e11037c223b.jpg)
-![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230115455-cac5c1b6-3622-46c6-b276-86f6b36b4147.jpg)
+![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/90820000/230129315-15035d12-63dd-4fb1-b299-de90687c9887.jpg)
+![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/90820000/230129379-d469fe57-bcb3-4f81-b64f-69c01bb2ab45.png)
+![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/90820000/230129444-3a10fe92-a775-41f1-b98a-c80673051127.png)
 <hr>
 <hr>
