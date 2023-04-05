@@ -49,7 +49,7 @@ docker-compose up
 - Username: root
 - Password: root
 
-## User Scenarios
+## User Scenarios (Diagrams)
 
 ### Customer Finding People to Enter a Ride
 
@@ -58,12 +58,6 @@ This Scenario shows the Visitor creating a group and thereafter creates a Broadc
 ![User Scenario 1 Interaction Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230024931-458b7b0f-27b5-44e7-ac00-f296482f8564.jpg)
 This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
 <hr>
-
-### Customer Wishes to Jump Queue
-
-
-
-<hr>
 ### Customer Participates in Challenges
 
 ![User Scenario 1 Diagram-Scenario 1A](https://user-images.githubusercontent.com/73370403/230029067-6c9706a5-ca85-4905-a374-37d2b86da13e.jpg)
@@ -71,5 +65,11 @@ This Scenario shows the Visitor creating a group and then joins an already Broad
 ![User Scenario 1 Diagram-Scenario 1C](https://user-images.githubusercontent.com/73370403/230029096-45107267-bd73-4e60-80c4-4b2e378bd10e.jpg)
 
 
+<hr>
+
+### Customer Wishes to Jump Queue
+![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230029905-6c24f9a8-079f-4657-97ce-57dfcbb79db9.jpg)
+![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230029936-46eca0fc-4d38-4ca2-b027-db5ccd2fcc84.jpg)
+![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230029949-f28c2664-75c3-4437-af4f-346dbbbed614.jpg)
 <hr>
 <hr>
