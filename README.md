@@ -30,6 +30,12 @@ cd ESDeezknee
 docker-compose up
 ```
 
+The application will take a few minutes to get everything set up. If the application is not working as expected, run docker compose again.
+
+```sh
+docker-compose up
+```
+
 ## MySQL + phpMyAdmin
 
 To view and access the database, go to [http://127.0.0.1:5013](http://127.0.0.1:5013) and enter the following credentials.
@@ -79,6 +85,14 @@ To view the frontend application, go to [http://127.0.0.1:5173](http://127.0.0.1
 
 - Stripe
 - NotificationsAPI
+
+## Postman Environment + Collections
+
+To test the API endpoints of the microservices, import the following to Postman.
+
+- [ESDeezknee Environment](/ESDeezknee.postman_environment.json)
+- [ESDeezknee Collection](/ESDeezknee.postman_collection.json)
+- [ESDeezknee API Gateway Collection](/ESDeezkneeAPIGateway.postman_collection.json)
 
 ## User Scenarios (Diagrams)
 
