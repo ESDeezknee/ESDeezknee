@@ -74,8 +74,8 @@ func main() {
     // Seed the database with initial data
     var mission1 Mission
 		var mission2 Mission
-    // var mission3 Mission
-		// var mission4 Mission
+    var mission3 Mission
+		var mission4 Mission
     // var mission5 Mission
 
 
@@ -104,26 +104,26 @@ func main() {
 						Created:      time.Now(),
 						Modified:     time.Now(),
 				}
-				// 	mission3 = Mission{
-				// 		Name:         "Bottle Up!",
-				// 		Description:  "Use your own bottle for your meal to gain 200 points!",
-				// 		Difficulty:   "Easy",
-				// 		Duration:     1.0,
-				// 		AwardPoints:  200,
-				// 		IsActive:     true,
-				// 		Created:      time.Now(),
-				// 		Modified:     time.Now(),
-				// }
-				// mission4 = Mission{
-				// 		Name:         "Get wet at Jurassic Park Rapids Adventure!",
-				// 		Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
-				// 		Difficulty:   "Easy",
-				// 		Duration:     5.0,
-				// 		AwardPoints:  1000,
-				// 		IsActive:     true,
-				// 		Created:      time.Now(),
-				// 		Modified:     time.Now(),
-				// }
+					mission3 = Mission{
+						Name:         "Bottle Up!",
+						Description:  "Use your own bottle for your meal to gain 200 points!",
+						Difficulty:   "Easy",
+						Duration:     1.0,
+						AwardPoints:  200,
+						IsActive:     true,
+						Created:      time.Now(),
+						Modified:     time.Now(),
+				}
+				mission4 = Mission{
+						Name:         "Get wet at Jurassic Park Rapids Adventure!",
+						Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
+						Difficulty:   "Easy",
+						Duration:     5.0,
+						AwardPoints:  1000,
+						IsActive:     true,
+						Created:      time.Now(),
+						Modified:     time.Now(),
+				}
 				// mission5 = Mission{
 				// 		Name:         "Go on an adventure with Puss in Boots!",
 				// 		Description:  "Ride Puss in Boots Journey 3 times to gain 100 points!",
@@ -135,10 +135,9 @@ func main() {
 				// 		Modified:     time.Now(),
 				// }
         err = db.Create(&mission1).Error
-			err = db.Create(&mission2).Error
-		// err = db.Create(&mission3).Error
-        // err = db.Create(&mission3).Error
-				// err = db.Create(&mission4).Error
+				err = db.Create(&mission2).Error
+        err = db.Create(&mission3).Error
+				err = db.Create(&mission4).Error
         // err = db.Create(&mission5).Error
 
         if err != nil {
