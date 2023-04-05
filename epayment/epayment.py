@@ -51,7 +51,6 @@ class epayment(db.Model):
 with app.app_context():
     db.create_all()
 
-
 @app.route('/epayment/create_checkout_session', methods=['POST'])
 def create_checkout_session():
     data = request.get_json()
