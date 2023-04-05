@@ -56,15 +56,17 @@ docker-compose up
 This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
 ![User Scenario 1 Interaction Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230024931-458b7b0f-27b5-44e7-ac00-f296482f8564.jpg)
 This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
-
+<hr>
 
 ### Customer Wishes to Jump Queue
 
 
 
-
+<hr>
 ### Customer Participates in Challenges
 ![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230024553-a3ca8f31-94aa-41a9-930d-8b1dbfe84a8c.jpg)
 ![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230024617-df74c9a9-29dd-46ff-a003-b1fa013b0cd7.jpg)
 ![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230024676-5a10ba4f-9ab7-483a-88b8-74340891dc18.jpg)
 
+<hr>
+<hr>
