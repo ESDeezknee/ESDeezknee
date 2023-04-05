@@ -208,8 +208,7 @@ def update_order(account_id):
     else:
         return jsonify({
             "code": 405,
-            "message": "Order not updated",
-            "error": update_account
+            "message": "Order not updated"
         }), 405
 
 @app.route("/order/<int:queue_id>/used", methods=['PATCH'])

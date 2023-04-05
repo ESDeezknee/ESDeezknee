@@ -107,10 +107,10 @@ def create_promo():
     if account_result["code"] in range(500, 600):
         return jsonify(
             {
-                "code": 500,
+                "code": 502,
                 "message": "Oops, something went wrong! Account",
             }
-        ), 500
+        ), 502
 
     if account_result["code"] in range(300, 500):
         return jsonify(
@@ -130,10 +130,10 @@ def create_promo():
     except:
         return jsonify(
             {
-                "code": 500,
+                "code": 501,
                 "message": "An error occurred creating the promo code."
             }
-        ), 500
+        ), 501
 
 
     return jsonify(
@@ -173,19 +173,12 @@ def used_promo(account_id):
         return jsonify(
             {
                 "code": 404,
-                "data": {
-                    "account_id": account_id
-                },
                 "message": "Promo not found."
             }
         ), 404
     
     data = request.get_json()
-    # frontend need to pass
-    # {
-    #   "is_used": 1
-    #   "promo_code": "123456"
-    # }
+
     updated_promo = Promo.query.filter_by(account_id=account_id).first()
 
     if updated_promo.is_used == 0 and updated_promo.promo_code == data["promo_code"]:

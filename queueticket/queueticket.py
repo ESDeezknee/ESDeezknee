@@ -127,34 +127,29 @@ def create_queueticket():
     if account_result["code"] in range(500, 600):
         return jsonify(
             {
-                "code": 500,
-                "message": "Oops, something went wrong! Account"
+                "code": 501,
+                "message": "Error with verifying account."
             }
-        ), 500
+        ), 501
 
     if account_result["code"] in range(300, 500):
         return jsonify(
             {
                 "code": 400,
-                "data": {
-                    "account_id": new_queue["account_id"]
-                },
                 "message": "Account does not exist."
             }
         ), 400
 
     paid_ticket = invoke_http(
         order_URL + str(new_queue["account_id"]) + "/paid", method="PATCH", json=new_queue)
-    print(paid_ticket)
 
     if paid_ticket["code"] in range(500, 600):
             return jsonify(
                 {
-                    "code": 500,
-                    "message": "Oops, something went wrong! paid ticket",
-                    "asdf": paid_ticket
+                    "code": 502,
+                    "message": "An error occurred invoking that the ticket was paid."
                 }
-            ), 500 
+            ), 502
 
     try:
         
@@ -171,8 +166,7 @@ def create_queueticket():
         return jsonify(
             {
                 "code": 500,
-                "message": "An error occurred creating the queueticket.",
-                "asdf": new_queue
+                "message": "An error occurred creating the queueticket."
             }
         ), 500
 
