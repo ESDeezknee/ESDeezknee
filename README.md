@@ -48,6 +48,9 @@ docker-compose up
 ## User Scenarios
 
 ### Customer Finding People to Enter a Ride
+![User Scenario 1 Interaction Diagram-Scenario 1A drawio](https://user-images.githubusercontent.com/73370403/230005080-5bb67bcb-3010-4451-b001-c41bd9e91860.png)
+![User Scenario 1 Interaction Diagram-Scenario 1B drawio (1)](https://user-images.githubusercontent.com/73370403/230005091-8e5528a2-27b1-4451-88e0-d6a05c20f049.png)
+
 
 ### Customer Wishes to Jump Queue
 
