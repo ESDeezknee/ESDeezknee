@@ -95,16 +95,6 @@ func main() {
 						Modified:     time.Now(),
 				}
 					mission2 = Mission{
-						Name:         "Skip the Queue!",
-						Description:  "Purchase an express queue to gain 100 points!",
-						Difficulty:   "Easy",
-						Duration:     1.0,
-						AwardPoints:  100,
-						IsActive:     true,
-						Created:      time.Now(),
-						Modified:     time.Now(),
-				}
-					mission3 = Mission{
 						Name:         "Bottle Up!",
 						Description:  "Use your own bottle for your meal to gain 200 points!",
 						Difficulty:   "Easy",
@@ -114,6 +104,16 @@ func main() {
 						Created:      time.Now(),
 						Modified:     time.Now(),
 				}
+				// 	mission3 = Mission{
+				// 		Name:         "Bottle Up!",
+				// 		Description:  "Use your own bottle for your meal to gain 200 points!",
+				// 		Difficulty:   "Easy",
+				// 		Duration:     1.0,
+				// 		AwardPoints:  200,
+				// 		IsActive:     true,
+				// 		Created:      time.Now(),
+				// 		Modified:     time.Now(),
+				// }
 				// mission4 = Mission{
 				// 		Name:         "Get wet at Jurassic Park Rapids Adventure!",
 				// 		Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
@@ -135,8 +135,7 @@ func main() {
 				// 		Modified:     time.Now(),
 				// }
         err = db.Create(&mission1).Error
-		err = db.Create(&mission2).Error
-		err = db.Create(&mission3).Error
+			err = db.Create(&mission2).Error
         // err = db.Create(&mission3).Error
 				// err = db.Create(&mission4).Error
         // err = db.Create(&mission5).Error
