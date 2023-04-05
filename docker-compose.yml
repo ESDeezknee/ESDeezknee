@@ -14,15 +14,15 @@ services:
   #################################
   # Volumes Backup
   #################################
-  backup:
-    image: alpine
-    command: >
-      sh -c "tar -czf /backup/konga-data.tar.gz -C /volume ./
-             tar -czf /backup/pg-data.tar.gz -C /volume ./"
-    volumes:
-      - kongadata:/volume
-      - pgdata:/volume
-      - ./backups:/backup
+  # backup:
+  #   image: alpine
+  #   command: >
+  #     sh -c "tar -czf /backup/konga-data.tar.gz -C /volume ./
+  #            tar -czf /backup/pg-data.tar.gz -C /volume ./"
+  #   volumes:
+  #     - kongadata:/volume
+  #     - pgdata:/volume
+  #     - ./backups:/backup
 
   #################################
   # Volumes Restore
