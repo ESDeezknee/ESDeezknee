@@ -60,25 +60,27 @@ docker-compose up
 
 ## User Scenarios (Diagrams)
 
+
+### Customer Participates in Challenges
+![User Scenario 1 Diagram-Scenario 1A](https://user-images.githubusercontent.com/73370403/230117241-863a7f2e-cb85-4640-b02e-867058ed665a.jpg)
+![User Scenario 1 Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230117266-59599d1c-09cb-4711-a718-1237ee1fc079.jpg)
+![User Scenario 1 Diagram-Scenario 1C](https://user-images.githubusercontent.com/73370403/230117288-858d05ad-d4f0-488f-9c4f-1c2a3708a5c8.jpg)
+
+
+
+
+<hr>
 ### Customer Finding People to Enter a Ride
 
-![User Scenario 1 Interaction Diagram-Scenario 1A (1)](https://user-images.githubusercontent.com/73370403/230024888-214b7369-0c42-47ad-a592-4a2c06007574.jpg)
+![User Scenario 2 Interaction Diagram-Scenario 2A](https://user-images.githubusercontent.com/73370403/230115365-344aaf23-16be-49a9-8522-86b9c2afac77.jpg)
 This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
-![User Scenario 1 Interaction Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230024931-458b7b0f-27b5-44e7-ac00-f296482f8564.jpg)
+![User Scenario 2 Interaction Diagram-Scenario 2B](https://user-images.githubusercontent.com/73370403/230115396-2860ec48-1d95-4d52-8bcf-8d1e5dc12fff.jpg)
 This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
-<hr>
-### Customer Participates in Challenges
-
-![User Scenario 1 Diagram-Scenario 1A](https://user-images.githubusercontent.com/73370403/230029067-6c9706a5-ca85-4905-a374-37d2b86da13e.jpg)
-![User Scenario 1 Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230029088-619cc2b0-bef3-4494-81e9-94f21a405b71.jpg)
-![User Scenario 1 Diagram-Scenario 1C](https://user-images.githubusercontent.com/73370403/230029096-45107267-bd73-4e60-80c4-4b2e378bd10e.jpg)
-
-
 <hr>
 
 ### Customer Wishes to Jump Queue
-![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230029905-6c24f9a8-079f-4657-97ce-57dfcbb79db9.jpg)
-![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230029936-46eca0fc-4d38-4ca2-b027-db5ccd2fcc84.jpg)
-![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230029949-f28c2664-75c3-4437-af4f-346dbbbed614.jpg)
+![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230115430-dcc3791c-7c3f-4b1b-af4e-4a1abad66c7e.jpg)
+![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230115446-1624b2d1-e225-4889-8daf-0e11037c223b.jpg)
+![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230115455-cac5c1b6-3622-46c6-b276-86f6b36b4147.jpg)
 <hr>
 <hr>
