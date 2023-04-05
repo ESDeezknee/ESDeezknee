@@ -1,0 +1,1587 @@
+{
+	"info": {
+		"_postman_id": "10a38262-e141-4d34-9e00-37a288d477ca",
+		"name": "ESDeezknee",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Mission",
+			"item": [
+				{
+					"name": "Get All Missions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mission_service}}/mission",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Active Missions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mission_service}}/mission/active",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Mission",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{mission_service}}/mission/1",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Mission",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"award_points\": 500,\n    \"description\": \"Ride Battlestar Galatica: HUMAN vs GALATICA 3 times to gain 500 points!\",\n    \"difficulty\": \"Hard\",\n    \"duration\": 2.0,\n    \"name\": \"Battlestar Galatica: HUMAN vs GALATICA\",\n    \"is_active\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mission_service}}/mission",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Mission",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"award_points\": 600,\n    \"description\": \"Ride Battlestar Galatica: HUMAN vs GALATICA 3 times to gain 500 points!\",\n    \"difficulty\": \"Difficult\",\n    \"duration\": 2.0,\n    \"name\": \"Battlestar Galatica: HUMAN vs GALATICA\",\n    \"is_active\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{mission_service}}/mission/4",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Mission",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{mission_service}}/mission/4",
+							"host": [
+								"{{mission_service}}"
+							],
+							"path": [
+								"mission",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Get All Accounts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{account_service}}/account",
+							"host": [
+								"{{account_service}}"
+							],
+							"path": [
+								"account"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{account_service}}/account/1",
+							"host": [
+								"{{account_service}}"
+							],
+							"path": [
+								"account",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Account by email",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{account_service}}/account/email/kangting.ng.2021@scis.smu.edu.sg",
+							"host": [
+								"{{account_service}}"
+							],
+							"path": [
+								"account",
+								"email",
+								"kangting.ng.2021@scis.smu.edu.sg"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update is_priority",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"queue_id\": 3,\n    \"is_priority\": 1,\n    \"account_id\": 3,\n    \"payment_method\": \"promo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{account_service}}/account/3",
+							"host": [
+								"{{account_service}}"
+							],
+							"path": [
+								"account",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Loyalty",
+			"item": [
+				{
+					"name": "Get All Loyalties",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{loyalty_service}}/loyalty",
+							"host": [
+								"{{loyalty_service}}"
+							],
+							"path": [
+								"loyalty"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Loyalty",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{loyalty_service}}/loyalty/3",
+							"host": [
+								"{{loyalty_service}}"
+							],
+							"path": [
+								"loyalty",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Loyalty",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_id\": 1,\n    \"available_points\": 0,\n    \"redeemed_points\": 0,\n    \"total_points\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loyalty_service}}/loyalty",
+							"host": [
+								"{{loyalty_service}}"
+							],
+							"path": [
+								"loyalty"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Earn Loyalty Points",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 500\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loyalty_service}}/loyalty/3/earn",
+							"host": [
+								"{{loyalty_service}}"
+							],
+							"path": [
+								"loyalty",
+								"3",
+								"earn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Redeem Loyalty Points",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{loyalty_service}}/loyalty/3/redeem",
+							"host": [
+								"{{loyalty_service}}"
+							],
+							"path": [
+								"loyalty",
+								"3",
+								"redeem"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Challenge",
+			"item": [
+				{
+					"name": "Get All Challenges",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{challenge_service}}/challenge",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Challenges From Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{challenge_service}}/challenge/account/1",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge",
+								"account",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Challenge From Account and Mission",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{challenge_service}}/challenge/account/1/mission/1",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge",
+								"account",
+								"1",
+								"mission",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Challenge",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{challenge_service}}/challenge/1",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Challenge",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_id\": 1,\n    \"mission_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{challenge_service}}/challenge",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Challenge to Complete",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{challenge_service}}/challenge/1/complete",
+							"host": [
+								"{{challenge_service}}"
+							],
+							"path": [
+								"challenge",
+								"1",
+								"complete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reward",
+			"item": [
+				{
+					"name": "Get All Rewards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{reward_service}}/reward",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Active Rewards",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{reward_service}}/reward/active",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward",
+								"active"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reward",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{reward_service}}/reward/1",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Reward",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Redeem 2 tickets to Singapore Zoo with 100 points!\",\n    \"exchange_points\": 100,\n    \"name\": \"Singapore Zoo Admission Ticket\",\n    \"image_url\": \"https://www.mandai.com/content/dam/mandai/ticketing/single-park/singapore-zoo-880x496.jpg\",\n    \"is_active\": true,\n    \"quantity\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{reward_service}}/reward",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Reward",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Redeem 2 tickets to Singapore Zoo with 100 points!\",\n    \"exchange_points\": 100,\n    \"name\": \"Singapore Zoo Admission Ticket\",\n    \"image_url\": \"https://www.mandai.com/content/dam/mandai/ticketing/single-park/singapore-zoo-880x496.jpg\",\n    \"is_active\": false,\n    \"quantity\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{reward_service}}/reward/3",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Reward",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{reward_service}}/reward/3",
+							"host": [
+								"{{reward_service}}"
+							],
+							"path": [
+								"reward",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Redeem",
+			"item": [
+				{
+					"name": "Get All Redemptions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{redemption_service}}/redemption",
+							"host": [
+								"{{redemption_service}}"
+							],
+							"path": [
+								"redemption"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Redemptions From Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{redemption_service}}/redemption/account/1",
+							"host": [
+								"{{redemption_service}}"
+							],
+							"path": [
+								"redemption",
+								"account",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Redemption",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{redemption_service}}/redemption/1",
+							"host": [
+								"{{redemption_service}}"
+							],
+							"path": [
+								"redemption",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Redemption",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_id\": 1,\n    \"reward_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{redemption_service}}/redemption",
+							"host": [
+								"{{redemption_service}}"
+							],
+							"path": [
+								"redemption"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Redemption to Claimed",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{redemption_service}}/redemption/1/claimed",
+							"host": [
+								"{{redemption_service}}"
+							],
+							"path": [
+								"redemption",
+								"1",
+								"claimed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Broadcast",
+			"item": [
+				{
+					"name": "Create a Broadcast Message",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"broadcasted_id\" : 1,\n    \"lf_pax\" : 4,\n    \"date_of_visit\": \"2022-10-23\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{broadcast_service}}/broadcast/4",
+							"host": [
+								"{{broadcast_service}}"
+							],
+							"path": [
+								"broadcast",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Broadcast Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{broadcast_service}}/broadcast/1",
+							"host": [
+								"{{broadcast_service}}"
+							],
+							"path": [
+								"broadcast",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Broadcast",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{broadcast_service}}/broadcast",
+							"host": [
+								"{{broadcast_service}}"
+							],
+							"path": [
+								"broadcast"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Broadcast Message",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"lf_pax\": 2,\n        \"date_of_visit\": \"Sun, 23 Oct 2022 00:00:00 GMT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{broadcast_service}}/broadcast/4",
+							"host": [
+								"{{broadcast_service}}"
+							],
+							"path": [
+								"broadcast",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Broadcast",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{broadcast_service}}/broadcast/2",
+							"host": [
+								"{{broadcast_service}}"
+							],
+							"path": [
+								"broadcast",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "handleGroup",
+			"item": [
+				{
+					"name": "Create new group",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"list_account\":[4],\r\n    \"no_of_pax\": 2,\r\n    \"description\":\"Just created the group\",\r\n    \"status\":\"Started\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{handleGroup_service}}/handleGroup/create",
+							"host": [
+								"{{handleGroup_service}}"
+							],
+							"path": [
+								"handleGroup",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Broadcast",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{handleGroup_service}}/handleGroup/broadcast_listings",
+							"host": [
+								"{{handleGroup_service}}"
+							],
+							"path": [
+								"handleGroup",
+								"broadcast_listings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Join Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"grouping_id\":2,\n    \"broadcasted_id\":1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{handleGroup_service}}/handleGroup/join_group",
+							"host": [
+								"{{handleGroup_service}}"
+							],
+							"path": [
+								"handleGroup",
+								"join_group"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Broadcast",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"broadcasted_id\" : 2,\r\n    \"lf_pax\" : 4,\r\n    \"date_of_visit\": \"2022-10-23\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{handleGroup_service}}/handleGroup/broadcast",
+							"host": [
+								"{{handleGroup_service}}"
+							],
+							"path": [
+								"handleGroup",
+								"broadcast"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Create",
+			"item": [
+				{
+					"name": "Get all groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{creategroup_service}}/grouping",
+							"host": [
+								"{{creategroup_service}}"
+							],
+							"path": [
+								"grouping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Group",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{creategroup_service}}/grouping/1",
+							"host": [
+								"{{creategroup_service}}"
+							],
+							"path": [
+								"grouping",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create a New Group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"list_account\":[2],\n    \"no_of_pax\": 2,\n    \"description\":\"Just created the group\",\n    \"status\":\"Started\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{creategroup_service}}/grouping",
+							"host": [
+								"{{creategroup_service}}"
+							],
+							"path": [
+								"grouping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Deleting Specific Group",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{creategroup_service}}/grouping/1",
+							"host": [
+								"{{creategroup_service}}"
+							],
+							"path": [
+								"grouping",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Updating Specific Group",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"no_of_pax\": 2\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{creategroup_service}}/grouping/1",
+							"host": [
+								"{{creategroup_service}}"
+							],
+							"path": [
+								"grouping",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Promo",
+			"item": [
+				{
+					"name": "Get All Promo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{promo_service}}/promo",
+							"host": [
+								"{{promo_service}}"
+							],
+							"path": [
+								"promo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Promo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{promo_service}}/promo/1",
+							"host": [
+								"{{promo_service}}"
+							],
+							"path": [
+								"promo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Promo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_id\": 5,\n    \"queue_id\": 5,\n    \"promo_code\": \"1234567\",\n    \"is_used\": 0\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{promo_service}}/promo",
+							"host": [
+								"{{promo_service}}"
+							],
+							"path": [
+								"promo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Redeem Promo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_used\": 1,\n    \"promo_code\": 123456\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{promo_service}}/promo/3",
+							"host": [
+								"{{promo_service}}"
+							],
+							"path": [
+								"promo",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Promo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{promo_service}}/promo/5",
+							"host": [
+								"{{promo_service}}"
+							],
+							"path": [
+								"promo",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "QueueTicket",
+			"item": [
+				{
+					"name": "Get All Queue Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{queueticket_service}}/queueticket",
+							"host": [
+								"{{queueticket_service}}"
+							],
+							"path": [
+								"queueticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Queue Ticket",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{queueticket_service}}/queueticket/3",
+							"host": [
+								"{{queueticket_service}}"
+							],
+							"path": [
+								"queueticket",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Queue Ticket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{queueticket_service}}/queueticket/4",
+							"host": [
+								"{{queueticket_service}}"
+							],
+							"path": [
+								"queueticket",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Queue Ticket",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"queue_id\": 3,\n    \"is_priority\": true,\n    \"account_id\": 3,\n    \"payment_method\": \"loyalty\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{queueticket_service}}/queueticket",
+							"host": [
+								"{{queueticket_service}}"
+							],
+							"path": [
+								"queueticket"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Queue Ticket",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_priority\": true,\n    \"account_id\": 3,\n    \"payment_method\": \"external\",\n    \"is_used\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{queueticket_service}}/queueticket/3",
+							"host": [
+								"{{queueticket_service}}"
+							],
+							"path": [
+								"queueticket",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Verify Account",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{order_service}}/order/retrieve_account/2",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"retrieve_account",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PROMO Payment Method",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_method\": \"promo\",\n    \"promo_code\": \"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/get_payment_method/3",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"get_payment_method",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "EPAYMENT Payment Method",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_method\": \"external\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/get_payment_method/3",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"get_payment_method",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "LOYALTY Payment Method",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_method\": \"loyalty\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/get_payment_method/1",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"get_payment_method",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initialise Queue Ticket (Paying)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"account_id\": 3,\n    \"queue_id\": 3,\n    \"promo_code\": 1234567,\n    \"payment_method\": \"promo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/3/paying",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"3",
+								"paying"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account (Paid)",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"queue_id\": 3,\n    \"is_priority\": 1,\n    \"account_id\": 3,\n    \"payment_method\": \"promo\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/3/paid",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"3",
+								"paid"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Use Ticket",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"queue_id\": 2,\n    \"is_used\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{order_service}}/order/2/used",
+							"host": [
+								"{{order_service}}"
+							],
+							"path": [
+								"order",
+								"2",
+								"used"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EPayment",
+			"item": [
+				{
+					"name": "Retrieve List of Payments Sessions",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{payment_service}}/epayment",
+							"host": [
+								"{{payment_service}}"
+							],
+							"path": [
+								"epayment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Checkout Session",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"account_id\" : \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "{{payment_service}}/epayment/create_checkout_session",
+							"host": [
+								"{{payment_service}}"
+							],
+							"path": [
+								"epayment",
+								"create_checkout_session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Payment Status (need to change session_id)",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{payment_service}}/epayment/check_payment_status/cs_test_a1kbKbb3Xhj9YYUy4wAwCbt8jjOrA4yL6AmZt4ElHgHyHtNbzwzYEfGRvt",
+							"host": [
+								"{{payment_service}}"
+							],
+							"path": [
+								"epayment",
+								"check_payment_status",
+								"cs_test_a1kbKbb3Xhj9YYUy4wAwCbt8jjOrA4yL6AmZt4ElHgHyHtNbzwzYEfGRvt"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Icebreakers",
+			"item": [
+				{
+					"name": "Get a Icebreaker (Only have 6 to choose from)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{icebreaker_service}}/api/icebreakers",
+							"host": [
+								"{{icebreaker_service}}"
+							],
+							"path": [
+								"api",
+								"icebreakers"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

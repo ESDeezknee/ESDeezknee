@@ -245,38 +245,6 @@ def join_group():
                                                 "message": "Congratulations! You are now part of Group " + grouping_id
                                             }
                                         ), 200
-                
-                                    icebreaker_message = json.dumps(notification_message_2)
-                                    amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename, routing_key="notification.sms",
-                                                body=icebreaker_message, properties=pika.BasicProperties(delivery_mode=2))
-                            code = delete_broadcast_result["code"]
-                            if code not in range (200,300):
-                                return jsonify({
-                                    "code": 500,
-                                    "data": {"joinGroup_result": delete_broadcast_result},
-                                    "message": "Failed to join group as group deletion failed."
-                                })
-                            
-                            else: 
-                                ## get group number from frontend
-                                delete_joining_group_result = processDeleteGroup(grouping_id)
-                                code = delete_joining_group_result["code"]
-                                if code not in range (200,300):
-                                    return jsonify({
-                                        "code": 500,
-                                        "data": {"joinGroup_result": delete_joining_group_result},
-                                        "message": "Failed to join group as group deletion failed."
-                                    })
-                                else:
-                                ## get group number from frontend
-                                    
-                                    return jsonify(
-                                        {
-                                            "code": 200,
-                                            "grouping_id": broadcasted_id,
-                                            "message": "Join group success! You are now part of Group " + str(broadcasted_id)
-                                        }
-                                    ), 200
             
             ## case 3: still need more people 
             elif new_LF_pax > 0:
