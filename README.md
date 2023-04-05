@@ -73,9 +73,9 @@ docker-compose up
 <hr>
 ### Customer Finding People to Enter a Ride
 
-![User Scenario 2 Interaction Diagram-Scenario 2A](https://user-images.githubusercontent.com/73370403/230115365-344aaf23-16be-49a9-8522-86b9c2afac77.jpg)
+![User Scenario 2 Interaction Diagram-Scenario 2A](https://user-images.githubusercontent.com/93701568/230126466-2f36ce8b-c263-49da-992e-1590630c8085.jpg)
 This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
-![User Scenario 2 Interaction Diagram-Scenario 2B](https://user-images.githubusercontent.com/73370403/230115396-2860ec48-1d95-4d52-8bcf-8d1e5dc12fff.jpg)
+![User Scenario 2 Interaction Diagram-Scenario 2B (1)](https://user-images.githubusercontent.com/93701568/230126777-c92f0c74-2588-4d78-9557-d650d2018f99.jpg)
 This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
 <hr>
 
