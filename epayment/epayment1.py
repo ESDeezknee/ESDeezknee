@@ -22,7 +22,6 @@ stripe.api_key = environ.get('STRIPE_API_KEY')
 
 order_URL = environ.get('orderURL') or "http://localhost:6201/order/"
 
-
 class epayment(db.Model):
     __tablename__ = 'epayment'
 
@@ -49,16 +48,8 @@ class epayment(db.Model):
                 "paymentDate": self.paymentDate
                 }
 
-
 with app.app_context():
     db.create_all()
-
-
-@app.route('/')
-def hello():
-    return 'Hello from the epayment Microservice!'
-
-# pls send a POST request to this endpoint to trigger it instantly
 
 
 @app.route('/epayment/create_checkout_session', methods=['POST'])
@@ -77,9 +68,6 @@ def create_checkout_session():
                 }
             ],
             mode="payment",
-            # success_url and cancel_url leads to the next page depending on payment status (both are built-in to the API)
-
-            # cancel_url should bring it back to the main page but cancels payment
             success_url='http://localhost:6203/epayment/check_payment_status/{CHECKOUT_SESSION_ID}',
             cancel_url='http://localhost:5174/payment-mode'
         )
@@ -124,37 +112,10 @@ async def check_payment_status(session_id):
                         "data": payment
                     }
                 ), 500
-        #     payment_json = {
-        #         "account_id": payment.account_id,
-        #         "session_id": payment.session_id,
-        #         "payment_method": "external"
-        #     }
-        # create_ticket = invoke_http(
-        #     order_URL + str(payment.account_id) + "/paying", method='POST', json=payment_json
-        # )
-        # if create_ticket["code"] == 200:
-        #     return jsonify(
-        #         {
-        #             "code": 200,
-        #             "message": "Ticket created!",
-        #             "data" : payment_json,
-        #             "data1" : create_ticket
-        #         }
-        #     )
-        # else:
-        #     return jsonify(
-        #         {
-        #             "code": 500,
-        #             "message": "Error creating ticket",
-        #             "error": create_ticket
-        #         }
-        #     ), 500
     elif payment_status == 'unpaid':
-        # Payment has not yet been made
         await asyncio.sleep(30)
         return await check_payment_status(session_id)
     else:
-        # Payment has failed or has been refunded
         return "Payment failed or refunded"
 
 
