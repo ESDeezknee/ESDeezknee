@@ -85,11 +85,11 @@ func main() {
     }
     if mission1.MissionID == 0 {
 					mission1 = Mission{
-						Name:         "Join others on an adventure!",
-						Description:  "Join a group and have fun together to gain 100 points!",
-						Difficulty:   "Easy",
+						Name:         "Ride Mummy Now!",
+						Description:  "Ride Revenge of the Mummy right now to gain 500 points!",
+						Difficulty:   "Medium",
 						Duration:     1.0,
-						AwardPoints:  100,
+						AwardPoints:  500,
 						IsActive:     true,
 						Created:      time.Now(),
 						Modified:     time.Now(),
@@ -104,16 +104,16 @@ func main() {
 						Created:      time.Now(),
 						Modified:     time.Now(),
 				}
-        // mission3 = Mission{
-        //     Name:         "Are you afraid of the mummy?",
-        //     Description:  "Ride Revenge of the Mummy 5 times to gain 500 points!",
-        //     Difficulty:   "Medium",
-        //     Duration:     5.0,
-        //     AwardPoints:  500,
-        //     IsActive:     true,
-        //     Created:      time.Now(),
-        //     Modified:     time.Now(),
-        // }
+					mission3 = Mission{
+						Name:         "Bottle Up!",
+						Description:  "Use your own bottle for your meal to gain 200 points!",
+						Difficulty:   "Easy",
+						Duration:     1.0,
+						AwardPoints:  200,
+						IsActive:     true,
+						Created:      time.Now(),
+						Modified:     time.Now(),
+				}
 				// mission4 = Mission{
 				// 		Name:         "Get wet at Jurassic Park Rapids Adventure!",
 				// 		Description:  "Ride Jurassic Park Rapids Adventure 10 times to gain 1000 points!!",
@@ -135,7 +135,8 @@ func main() {
 				// 		Modified:     time.Now(),
 				// }
         err = db.Create(&mission1).Error
-				err = db.Create(&mission2).Error
+		err = db.Create(&mission2).Error
+		err = db.Create(&mission3).Error
         // err = db.Create(&mission3).Error
 				// err = db.Create(&mission4).Error
         // err = db.Create(&mission5).Error
