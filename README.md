@@ -52,10 +52,9 @@ docker-compose up
 ## User Scenarios
 
 ### Customer Finding People to Enter a Ride
-![User Scenario 1 Interaction Diagram-Scenario 1A drawio](https://user-images.githubusercontent.com/73370403/230005080-5bb67bcb-3010-4451-b001-c41bd9e91860.png)
+![User Scenario 1 Interaction Diagram-Scenario 1A (1)](https://user-images.githubusercontent.com/73370403/230024888-214b7369-0c42-47ad-a592-4a2c06007574.jpg)
 This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
-
-![User Scenario 1 Interaction Diagram-Scenario 1B drawio (1)](https://user-images.githubusercontent.com/73370403/230005091-8e5528a2-27b1-4451-88e0-d6a05c20f049.png)
+![User Scenario 1 Interaction Diagram-Scenario 1B](https://user-images.githubusercontent.com/73370403/230024931-458b7b0f-27b5-44e7-ac00-f296482f8564.jpg)
 This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
 
 
