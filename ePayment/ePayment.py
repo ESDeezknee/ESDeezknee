@@ -115,7 +115,7 @@ async def check_payment_status(session_id):
             try:
                 payment.status = 'paid'
                 db.session.commit()
-                return redirect("http://localhost:5174/queue-ticket")
+                return redirect("http://localhost:5173/queue-ticket")
             except:
                 return jsonify(
                     {

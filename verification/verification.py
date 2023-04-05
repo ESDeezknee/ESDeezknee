@@ -22,15 +22,19 @@ reward_URL = environ.get('rewardURL') or "http://localhost:6303/reward/"
 grouping_URL = environ.get('groupingURL') or "http://localhost:6103/grouping/"
 promo_URL = environ.get('promoURL') or "http://localhost:6204/promo/"
 queue_URL = environ.get('queueURL') or "http://localhost:6202/queueticket/"
-icebreakers_url = environ.get('icebreakersURL') or "http://localhost:6101/api/icebreakers/"
-challenge_url = environ.get('challengeURL') or "http://localhost:6302/challenge/"
+icebreakers_url = environ.get(
+    'icebreakersURL') or "http://localhost:6101/api/icebreakers/"
+challenge_url = environ.get(
+    'challengeURL') or "http://localhost:6302/challenge/"
 
 
 monitorBindingKey = '#'
 
+
 def receiveMessage():
     rabbitmq_thread = threading.Thread(target=start_consuming)
     rabbitmq_thread.start()
+
 
 def start_consuming():
     amqp_setup.check_setup()
@@ -52,23 +56,40 @@ def challenge_callback(channel, method, properties, body):
 
     data = json.loads(body)
 
-    if data["code"] not in range(200,300):
-      return
-
-    for account_id in data["group_obj"]["list_account"]:
-      challenge_result = invoke_http(challenge_url + "account/" + str(account_id) + "/mission/" + str(data["mission_id"]), method='GET')
-      
-      if challenge_result["code"] not in range(200,300):
+    if data["code"] not in range(200, 300):
         return
 
-      if challenge_result["data"]["status"] == "Completed":
+    if data["mission_id"] == 1:
+        for account_id in data["group_obj"]["list_account"]:
+            challenge_result = invoke_http(challenge_url + "account/" + str(
+                account_id) + "/mission/" + str(data["mission_id"]), method='GET')
+
+            if challenge_result["code"] not in range(200, 300):
+                return
+
+            if challenge_result["data"]["status"] == "Completed":
+                return
+
+            update_challenge_result = invoke_http(
+                challenge_url + str(challenge_result["data"]["challenge_id"]) + "/complete", method='PATCH')
+
+            print(update_challenge_result)
+
         return
 
-      update_challenge_result = invoke_http(challenge_url + str(challenge_result["data"]["challenge_id"]) + "/complete", method='PATCH')
+    challenge_result = invoke_http(challenge_url + "account/" + str(
+        data["account_id"]) + "/mission/" + str(data["mission_id"]), method='GET')
 
-      print(update_challenge_result)
+    if challenge_result["code"] not in range(200, 300):
+        return
 
+    if challenge_result["data"]["status"] == "Completed":
+        return
 
+    update_challenge_result = invoke_http(
+        challenge_url + str(challenge_result["data"]["challenge_id"]) + "/complete", method='PATCH')
+
+    print(update_challenge_result)
 
 
 @app.route("/verification/account/<account_id>")
@@ -76,20 +97,24 @@ def verify_account(account_id):
     return invoke_http(
         account_URL + str(account_id), method='GET')
 
+
 @app.route("/verification/grouping/<grouping_id>")
 def verify_grouping(grouping_id):
     return invoke_http(
         grouping_URL + str(grouping_id),  method='GET')
+
 
 @app.route("/verification/mission/<mission_id>")
 def verify_mission(mission_id):
     return invoke_http(
         mission_URL + str(mission_id), method='GET')
 
+
 @app.route("/verification/reward/<reward_id>")
 def verify_reward(reward_id):
     return invoke_http(
         reward_URL + str(reward_id), method='GET')
+
 
 @app.route("/verification/queueticket/<queue_id>")
 def verify_queue(queue_id):

@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, abort, Response, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from os import environ
-import sys, os
+import sys
+import os
 import asyncio
 
 import requests
@@ -23,7 +24,8 @@ db = SQLAlchemy(app)
 
 CORS(app)
 
-verification_URL = environ.get('verificationURL') or "http://localhost:6001/verification/"
+verification_URL = environ.get(
+    'verificationURL') or "http://localhost:6001/verification/"
 account_URL = environ.get('accountURL') or "http://localhost:6003/account/"
 epayment_URL = environ.get('epaymentURL') or "http://localhost:6203/epayment"
 loyalty_URL = environ.get('loyaltyURL') or "http://localhost:6301/loyalty/"
@@ -46,16 +48,15 @@ async def select_payment_method(account_id):
     else:
         queue_id = 1
 
-    
     data = {
         "account_id": account_id,
         "queue_id": queue_id,
         "payment_method": payment_method
     }
 
-
     if (payment_method == "external"):
-        response = invoke_http(epayment_URL + 'create_checkout_session', method="POST" ,json={"account_id":data["account_id"]})
+        response = invoke_http(epayment_URL + 'create_checkout_session',
+                               method="POST", json={"account_id": data["account_id"]})
         if response:
             response["queue_id"] = data["queue_id"]
 
@@ -63,7 +64,7 @@ async def select_payment_method(account_id):
                 order_URL + str(account_id) + "/paying", method='POST', json=data)
             if ini_create_ticket["code"] == 201:
                 return jsonify({
-                    "code": 200, 
+                    "code": 200,
                     "data": response,
                     "queue_id": data["queue_id"]
                     }), 200
@@ -73,7 +74,7 @@ async def select_payment_method(account_id):
                     "data": response,
                     "message": "Failed to create ticket"
                 }), 405
-                
+
         else:
             return jsonify({'status': 'error', 'message': 'Failed to create checkout session', 'data': response})
     elif (payment_method == "promo"):
@@ -81,14 +82,15 @@ async def select_payment_method(account_id):
             "is_used": 1,
             "promo_code": payment_method1["promo_code"]
         }
-        update_promo = invoke_http(promo_URL + str(account_id), method="PATCH", json=promo_json)
+        update_promo = invoke_http(
+            promo_URL + str(account_id), method="PATCH", json=promo_json)
         if update_promo["code"] == 200:
             ini_create_ticket = invoke_http(
                 order_URL + str(account_id) + "/paying", method='POST', json=data)
             if ini_create_ticket["code"] == 201:
                 return jsonify({
                     "code": 200,
-                    "message": "Promo code has been redeemed", 
+                    "message": "Promo code has been redeemed",
                     "data": update_promo["data"],
                     "queue_id": data["queue_id"]
                     }), 200
@@ -109,7 +111,7 @@ async def select_payment_method(account_id):
             if ini_create_ticket["code"] == 201:
                 return jsonify({
                     "code": 200,
-                    "message": "Loyalty points have been redeemed", 
+                    "message": "Loyalty points have been redeemed",
                     "data": update_loyalty["data"],
                     "queue_id": data["queue_id"],
                     "available_points": update_loyalty["data"]["available_points"]
@@ -123,6 +125,7 @@ async def select_payment_method(account_id):
     else:
         return "Cannot find payment method"
 
+
 @app.route("/order/<int:account_id>/paying", methods=['POST'])
 def ini_create_ticket(account_id):
     # this function initialises the create ticket post
@@ -132,13 +135,25 @@ def ini_create_ticket(account_id):
             "code": 404,
             "message": "Invalid JSON input: " + str(request.get_data())
         }), 404
-    
+
     data = request.get_json()
 
     create_ticket = invoke_http(
         queue_URL, method='POST', json=data)
-    
+
     if create_ticket["code"] == 201:
+        # For User Scenario 3, Update Challenge Status
+        challenge_message = {
+            "mission_id": 2,
+            "code": 201
+        }
+
+        challenge_message.update(create_ticket["data"])
+        message = json.dumps(challenge_message)
+
+        amqp_setup.channel.basic_publish(exchange=amqp_setup.exchangename1, routing_key="challenge.challenge_complete", body=message, properties=pika.BasicProperties(delivery_mode=2))
+
+
         return jsonify({
             "code": 201,
             "message": "Queueticket being created", 

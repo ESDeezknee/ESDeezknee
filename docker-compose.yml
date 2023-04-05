@@ -12,6 +12,19 @@ networks:
 
 services:
   #################################
+  # Volumes Backup
+  #################################
+  backup:
+    image: alpine
+    command: >
+      sh -c "tar -czf /backup/konga-data.tar.gz -C /volume ./
+             tar -czf /backup/pg-data.tar.gz -C /volume ./"
+    volumes:
+      - kongadata:/volume
+      - pgdata:/volume
+      - ./backups:/backup
+
+  #################################
   # Volumes Restore
   #################################
   restore:
@@ -25,19 +38,6 @@ services:
       - ./backups:/backup
 
   #################################
-  # Volumes Backup
-  #################################
-  # backup:
-  #   image: alpine
-  #   command: >
-  #     sh -c "tar -czf /backup/konga-data.tar.gz -C /volume ./
-  #            tar -czf /backup/pg-data.tar.gz -C /volume ./"
-  #   volumes:
-  #     - kongadata:/volume
-  #     - pgdata:/volume
-  #     - ./backups:/backup
-
-  #################################
   # Frontend
   #################################
   frontend:
@@ -48,8 +48,6 @@ services:
     depends_on:
       - mysql-database
     restart: always
-    networks:
-      - kong-net
     ports:
       - "5173:5173"
 
@@ -382,6 +380,26 @@ services:
       RABBITMQ_HOST: rabbitmq
 
   #################################
+  # Stripe: The External Payment Microservice
+  #################################
+  epayment:
+    image: esdeezknee/epayment:1.0
+    build:
+      context: .
+      dockerfile: epayment/Dockerfile
+    depends_on:
+      - mysql-database
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6203:6203"
+    environment:
+      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/epayment
+      PYTHONUNBUFFERED: 1
+      orderURL: http://order:6201/order/
+
+  #################################
   # Promo: The PromoCode microservice
   #################################
   promo:
@@ -518,26 +536,6 @@ services:
       verificationURL: http://verification:6001/verification/
       loyaltyURL: http://loyalty:6301/loyalty/
       RABBITMQ_HOST: rabbitmq
-
-  #################################
-  # Stripe: The External Payment Microservice
-  #################################
-  epayment:
-    image: esdeezknee/epayment:1.0
-    build:
-      context: .
-      dockerfile: epayment/Dockerfile
-    depends_on:
-      - mysql-database
-    restart: always
-    networks:
-      - internal
-    ports:
-      - "6203:6203"
-    environment:
-      dbURL: mysql+mysqlconnector://root:root@host.docker.internal:3306/epayment
-      PYTHONUNBUFFERED: 1
-      orderURL: http://order:6201/order/
 
   #################################
   # Icebreakers: The Icebreakers Microservice
