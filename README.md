@@ -8,12 +8,16 @@ Theme Park Application
 
 ## Project Setup
 
-To run the project in development environment, access the folder directory and run docker compose
+### Running Backend
+To run the project in development environment, access the parent folder directory and run docker compose
 
 ```sh
 cd ESDeezknee
 docker-compose up
 ```
+*Frontend will also be containerised*
+
+
 
 ## Microservices
 
@@ -49,9 +53,19 @@ docker-compose up
 
 ### Customer Finding People to Enter a Ride
 ![User Scenario 1 Interaction Diagram-Scenario 1A drawio](https://user-images.githubusercontent.com/73370403/230005080-5bb67bcb-3010-4451-b001-c41bd9e91860.png)
+This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
+
 ![User Scenario 1 Interaction Diagram-Scenario 1B drawio (1)](https://user-images.githubusercontent.com/73370403/230005091-8e5528a2-27b1-4451-88e0-d6a05c20f049.png)
+This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
 
 
 ### Customer Wishes to Jump Queue
 
+
+
+
 ### Customer Participates in Challenges
+![User Scenario 3 Diagram-Scenario 3A](https://user-images.githubusercontent.com/73370403/230024553-a3ca8f31-94aa-41a9-930d-8b1dbfe84a8c.jpg)
+![User Scenario 3 Diagram-Scenario 3B](https://user-images.githubusercontent.com/73370403/230024617-df74c9a9-29dd-46ff-a003-b1fa013b0cd7.jpg)
+![User Scenario 3 Diagram-Scenario 3C](https://user-images.githubusercontent.com/73370403/230024676-5a10ba4f-9ab7-483a-88b8-74340891dc18.jpg)
+
