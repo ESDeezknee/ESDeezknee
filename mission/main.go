@@ -85,21 +85,21 @@ func main() {
     }
     if mission1.MissionID == 0 {
 					mission1 = Mission{
-						Name:         "Ride Mummy Now!",
-						Description:  "Ride Revenge of the Mummy right now to gain 500 points!",
-						Difficulty:   "Medium",
+						Name:         "Join others on an adventure!",
+						Description:  "Join a group and have fun together to gain 100 points!",
+						Difficulty:   "Easy",
 						Duration:     1.0,
-						AwardPoints:  500,
+						AwardPoints:  100,
 						IsActive:     true,
 						Created:      time.Now(),
 						Modified:     time.Now(),
 				}
 					mission2 = Mission{
-						Name:         "Bottle Up!",
-						Description:  "Use your own bottle for your meal to gain 200 points!",
+						Name:         "Skip the Queue!",
+						Description:  "Purchase an express queue to gain 100 points!",
 						Difficulty:   "Easy",
 						Duration:     1.0,
-						AwardPoints:  200,
+						AwardPoints:  100,
 						IsActive:     true,
 						Created:      time.Now(),
 						Modified:     time.Now(),
@@ -136,6 +136,7 @@ func main() {
 				// }
         err = db.Create(&mission1).Error
 			err = db.Create(&mission2).Error
+		// err = db.Create(&mission3).Error
         // err = db.Create(&mission3).Error
 				// err = db.Create(&mission4).Error
         // err = db.Create(&mission5).Error
