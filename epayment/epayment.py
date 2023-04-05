@@ -4,8 +4,6 @@ from flask_cors import CORS
 from os import environ
 from datetime import datetime
 import asyncio
-
-from invokes import invoke_http
 import stripe
 
 app = Flask(__name__)
@@ -96,7 +94,6 @@ async def check_payment_status(session_id):
         return "Could not connect to Stripe's API"
 
     if payment_status == 'paid':
-        # Payment has been successfully made
         payment = epayment.query.filter_by(session_id=session_id).first()
         if payment:
             try:
