@@ -9,7 +9,7 @@
 
 # ESDeezknee
 
-ESDeezKnee is a thrilling and immersive theme park that offers a range of exciting rides and attractions. From adrenaline-pumping roller coasters to family-friendly experiences, ESDeezKnee has something for everyone, including ways to jump queues, find new group mates, and participate in fun challenges and get rewarded!
+An immersive enterprise solution that offers a wide range of functions through the application for theme parks to utilise and engage with their visitors.
 
 ## Problem Statement
 
