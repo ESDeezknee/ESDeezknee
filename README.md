@@ -170,7 +170,7 @@ Please use the following account to navigate through the system:
 - Email: kangting.ng.2021@scis.smu.edu.sg
 - Password: IS213ESDeezKnee
 
-### mySQL issue when using docker compose
+### MySQL issue when using docker compose
 
 1. On your MAMP/WAMP with you mySQL
 2. Ensure that root account password is 'root'
