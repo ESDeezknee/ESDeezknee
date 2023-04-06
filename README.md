@@ -24,7 +24,9 @@ Reducing the environmental impact that are currently existing within theme parks
 - [Zachary Lian](https://www.linkedin.com/in/zacharylian/)
 - [Vanessa Lee](https://www.linkedin.com/in/vanessaleexn/)
 
-<img src="https://user-images.githubusercontent.com/45414933/230269151-a5b11c43-a67e-4867-b69f-92c71978ecc5.gif" alt="Application"  width="75%" style="border-radius:10px;">
+## Application
+
+![Application](https://user-images.githubusercontent.com/45414933/230269633-7ec3527b-85c3-4d05-822e-bc74c6fdbf35.gif)
 
 ## Requirements
 
