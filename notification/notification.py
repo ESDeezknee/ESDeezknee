@@ -133,8 +133,8 @@ def send_notification_handleGroup_sms(number_pax, first_name,phone_number):
     print("Notification SMS about full group successfully sent!", flush=True)
 
 def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phone_number, first_name):
-    notificationapi.init("2asi8se1f8laqltb8fgh9lhmod", 
-                        "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
+    notificationapi.init("4tjgaihoti8buperss4ou9kpcp", 
+                        "g3nlqqqbj081o7aqvoln06fljcheg23rag0pe1j7s6kmggo7ffu")
     # send sms
     notificationapi.send({
         "notificationId": "queueticket",
@@ -148,8 +148,8 @@ def send_notification_queueTicket_sms(account_id, queue_id, payment_method, phon
     print("Notification SMS about queue ticket successfully sent!", flush=True)
 
 def send_notification_promo_sms(account_id, promo_code, first_name, phone_number):
-    notificationapi.init('2asi8se1f8laqltb8fgh9lhmod', 
-                        '1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh')
+    notificationapi.init('4tjgaihoti8buperss4ou9kpcp', 
+                        'g3nlqqqbj081o7aqvoln06fljcheg23rag0pe1j7s6kmggo7ffu')
     # send sms
     notificationapi.send({
         "notificationId": "promo",
@@ -182,8 +182,8 @@ def send_notification_icebreakers_sms(id,icebreaker_statement, first_name,phone_
 
 
 def send_notification_use_queue_sms(account_id, queue_id, payment_method, phone_number, first_name):
-    notificationapi.init("2asi8se1f8laqltb8fgh9lhmod", 
-                        "1288s1b3fiu8aupu7e97qnc34rvh52fejpapfbqiuv6qokhn7esh")
+    notificationapi.init("4tjgaihoti8buperss4ou9kpcp", 
+                        "g3nlqqqbj081o7aqvoln06fljcheg23rag0pe1j7s6kmggo7ffu")
     # send sms
     notificationapi.send({
         "notificationId": "use_queue",
