@@ -123,7 +123,7 @@ Description: If the visitor decides to redeem their loyalty points, they will be
 
 <hr>
 
-### Scenario 2 - Visitor Finds People to Enter a Ride
+### Scenario 2 - Visitor wants to create a group and search for more Theme-park goers to join his group
 
 <img src="https://user-images.githubusercontent.com/93701568/230126466-2f36ce8b-c263-49da-992e-1590630c8085.jpg" alt="User Scenario 2 Interaction Diagram-Scenario 2A"  width="75%">
 
@@ -135,7 +135,7 @@ Description: This Scenario shows the Visitor creating a group and then joins an 
 
 <hr>
 
-### Visitor Wishes to Jump Queue
+### Scenario 3 - Visitor wants to Purchase a Jump Queue Ticket
 
 <img src="https://user-images.githubusercontent.com/90820000/230129315-15035d12-63dd-4fb1-b299-de90687c9887.jpg" alt="User Scenario 3 Diagram-Scenario 3A"  width="75%">
 
