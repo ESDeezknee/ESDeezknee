@@ -166,12 +166,10 @@ Please use the following account to navigate through the system:
 - Email: kangting.ng.2021@scis.smu.edu.sg
 - Password: IS213ESDeezKnee
 
-### Missing Queue Ticket
+### mySQL issue when using docker compose
 
-To prevent a possible missing queue ticket on UI after Stripe Payment (Visitor will still be notified of it on SMS):
-
-**Before purchasing through Stripe**
-
-1. Login to the account given above
-2. Clear the local storage in applications tab of the console
-3. Refresh the page and re-login
+1. On your MAMP/WAMP with you mySQL
+2. Ensure that root account password is 'root'
+3. Enter the following into your terminal:
+> docker-compose -f docker-compose.local.yml build
+> docker-compose -f docker-compose.local.yml up
