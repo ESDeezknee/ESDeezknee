@@ -17,19 +17,19 @@ class IcebreakersSeeder extends Seeder
         $data = [
             [
                 'id' => 1,
-                'statements' => 'If animals could talk, which species do you think would be the rudest?',
+                'statements' => 'Aim: Look at how to be environmentally friendly today!',
             ],
             [
                 'id' => 2,
-                'statements' => 'If you could only eat one color of food for the rest of your life, what color would it be?',
+                'statements' => 'Read up about Ecological Footprint and Environmental, Societal and Governance (ESG)',
             ],
             [
                 'id' => 3,
-                'statements' => 'Chicken Rice, Nasi Lemak or Hokkien Mee. Choose one and tell us where is your go to place!',
+                'statements' => 'What food do you hate to see in the bin and why?',
             ],
             [
                 'id' => 4,
-                'statements' => 'Do the chicken dance',
+                'statements' => 'Educate your group mates on Carbon Sequestration.',
             ],
             [
                 'id' => 5,
@@ -37,7 +37,7 @@ class IcebreakersSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'statements' => 'If you were a professional wrestler, what would your entrance music be and what would your signature move be called?',
+                'statements' => 'Find out what it means to have alternate energy! Share the findings with everyone',
             ]
             // Add more data here as needed
         ];

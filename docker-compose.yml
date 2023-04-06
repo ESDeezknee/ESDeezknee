@@ -540,21 +540,21 @@ services:
   #################################
   # Icebreakers: The Icebreakers Microservice
   #################################
-  # icebreakers:
-  #   image: esdeezknee/icebreakers:1.0
-  #   build:
-  #     context: .
-  #     dockerfile: icebreakers/Dockerfile
-  #   depends_on:
-  #     - mysql-database
-  #   restart: always
-  #   networks:
-  #     - internal
-  #   ports:
-  #     - "6101:6101"
-  #   environment:
-  #     - DB_HOST=host.docker.internal
-  #     - DB_DATABASE=icebreakers
-  #     - DB_USERNAME=root
-  #     - DB_PASSWORD=root
-  #   command: bash -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=6101"
+  icebreakers:
+    image: esdeezknee/icebreakers:1.0
+    build:
+      context: .
+      dockerfile: icebreakers/Dockerfile
+    depends_on:
+      - mysql-database
+    restart: always
+    networks:
+      - internal
+    ports:
+      - "6101:6101"
+    environment:
+      - DB_HOST=host.docker.internal
+      - DB_DATABASE=icebreakers
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    command: bash -c "php artisan migrate:fresh --seed && php artisan serve --host=0.0.0.0 --port=6101"
