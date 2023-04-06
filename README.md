@@ -15,6 +15,15 @@ ESDeezKnee is a thrilling and immersive theme park that offers a range of exciti
 
 Reducing the environmental impact that are currently existing within theme parks, while enhancing visitors’ experience in the theme park, especially those who are more environmentally conscious.
 
+## Team Members
+
+- [Ng Kang Ting](https://github.com/ngkangting)
+- [Teo Wei Lun](https://github.com/weilunteo)
+- [Keith Law](https://github.com/KeithLaww)
+- [Joel Tan](https://github.com/joelfatnugget)
+- [Zachary Lian](https://github.com/zacharylian)
+- [Vanessa Lee](https://github.com/vanleexn)
+
 ## Requirements
 
 - Docker v4.17.0
