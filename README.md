@@ -156,8 +156,12 @@ Description: At the point in time before the user enters the ride through queue 
 ### Docker-compose build fails
 
 1. Delete all containers, images and volumes on Docker or Purge/Delete data on Docker
-2. Run `docker-compose build` again
-3. Run `docker-compose up`
+2. Enter the following into your terminal:
+
+```sh
+docker-compose -f docker-compose.local.yml build
+docker-compose -f docker-compose.local.yml up
+```
 
 ### Login Error
 
@@ -171,5 +175,8 @@ Please use the following account to navigate through the system:
 1. On your MAMP/WAMP with you mySQL
 2. Ensure that root account password is 'root'
 3. Enter the following into your terminal:
-> docker-compose -f docker-compose.local.yml build
-> docker-compose -f docker-compose.local.yml up
+
+```sh
+docker-compose -f docker-compose.local.yml build
+docker-compose -f docker-compose.local.yml up
+```
