@@ -34,7 +34,7 @@ Enhancing visitors' experiences by reducing the pains that visitors undergo in t
 
 ## Project Setup
 
-The application has been dockerised to include MySQL, phpMyAdmin, RabbitMQ, Kong API Gateway, Frontend application and the Microservices to provide seamless set up with Docker Compose.
+The application has been dockerised to include MySQL, phpMyAdmin, RabbitMQ, Kong API Gateway, Frontend application and the Microservices to provide seamless set up with Docker Compose. Please ensure that your MAMP/WAMP or any MySQL database is turned **OFF**. Additionally, please ensure that port 3306 is unused.
 
 To run the project in development environment, access the parent folder directory and run docker compose.
 
@@ -48,6 +48,8 @@ The application will take a few minutes to get everything set up. If the applica
 ```sh
 docker-compose up
 ```
+
+However, our microservices are still exposed publicly for ease of use in testing all the endpoints of the microservices.
 
 ## MySQL + phpMyAdmin
 
@@ -77,7 +79,7 @@ To view the frontend application, go to [http://127.0.0.1:5173](http://127.0.0.1
 
 ## Microservices
 
-The following are the addresses for the microservices. The respective API endspoint can be found in the Postman Collection.
+The following are the addresses for the microservices. The respective API endpoints can be found in the Postman Collection.
 
 - Verification: [http://127.0.0.1:6001](http://127.0.0.1:6001)
 - Notification: [http://127.0.0.1:6002](http://127.0.0.1:6002)
@@ -99,7 +101,7 @@ The following are the addresses for the microservices. The respective API endspo
 ## External Microservices
 
 - [Stripe](https://stripe.com/docs/api)
-- [NotificationsAPI](https://docs.notificationapi.com/)
+- [NotificationAPI](https://docs.notificationapi.com/)
 
 ## Postman Environment + Collections
 
