@@ -163,8 +163,8 @@ Description: At the point in time before the user enters the ride through queue 
 2. Enter the following into your terminal:
 
 ```sh
-docker-compose -f docker-compose.local.yml build
-docker-compose -f docker-compose.local.yml up
+docker-compose build
+docker-compose up
 ```
 
 ### Login Error
