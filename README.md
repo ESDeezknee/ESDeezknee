@@ -39,7 +39,7 @@ cd ESDeezknee
 docker-compose up
 ```
 
-The application will take a few minutes to get everything set up. If the application is not working as expected, run docker compose again.
+The application will take a few minutes to get everything set up. If the application is not working as expected, terminate the terminal and run docker compose again.
 
 ```sh
 docker-compose up
