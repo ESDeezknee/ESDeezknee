@@ -24,6 +24,8 @@ Reducing the environmental impact that are currently existing within theme parks
 - [Zachary Lian](https://www.linkedin.com/in/zacharylian/)
 - [Vanessa Lee](https://www.linkedin.com/in/vanessaleexn/)
 
+![Screen_Recording_2023-04-06_at_11_49_41_AdobeExpress](https://user-images.githubusercontent.com/45414933/230269151-a5b11c43-a67e-4867-b69f-92c71978ecc5.gif)
+
 ## Requirements
 
 - Docker v4.17.0
