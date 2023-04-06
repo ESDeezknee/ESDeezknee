@@ -109,9 +109,15 @@ To test the API endpoints of the microservices, import the following to Postman.
 
 <img src="https://user-images.githubusercontent.com/73370403/230126026-079c6d4d-2bdf-4a3a-a55a-1a338ea99f99.jpg" alt="User Scenario 1 Diagram-Scenario 1A"  width="75%">
 
+Description: When the visitor comes to the theme park, they can view active missions and attempt to accomplish them to earn loyalty points.
+
 <img src="https://user-images.githubusercontent.com/73370403/230126006-527edcea-9e7d-495d-9849-c308b558ae73.jpg" alt="User Scenario 1 Diagram-Scenario 1B"  width="75%">
 
+Description: When the visitor completes a challenge, they will then be rewarded with and notifed of additional loyalty points.
+
 <img src="https://user-images.githubusercontent.com/73370403/230125997-472d6cda-b3ba-45f0-aa80-80c8101574da.jpg" alt="User Scenario 1 Diagram-Scenario 1C"  width="75%">
+
+Description: If the visitor decides to redeem their loyalty points, they will be able to view possible rewards available or redeem it through the purchase of a jump queue ticket.
 
 <hr>
 
@@ -119,11 +125,11 @@ To test the API endpoints of the microservices, import the following to Postman.
 
 <img src="https://user-images.githubusercontent.com/93701568/230126466-2f36ce8b-c263-49da-992e-1590630c8085.jpg" alt="User Scenario 2 Interaction Diagram-Scenario 2A"  width="75%">
 
-This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
+Description: This Scenario shows the Visitor creating a group and thereafter creates a Broadcast Message that everyone is able to view.
 
 <img src="https://user-images.githubusercontent.com/93701568/230126777-c92f0c74-2588-4d78-9557-d650d2018f99.jpg" alt="User Scenario 2 Interaction Diagram-Scenario 2B"  width="75%">
 
-This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
+Description: This Scenario shows the Visitor creating a group and then joins an already Broadcasted Message.
 
 <hr>
 
@@ -131,8 +137,31 @@ This Scenario shows the Visitor creating a group and then joins an already Broad
 
 <img src="https://user-images.githubusercontent.com/90820000/230129315-15035d12-63dd-4fb1-b299-de90687c9887.jpg" alt="User Scenario 3 Diagram-Scenario 3A"  width="75%">
 
+Description: If the visitor does not want to wait in line for too long, they can opt to purchase a jump queue ticket through three payment methods. Once both loyalty and promo redemption is successful, the user will be notified of it through SMS.
+
 <img src="https://user-images.githubusercontent.com/90820000/230129379-d469fe57-bcb3-4f81-b64f-69c01bb2ab45.png" alt="User Scenario 3 Diagram-Scenario 3B"  width="75%">
+
+Description: Once payment is successful, a new jump queue ticket will be generated and notified to the visitor through SMS and on the UI.
 
 <img src="https://user-images.githubusercontent.com/90820000/230129444-3a10fe92-a775-41f1-b98a-c80673051127.png" alt="User Scenario 3 Diagram-Scenario 3C"  width="75%">
 
+Description: At the point in time before the user enters the ride through queue jumping, the user will redeem their ticket and be notified that the queue ticket is redeemed through SMS and on the UI.
+
 <hr>
+
+## Troubleshooting
+
+Docker-compose build fails:
+1. Delete all containers, images and volumes on Docker or Purge/Delete data on Docker
+2. Run "docker-compose build" again
+
+Error when login in:
+Please use the following account to navigate through the system:
+Email: kangting.ng.2021@scis.smu.edu.sg
+Password: IS213ESDeezKnee
+
+To prevent a possible missing queue ticket on UI after Stripe Payment (visitor will still be notified of it on SMS):
+**Before purchasing through Stripe**
+1. Login to the account given above
+2. Clear the local storage in applications tab of the console
+3. Refresh the page and re-login
