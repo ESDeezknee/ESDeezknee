@@ -24,6 +24,10 @@ Reducing the environmental impact that are currently existing within theme parks
 - [Zachary Lian](https://www.linkedin.com/in/zacharylian/)
 - [Vanessa Lee](https://www.linkedin.com/in/vanessaleexn/)
 
+## Application Preview
+
+![Application](https://user-images.githubusercontent.com/45414933/230269633-7ec3527b-85c3-4d05-822e-bc74c6fdbf35.gif)
+
 ## Requirements
 
 - Docker v4.17.0
@@ -156,8 +160,12 @@ Description: At the point in time before the user enters the ride through queue 
 ### Docker-compose build fails
 
 1. Delete all containers, images and volumes on Docker or Purge/Delete data on Docker
-2. Run `docker-compose build` again
-3. Run `docker-compose up`
+2. Enter the following into your terminal:
+
+```sh
+docker-compose -f docker-compose.local.yml build
+docker-compose -f docker-compose.local.yml up
+```
 
 ### Login Error
 
@@ -166,12 +174,13 @@ Please use the following account to navigate through the system:
 - Email: kangting.ng.2021@scis.smu.edu.sg
 - Password: IS213ESDeezKnee
 
-### Missing Queue Ticket
+### MySQL issue when using docker compose
 
-To prevent a possible missing queue ticket on UI after Stripe Payment (Visitor will still be notified of it on SMS):
+1. On your MAMP/WAMP with your mySQL
+2. Ensure that root account password is 'root'
+3. Enter the following into your terminal:
 
-**Before purchasing through Stripe**
-
-1. Login to the account given above
-2. Clear the local storage in applications tab of the console
-3. Refresh the page and re-login
+```sh
+docker-compose -f docker-compose.local.yml build
+docker-compose -f docker-compose.local.yml up
+```
