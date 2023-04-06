@@ -39,7 +39,7 @@ cd ESDeezknee
 docker-compose up
 ```
 
-The application will take a few minutes to get everything set up. If the application is not working as expected, terminate the terminal and run docker compose again.
+The application will take a few minutes to get everything set up. If the application is not working as expected, stop the terminal and run docker compose again.
 
 ```sh
 docker-compose up
@@ -60,7 +60,7 @@ To view and access RabbitMQ, go to [http://127.0.0.1:15672](http://127.0.0.1:156
 - Username: guest
 - Password: guest
 
-## Kong API Gateway (Konga)
+## Kong API Gateway
 
 To view and access Kong API Gateway, go to [http://127.0.0.1:1337](http://127.0.0.1:1337) and enter the following credentials.
 
@@ -72,6 +72,8 @@ To view and access Kong API Gateway, go to [http://127.0.0.1:1337](http://127.0.
 To view the frontend application, go to [http://127.0.0.1:5173](http://127.0.0.1:5173).
 
 ## Microservices
+
+The following are the addresses for the microservices. The respective API endspoint can be found in the Postman Collection.
 
 - Verification: [http://127.0.0.1:6001](http://127.0.0.1:6001)
 - Notification: [http://127.0.0.1:6002](http://127.0.0.1:6002)
@@ -92,8 +94,8 @@ To view the frontend application, go to [http://127.0.0.1:5173](http://127.0.0.1
 
 ## External Microservices
 
-- Stripe
-- NotificationsAPI
+- [Stripe](https://stripe.com/docs/api)
+- [NotificationsAPI](https://docs.notificationapi.com/)
 
 ## Postman Environment + Collections
 
@@ -109,7 +111,7 @@ To test the API endpoints of the microservices, import the following to Postman.
 
 <img src="https://user-images.githubusercontent.com/73370403/230126026-079c6d4d-2bdf-4a3a-a55a-1a338ea99f99.jpg" alt="User Scenario 1 Diagram-Scenario 1A"  width="75%">
 
-Description: When the visitor comes to the theme park, they can view active missions and attempt to accomplish them to earn loyalty points.
+Description: When the visitor comes to the theme park, they can view active missions and participate in a challenge to earn loyalty points.
 
 <img src="https://user-images.githubusercontent.com/73370403/230126006-527edcea-9e7d-495d-9849-c308b558ae73.jpg" alt="User Scenario 1 Diagram-Scenario 1B"  width="75%">
 
@@ -117,7 +119,7 @@ Description: When the visitor completes a challenge, they will then be rewarded 
 
 <img src="https://user-images.githubusercontent.com/73370403/230125997-472d6cda-b3ba-45f0-aa80-80c8101574da.jpg" alt="User Scenario 1 Diagram-Scenario 1C"  width="75%">
 
-Description: If the visitor decides to redeem their loyalty points, they will be able to view possible rewards available or redeem it through the purchase of a jump queue ticket.
+Description: If the visitor decides to redeem their loyalty points, they will be able to view possible rewards available and redeem a reward or redeem it through the purchase of a jump queue ticket.
 
 <hr>
 
@@ -151,17 +153,25 @@ Description: At the point in time before the user enters the ride through queue 
 
 ## Troubleshooting
 
-Docker-compose build fails:
+### Docker-compose build fails
+
 1. Delete all containers, images and volumes on Docker or Purge/Delete data on Docker
-2. Run "docker-compose build" again
+2. Run `docker-compose build` again
+3. Run `docker-compose up`
 
-Error when login in:
+### Login Error
+
 Please use the following account to navigate through the system:
-Email: kangting.ng.2021@scis.smu.edu.sg
-Password: IS213ESDeezKnee
 
-To prevent a possible missing queue ticket on UI after Stripe Payment (visitor will still be notified of it on SMS):
+- Email: kangting.ng.2021@scis.smu.edu.sg
+- Password: IS213ESDeezKnee
+
+### Missing Queue Ticket
+
+To prevent a possible missing queue ticket on UI after Stripe Payment (Visitor will still be notified of it on SMS):
+
 **Before purchasing through Stripe**
+
 1. Login to the account given above
 2. Clear the local storage in applications tab of the console
 3. Refresh the page and re-login
