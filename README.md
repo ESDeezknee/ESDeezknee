@@ -20,7 +20,7 @@ Reducing the environmental impact that are currently existing within theme parks
 - [Ng Kang Ting](https://www.linkedin.com/in/ngkangting/)
 - [Teo Wei Lun](https://www.linkedin.com/in/weilunteo/)
 - [Keith Law](https://www.linkedin.com/in/keithlawzk/)
-- [Joel Tan](https://www.linkedin.com/in/joel-tan-a599b6201/)
+- [Joel Tan](https://www.linkedin.com/in/joeltanec/)
 - [Zachary Lian](https://www.linkedin.com/in/zacharylian/)
 - [Vanessa Lee](https://www.linkedin.com/in/vanessaleexn/)
 
