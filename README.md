@@ -17,12 +17,12 @@ Reducing the environmental impact that are currently existing within theme parks
 
 ## Team Members
 
-- [Ng Kang Ting](https://github.com/ngkangting)
-- [Teo Wei Lun](https://github.com/weilunteo)
-- [Keith Law](https://github.com/KeithLaww)
-- [Joel Tan](https://github.com/joelfatnugget)
-- [Zachary Lian](https://github.com/zacharylian)
-- [Vanessa Lee](https://github.com/vanleexn)
+- [Ng Kang Ting](https://www.linkedin.com/in/ngkangting/)
+- [Teo Wei Lun](https://www.linkedin.com/in/weilunteo/)
+- [Keith Law](https://www.linkedin.com/in/keithlawzk/)
+- [Joel Tan](https://www.linkedin.com/in/joel-tan-a599b6201/)
+- [Zachary Lian](https://www.linkedin.com/in/zacharylian/)
+- [Vanessa Lee](https://www.linkedin.com/in/vanessaleexn/)
 
 ## Requirements
 
