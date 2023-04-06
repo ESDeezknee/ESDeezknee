@@ -176,7 +176,7 @@ Please use the following account to navigate through the system:
 
 ### MySQL issue when using docker compose
 
-1. On your MAMP/WAMP with you mySQL
+1. On your MAMP/WAMP with your mySQL
 2. Ensure that root account password is 'root'
 3. Enter the following into your terminal:
 
