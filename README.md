@@ -13,7 +13,7 @@ ESDeezKnee is a thrilling and immersive theme park that offers a range of exciti
 
 ## Problem Statement
 
-Reducing the environmental impact that are currently existing within theme parks, while enhancing visitors’ experience in the theme park, especially those who are more environmentally conscious.
+Enhancing visitors' experiences by reducing the pains that visitors undergo in theme parks through providing a convenient and seamless solution.
 
 ## Team Members
 
